@@ -175,6 +175,15 @@ class ControlsRender
             else echo '<option value="' . $item['userID'] . '">' . $item['username']. '</option>';
         }
     }
+    //Render Mapkind dropdown
+    function GET_DDL_MAPKIND($array,$selected)
+    {
+        foreach ($array as $item) {
+            if ($selected == $item)
+                echo '<option value="' . $item['mapkindID'] . '" selected>' . $item['mapkindname']. '</option>';
+            else echo '<option value="' . $item['mapkindID'] . '">' . $item['mapkindname']. '</option>';
+        }
+    }
     /*Function: DISPLAY_LOG_INFO
      *Description: Receive an array of logs of a document as the parameter and render html element on the web page
      *              This function is only used for review.php of every Template

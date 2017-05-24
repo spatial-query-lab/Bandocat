@@ -6,10 +6,16 @@ Parameter(s):
 Return value(s):
  ***********************************************/
 
-
+//this class provides methods for Collection Creator and Template Creator, working with MYSQL database and CLI MYSQL
+// to run Collection Creator, the path to mysql/bin must be added to the System Environments Variable
 class CreatorHelper extends DBHelper
 {
-
+    /**********************************************
+     * Function: GET_COLLECTION_AND_TEMPLATE
+     * Description: return collection (parameter) name, display name, dbname, template ID, template description of all collections in `collection` and `template` table
+     * Parameter(s): NONE
+     * Return value(s): return assoc array of the collections
+     ***********************************************/
     function GET_COLLECTION_AND_TEMPLATE()
     {
         $this->getConn()->exec('USE ' . $this->maindb);
@@ -18,6 +24,12 @@ class CreatorHelper extends DBHelper
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**********************************************
+     * Function: GET_TEMPLATES
+     * Description: get all info from `template` table
+     * Parameter(s): NONE
+     * Return value(s): return assoc array of the templates
+     ***********************************************/
     function GET_TEMPLATES()
     {
         $this->getConn()->exec('USE ' . $this->maindb);
@@ -26,7 +38,14 @@ class CreatorHelper extends DBHelper
         return $sth->fetchAll(PDO::FETCH_NUM);
     }
 
-
+    /**********************************************
+     * Function: COLLECTION_VALIDATE_NEW_ENTRY
+     * Description: check if the new collection names (parameter name, displayname, dbname) has existed or not
+     * Parameter(s): $iParName (string) : parameter name of the new collection
+     *               $iDisplayName (string)  : display name of the new collection
+     *               $iDBName (string) : DB Name of the new collection
+     * Return value(s): return number of collection that satisfies the query's conditions ( = 0 mean no match, > 0 means a name has existed)
+     ***********************************************/
     function COLLECTION_VALIDATE_NEW_ENTRY($iParName,$iDisplayName,$iDBName)
     {
         $this->getConn()->exec('USE ' . $this->maindb);
@@ -40,7 +59,18 @@ class CreatorHelper extends DBHelper
         return $ret;
     }
 
-    //need to fix
+    /**********************************************
+     * Function: COLLECTION_INSERT
+     * Description: Insert new collection entry into `collection` table
+     * Parameter(s): $iParName (string) : parameter name of the new collection
+     *               $iDisplayName (string)  : display name of the new collection
+     *               $iDBName (string) : DB Name of the new collection
+     *               $iStorageDir (string) : Storage directory (full server path)
+     *               $iThumbnailDir (string) : Thumbnail directory (partial path)
+     *               $iTemplateID (int): new collection's template ID
+     *               $iGeoRecDir  (string): georectification directory (full server path)
+     * Return value(s): return false or the ID of new collection in `collection` table
+     ***********************************************/
     function COLLECTION_INSERT($iParName,$iDisplayName,$iDBName,$iStorageDir,$iThumbnailDir,$iTemplateID,$iGeorecDir)
     {
         $this->getConn()->exec('USE ' . $this->maindb);
@@ -58,6 +88,12 @@ class CreatorHelper extends DBHelper
         return $ret;
     }
 
+    /**********************************************
+     * Function: COLLECTION_DELETE
+     * Description: Delete the collection from the `collection` table (FOR ROLLBACK if fail to create new collection)
+     * Parameter(s): $iColID (int) - collection ID of the collection to be deleted
+     * Return value(s): false if fail
+     ***********************************************/
     function COLLECTION_DELETE($iColID)
     {
         $this->getConn()->exec('USE ' . $this->maindb);
@@ -68,7 +104,14 @@ class CreatorHelper extends DBHelper
     }
 
     //limit1 => select only one db
-    function GET_DBNAME_FROM_TEMPLATEID($iTemplateID,$limit1)
+    /**********************************************
+     * Function: GET_DBNAME_FROM_TEMPLATEID
+     * Description: Get a database name from a collection or collections with a specified templateID (for validation)
+     * Parameter(s): $iTemplateID (int) -  specified templateID
+     *               $limit1 (boolean - Default: true) - select only 1 row or all rows
+     * Return value(s): false if fail, otherwise, return the database name
+     ***********************************************/
+    function GET_DBNAME_FROM_TEMPLATEID($iTemplateID,$limit1 = true)
     {
         $this->getConn()->exec('USE ' . $this->maindb);
         if($limit1 == true)
@@ -84,15 +127,22 @@ class CreatorHelper extends DBHelper
     //TO DO:
     //add mysql/bin into Path
     //increase maximum execution time in php.ini
+    /**********************************************
+     * Function: DATABASE_CLONE_NEW
+     * Description: Run command line MySQL to clone new collection from the existing template and reset the AutoIncrement ID of all the tables of the new database
+     * Parameter(s): $iNewDBName (string) - new databasename of the clone
+     *               $iExistingDBName (string) - existing databasename to be cloned from
+     * Return value(s): true if success, false if fail
+     ***********************************************/
     function DATABASE_CLONE_NEW($iNewDBName,$iExistingDBName)
     {
         $query = "CREATE DATABASE IF NOT EXISTS " . $iNewDBName;
         $sth = $this->getConn()->query($query);
         if($sth) {
             //export routines,triggers and schema (no data) of existing db
-            $export = "mysqldump -d --routines --triggers -u " . parent::$user .  " -p" . parent::$pwd . " " . $iExistingDBName . " > temp.sql 2>&1";
+            $export = "mysqldump -d --routines --triggers -u " . $this->getUser() .  " -p" . $this->getPwd() . " " . $iExistingDBName . " > temp.sql 2>&1";
             exec($export,$output);
-            $import = "mysql -u " . parent::$user . " -p" . parent::$pwd . " " . $iNewDBName . " < temp.sql 2>&1";
+            $import = "mysql -u " . $this->getUser() . " -p" . $this->getPwd() . " " . $iNewDBName . " < temp.sql 2>&1";
             exec($import,$output);
             //delete temp file
             $delete = "del /f temp.sql 2>&1";
@@ -106,6 +156,12 @@ class CreatorHelper extends DBHelper
     }
 
     //unsafe
+    /**********************************************
+     * Function: DATABASE_RESET_TABLES_AUTOINCREMENT
+     * Description: Reset AutoIncrement ID of all tables from the specified database (be cautious)
+     * Parameter(s): $iDBName (string) - database name of the database to reset AI
+     * Return value(s): true if success
+     ***********************************************/
     function DATABASE_RESET_TABLES_AUTOINCREMENT($iDBName)
     {
         $this->getConn()->query("USE " . $iDBName);

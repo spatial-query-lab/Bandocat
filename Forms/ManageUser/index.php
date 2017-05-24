@@ -51,7 +51,7 @@ $Render = new ControlsRender();
                 <h4 class="Account_Title">Select User:</h4>
         <!---------Select Option Fields starts here------>
         <select name="ddl_user" id="ddl_user" multiple style="height: 250px; width: 250px">
-            <?php $Render->GET_DDL_USER($DB->GET_USER_TABLE(),null); ?>
+            <?php $Render->GET_DDL_USER($DB->GET_ACTIVE_USER_TABLE(),null); ?>
         </select><br/>
             </td>
         </tr>
@@ -64,7 +64,7 @@ $Render = new ControlsRender();
             <input type="radio" name="rd_Role" id="rd_Role_admin" value="2"/><label>Admin</label></td>
             <td><input type="radio" name="rd_Role" id="rd_Role_reader" value="4"/><label>Reader</label></td></tr>
             <td><input type="radio" name="rd_Role" id="rd_Role_ru" value="3"/><label>Regular</label></td>
-                <td><input type="radio" name="rd_Role" id="rd_Role_inactive" value="0"/><label>Inactive</label></td></tr>
+            <td><input type="radio" name="rd_Role" id="rd_Role_inactive" value="0"/><label>Inactive</label></td></tr>
             <br>
 
     </form></table>
@@ -127,9 +127,9 @@ $Render = new ControlsRender();
                 case "Reader":
                     $("#rd_Role_reader").prop("checked",true);
                     break;
-                case "Inactive":
-                    $("#rd_Role_inactive").prop("checked",true);
-                    break;
+//                case "Inactive":
+//                    $("#rd_Role_inactive").prop("checked",true);
+//                    break;
                 case "Super Admin":
                     $("#rd_Role_admin").prop("checked",true);
                     break;

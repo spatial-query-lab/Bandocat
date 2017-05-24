@@ -332,4 +332,28 @@ class FieldBookDBHelper extends DBHelper
         } else return false;
     }
 
+    /**********************************************
+     * Function: GET_BOOKS
+     * Description: retrieve unique books in `booktitle` field of `document` table in the targeted collection
+     * Parameter(s):
+     * $collection (in string) - name of the collection
+     * Return value(s):
+     * false if fail, else return an array of book titles
+     ***********************************************/
+    function GET_BOOKS($collection)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //selects the fieldbook collection names from the fieldbook collection
+            $sth = $this->getConn()->prepare("SELECT DISTINCT `booktitle` FROM `document` WHERE `booktitle` ORDER BY `booktitle` ASC");
+            $sth->execute();
+            //return the collection names
+            $result = $sth->fetchAll(PDO::FETCH_NUM);
+            return $result;
+        } else return false;
+    }
+
 }

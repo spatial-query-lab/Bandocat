@@ -58,8 +58,8 @@ $Render = new ControlsRender();
                     <thead>
                     <tr>
                         <th width="80px">Author ID</th>
-                        <th>Author Name</th>
                         <th>TDL Name</th>
+                        <th>Old Name</th>
                         <th width="30px"></th>
                     </tr>
                     </thead>
@@ -83,12 +83,12 @@ $Render = new ControlsRender();
                             <td width="300px"><label id="lblAuthorID"></label></td>
                         </tr>
                         <tr>
-                            <td><label>Author Name</label></td>
-                            <td><label id="lblAuthorName"></label></td>
+                            <td><label>TDL Name</label></td>
+                            <td><input type="text" name="txtAuthorName" id="txtAuthorName" value="" required/></td>
                         </tr>
                         <tr>
-                            <td><label>TDL Name</label></td>
-                            <td><input type="text" name="txtTDLName" id="txtTDLName" value="" required/></td>
+                            <td><label>Old Name</label></td>
+                            <td><label id="lblOldName"></label></td>
                         </tr>
                         <tr style="text-align: center;line-height:70px">
                           <td colspan="2"><input type="submit" onclick="btnUpdate_onclick(event)" name="btnUpdate" id="btnUpdate" value="Update" class="bluebtn">
@@ -128,8 +128,8 @@ $Render = new ControlsRender();
     }
 </style>
 <script>
-    //Hit enter on txtTDLName will trigger Update button, hit tab will trigger loadPopupInfo
-    $("#txtTDLName").keyup(function(event){
+    //Hit enter on txtOldName will trigger Update button, hit tab will trigger loadPopupInfo
+    $("#txtOldName").keyup(function(event){
         event.preventDefault();
         if(event.keyCode == 13)
         {$("#btnUpdate").click();return false; }//hit enter
@@ -158,10 +158,10 @@ $Render = new ControlsRender();
             success:function(data) {
                 var jsonData = JSON.parse(data)[0];
                 $("#lblAuthorID").text(jsonData.authorID);
-                $("#lblAuthorName").text(jsonData.authorname);
-                $("#txtTDLName").val(jsonData.TDLname);
+                $("#txtAuthorName").val(jsonData.authorname);
+                $("#lblOldName").text(jsonData.TDLname);
 
-                $("#txtTDLName").focus(); //focus on this textbox
+                $("#txtOldName").focus(); //focus on this textbox
             }
         });
     }
@@ -174,17 +174,17 @@ $Render = new ControlsRender();
         e.preventDefault();
         var collection = $("#ddlCollection").val();
         var authorID = $("#lblAuthorID").text();
-        var authorName = $("#lblAuthorName").text();
-        var TDLName = $("#txtTDLName").val();
+        var authorName = $("#txtAuthorName").val();
+        var oldName = $("#lblOldName").text();
 
-        if(TDLName.trim() == "") {
-            alert("TDLName must not be empty!");
+        if(authorName.trim() == "") {
+            alert("TDL Name must not be empty!");
             return false;
         }
         $.ajax({
             type: 'post',
             url: 'manage_authorname_processing.php?action=update&col=' + collection,
-            data: {authorID: authorID , authorname: authorName, TDLname: TDLName },
+            data: {authorID: authorID , authorname: authorName, oldname: oldName },
             success:function(data) {
                 var retval = JSON.parse(data);
                 if(retval == true) {

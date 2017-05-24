@@ -50,6 +50,7 @@ $session = new SessionManager();
     //catalog (new document)
     else if($action == "catalog")
     {
+        $session->unblockSession(); //close current session so that user can run another tab
         //Create Thumbnails dir if it doesn't exist
         if(!is_dir("../../Thumbnails"))
             exec(mkdir("../../Thumbnails", 0777));
@@ -157,16 +158,6 @@ $session = new SessionManager();
                     mkdir($filenamebackpath, 0777);
                 move_uploaded_file($_FILES["fileUploadBack"]["tmp_name"], $filenamebackpath . '/' . basename($_FILES["fileUploadBack"]["name"]));
             }
-            //script for thumbnail
-            if (!is_dir('../../' . $config['ThumbnailDir']))
-                mkdir('../../' . $config['ThumbnailDir'], 0777);
-
-            $exec1 = "convert " . $filenamepath . '/' . basename($_FILES["fileUpload"]["name"]) . " -deskew 40% -fuzz 50% -trim -resize 200 " . '../../' . $frontthumbnail;
-            exec($exec1, $yaks1);
-            if ($hasBack == true) {
-                $exec2 = "convert " . $filenamebackpath . '/' . basename($_FILES["fileUploadBack"]["name"]) . " -deskew 40% -fuzz 50% -trim -resize 200 " . '../../' . $backthumbnail;
-                exec($exec2, $yaks2);
-            }
 
             $backpath = "";
             if($hasBack == true)
@@ -179,6 +170,19 @@ $session = new SessionManager();
                 $data['ddlRectifiability'], $companyID, $data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
             $data['txtDocID'] = $retval;
             $comments = "Library Index: " . $data['txtLibraryIndex'];
+
+
+            //script for thumbnail
+            if (!is_dir('../../' . $config['ThumbnailDir']))
+                mkdir('../../' . $config['ThumbnailDir'], 0777);
+
+            $exec1 = "convert " . $filenamepath . '/' . basename($_FILES["fileUpload"]["name"]) . " -deskew 40% -fuzz 50% -trim -resize 200 " . '../../' . $frontthumbnail;
+            exec($exec1, $yaks1);
+            if ($hasBack == true) {
+                $exec2 = "convert " . $filenamebackpath . '/' . basename($_FILES["fileUploadBack"]["name"]) . " -deskew 40% -fuzz 50% -trim -resize 200 " . '../../' . $backthumbnail;
+                exec($exec2, $yaks2);
+            }
+
         }
 
 

@@ -177,7 +177,24 @@ class IndicesDBHelper extends DBHelper implements TranscriptionDB
             $result = $sth->fetchAll(PDO::FETCH_NUM);
             return $result;
     }
-
+//IN PROGRESS
+    /**********************************************
+     * Function: GET_MAPKIND_TABLE
+     * Description: Gets a table of users.
+     * Parameter(s): NONE
+     * Return value(s):
+     * $result  (associative array) - return associative array of Users
+     ***********************************************/
+    function GET_MAPKIND_TABLE($collection)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        $sth = $this->getConn()->prepare("SELECT `mapkindname`,`mapkindID` FROM `mapkind` ORDER BY `mapkindname` ASC ");
+        $sth->execute();
+        $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
     /**********************************************
      * Function: INSERT_INDICES_MAPKIND
      * Description: Inserts new mapkind

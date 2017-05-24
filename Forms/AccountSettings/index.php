@@ -119,13 +119,10 @@ $userinfo = $DB->GET_USER_INFO($session->getUserID());
     </div>
 </div>
 <?php include '../../Master/footer.php'; ?>
-
 </body>
 <script>
     $(document).ready(function(){
-
     });
-
     //update user Info
     $("#frmUserInformation").submit(function(event){
         event.preventDefault();

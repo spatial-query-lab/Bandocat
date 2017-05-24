@@ -140,12 +140,20 @@ trait GeoRectificationTrait
      ***********************************************/
     public function DOCUMENT_GEORECPATHS_UPDATE($docID,$FrontKMZPath,$FrontGeoTIFFPath,$BackKMZPath,$BackGeoTIFFPath)
     {
-        $sth = $this->getConn()->prepare("UPDATE `document` SET `georecFrontDirKMZ` = :frontKMZ,`georecFrontDirGeoTIFF` = :frontGeoTIFF,`georecBackDirKMZ` = :backKMZ,`georecBackDirGeoTIFF` = :backGeoTIFF WHERE `documentID` = :docID");
+        if($FrontKMZPath == null && $FrontGeoTIFFPath == null) //update back
+        {
+            $sth = $this->getConn()->prepare("UPDATE `document` SET `georecBackDirKMZ` = :backKMZ,`georecBackDirGeoTIFF` = :backGeoTIFF WHERE `documentID` = :docID");
+            $sth->bindParam(":backKMZ",$BackKMZPath,PDO::PARAM_STR);
+            $sth->bindParam(":backGeoTIFF",$BackGeoTIFFPath,PDO::PARAM_STR);
+        }
+            else //update front
+        {
+            $sth = $this->getConn()->prepare("UPDATE `document` SET `georecFrontDirKMZ` = :frontKMZ,`georecFrontDirGeoTIFF` = :frontGeoTIFF WHERE `documentID` = :docID");
+            $sth->bindParam(":frontKMZ",$FrontKMZPath,PDO::PARAM_STR);
+            $sth->bindParam(":frontGeoTIFF",$FrontGeoTIFFPath,PDO::PARAM_STR);
+        }
         $sth->bindParam(":docID",$docID,PDO::PARAM_INT);
-        $sth->bindParam(":frontKMZ",$FrontKMZPath,PDO::PARAM_STR);
-        $sth->bindParam(":frontGeoTIFF",$FrontGeoTIFFPath,PDO::PARAM_STR);
-        $sth->bindParam(":backKMZ",$BackKMZPath,PDO::PARAM_STR);
-        $sth->bindParam(":backGeoTIFF",$BackGeoTIFFPath,PDO::PARAM_STR);
+
         $ret = $sth->execute();
         return $ret;
     }
@@ -159,7 +167,7 @@ trait GeoRectificationTrait
      ***********************************************/
     public function DOCUMENT_GEOREC_INFO_SELECT($docID)
     {
-        $sth = $this->getConn()->prepare("SELECT `geoRecFrontStatus`,`georecFrontDirKMZ`,`georecFrontDirGeoTIFF`,`geoRecBackStatus`,`georecBackDirKMZ`,`georecBackDirKMZ` FROM `document` WHERE `documentID` = :docID");
+        $sth = $this->getConn()->prepare("SELECT `geoRecFrontStatus`,`georecFrontDirKMZ`,`georecFrontDirGeoTIFF`,`geoRecBackStatus`,`georecBackDirKMZ`,`georecBackDirGeoTIFF` FROM `document` WHERE `documentID` = :docID");
         $sth->bindParam(":docID",$docID,PDO::PARAM_INT);
         $ret = $sth->execute();
         if($ret)

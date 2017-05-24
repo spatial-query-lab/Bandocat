@@ -15,6 +15,7 @@ require_once __DIR__ . '\..\..\Library\TDLPublishJob.php';
 class bitstream{
     public $name;
     public $type;
+    public $md5_checksum;
     public $path;
     function __construct($name,$path,$type=null)
     {
@@ -22,6 +23,9 @@ class bitstream{
         $this->path = $path;
         if($type != null)
             $this->type = $type;
+
+        exec('certUtil -hashfile "' . $this->path . '" MD5',$output);
+	    $this->md5_checksum = preg_replace('/\s+/', '', $output[1]);
     }
 }
 
@@ -67,9 +71,9 @@ class bitstream{
 
     $TDLCommunityID = $collection["TDLcommunityID"];
     $TDLCollectionID = $collection["TDLcollectionID"];
-
-    $isEmptyQueue = false;
-    while(!$isEmptyQueue) {
+    while(true){ //infinite loop
+	$docID = null;
+    //while(!$isEmptyQueue) {
         //use this database
         $DB->SWITCH_DB($collectionName);
         $docID = $DB->PUBLISHING_DOCUMENT_GET_PUBLISHING_ID(); //look for abandoned job
@@ -77,12 +81,24 @@ class bitstream{
         if ($docID == null) {
             $docID = $DB->PUBLISHING_DOCUMENT_GET_NEXT_IN_QUEUE_ID();
             if ($docID == null) {
-                echo "\nThere is no item in the Queue";
-                fwrite($logfile,date(DATE_RFC2822) . ": " . "No item in the Queue.\r\n");
-                $isEmptyQueue = true;
-                break;
+                echo "\nThere is no item in the Queue. Sleep for 30 seconds.";
+                //fwrite($logfile,date(DATE_RFC2822) . ": " . "No item in the Queue.\r\n");
+                sleep(30);
+                //break;
+					//re-run (testing)
+					$DB = null;
+					$DS = null;
+					$Schema = null;
+				    //prepare
+					$DB = new DBHelper();
+					$DS = new TDLPublishJob();
+					$Schema = new TDLSchema();
             }
         }
+		
+
+		if($docID != null)		//begin if[1]
+		{
         //add more case if there are new templates
         //get document info
         switch($collection["templateID"])
@@ -192,8 +208,6 @@ class bitstream{
         if(!isset($doc['geoRecFrontStatus']))
             $hasGeorectification = false;
 
-        //find bitstreams:
-        $publishedBitstreams = $DS->TDL_GET_BITSTREAMS($dspaceID);
 
         $internalBitstreams = array();
 
@@ -225,7 +239,7 @@ class bitstream{
         if($hasGeorectification) {
             //kmz(s)and geotiff
             if ($doc['geoRecFrontStatus'] == 1) {
-                array_push($internalBitstreams,new bitstream(explode('/', $doc['georecFrontDirKMZ'])[1], $doc['georecdir'] . $doc['georecFrontDirKMZ'], 'frontKMZ'));
+                array_push($internalBitstreams,new bitstream(explode('/', $doc['georecFrontDirKMZ'])[1],$doc['georecdir'] . $doc['georecFrontDirKMZ'], 'frontKMZ'));
                 array_push($internalBitstreams,new bitstream(explode('/', $doc['georecFrontDirGeoTIFF'])[1], $doc['georecdir'] . $doc['georecFrontDirGeoTIFF'], 'frontGeoTIFF'));
             }
             if ($hasBack && $doc['geoRecBackStatus'] == 1) {
@@ -234,6 +248,9 @@ class bitstream{
             }
         }
 
+        //get published bitstreams:
+        $publishedBitstreams = $DS->TDL_GET_BITSTREAMS($dspaceID);
+
         //compare & publish
         foreach($internalBitstreams as $iB)
         {
@@ -241,7 +258,14 @@ class bitstream{
             foreach($publishedBitstreams as $pB)
             {
                 if($pB->name == $iB->name) {
-                    $published = true;
+                    if($pB->checkSum != $iB->md5_checksum) //compare checksum
+                    {
+                        $http_retval = $DS->TDL_DELETE_BITSTREAM($pB->id);
+                        if($http_retval == "200")
+                            $published = false;
+                        else fwrite($logfile, date(DATE_RFC2822) . ": " . $iB->type . " failed to delete bitstreams from TDL " . $pB->name .  ".... HTTP CODE:" . $http_retval . "\r\n");
+                    }
+                    else $published = true;
                     break;
                 }
             }
@@ -252,7 +276,7 @@ class bitstream{
                 if ($http_retval == "200")
                     fwrite($logfile, date(DATE_RFC2822) . ": " . $iB->type . " has been uploaded....\r\n");
                 else {
-                    fwrite($logfile, date(DATE_RFC2822) . ": " . $iB->type . " failed to upload.... HTTP CODE: . " . $http_retval . "\r\n");
+                    fwrite($logfile, date(DATE_RFC2822) . ": " . $iB->type . " failed to upload.... HTTP CODE:" . $http_retval . "\r\n");
                     $bitStreamError = true;
                 }
             }
@@ -265,7 +289,7 @@ class bitstream{
 
         $DB->PUBLISHING_DOCUMENT_UPDATE_STATUS($docID,1); //set status to Published
 
-        if($http_retval == "200") {
+        if($http_retval == "200" && !$bitStreamError) {
             fwrite($logfile, date(DATE_RFC2822) . ": Bitstream(s) uploaded....\r\n");
             fwrite($logfile, date(DATE_RFC2822) . ": Document ID: $docID has been published!\r\n");
             $DB->PUBLISHING_DOCUMENT_UPDATE_STATUS($docID,1); //set status to Published
@@ -283,6 +307,7 @@ class bitstream{
         } //set status to 11
 
         //$isEmptyQueue = true; //break the loop, for testing
+		}//end if [1]
     }
 
     echo "\n...\n...\n...\nEnd Job...";

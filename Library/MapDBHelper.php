@@ -216,7 +216,7 @@ class MapDBHelper extends DBHelper
                 $ret = $select->fetch(PDO::FETCH_COLUMN);
                 return $ret;
             }
-            else print_r($call->errorInfo());
+            print_r($call->errorInfo());
             return 0;
         } else return false;
     }

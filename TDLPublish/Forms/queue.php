@@ -1,20 +1,19 @@
 <?php
 //for admin use only
+
+//Include all the classes from the Library directory
 spl_autoload_register(function ($class_name) {
     require_once "../../Library/" . $class_name . '.php';});
 $session = new SessionManager();
+
+//for admin only
 if($session->isAdmin()) {
     $DB = new DBHelper();
 }
 else header('Location: ../../');
 $Render = new ControlsRender();
 
-//debug
-//require('../../Library/TDLPublishJob.php');
-//$DS = new TDLPublishJob();
-//$item = $DS->TDL_CUSTOM_GET("items/30269/metadata");
-//print_r($item);
-
+//DESCRIPTION: THIS PAGE DISPLAYS QUEUE OF TDLPUBLISH LIST
 ?>
 <!doctype html>
 <html lang="en">
@@ -59,6 +58,7 @@ $Render = new ControlsRender();
                         <br/>
                     <button id="btnPush" name="btnPush" onclick="pushQueue();">Push</button>
                         <select id="ddlHowMany" name="ddlHowMany">
+                            <option value="1">1</option>
                             <option value="20">20</option>
                             <option value="40">40</option>
                             <option value="60">60</option>
@@ -88,6 +88,7 @@ $Render = new ControlsRender();
 
 
 <script>
+    //testing only
     function startBackgroundWorker()
     {
         $.ajax({
@@ -99,15 +100,16 @@ $Render = new ControlsRender();
         });
     }
 
-
+    //convert the DspacePublished status code into String
     function statusConverter(iStatus)
     {
         switch(iStatus)
         {
             case "2": return "In Queue";
             case "10": //publishing front
-            case "11": //publishing back
                 return "Publishing";
+            case "11": //publishing back
+                return "Continue Publishing";
             default: return iStatus.toString();
         }
     }
@@ -151,7 +153,7 @@ $Render = new ControlsRender();
             }
         });
     }
-
+    //read log file and parse it to HTML #divLog
     function displayLog()
     {
         $.ajax({
@@ -181,10 +183,11 @@ $Render = new ControlsRender();
 
         $("#ddlCollection").change(); //run this when the page is loaded
 
-        //Reload every queue after 10sec, reload log every 18sec
+        //Reload queue after 10sec, reload Queue every 10sec
         window.setInterval(function(){
             loadQueue();
         }, 10000);
+        //Reload queue after 18sec, reload Log every 10sec
         window.setInterval(function(){
             displayLog();
         }, 18000);
@@ -208,7 +211,6 @@ $Render = new ControlsRender();
     #tblQueue thead td{width: 100px; font-weight: bold;}
     #tblQueue thead tr{background:#1b77cb;color:#fff;}
     #tblQueue tr:nth-child(even){background: #bce1ff;}
-
     }
 </style>
 </html>

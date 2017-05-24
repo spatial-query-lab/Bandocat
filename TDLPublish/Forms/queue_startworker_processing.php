@@ -1,4 +1,5 @@
 <?php
+//this page is used for testing only
 include '../../Library/SessionManager.php';
 $session = new SessionManager();
 $cmd = "cd ../Cron & CRON";

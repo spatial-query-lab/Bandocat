@@ -126,6 +126,11 @@ class SessionManager
         return false;
     }
 
+    public function unblockSession()
+    {
+        session_write_close();
+    }
+
 
 
 }

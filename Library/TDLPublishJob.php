@@ -4,12 +4,17 @@
 //to change login information for TDL, locate tdlconfig.ini file and change the username and password
 class TDLPublishJob
 {
-    static protected $ini_dir = "BandoCat_config\\tdlconfig.ini";
-    protected $token;
-    protected $tdl_email;
-    protected $tdl_pwd;
-    protected $baseUrl;
 
+    static protected $ini_dir = "BandoCat_config\\tdlconfig.ini"; //this point to the directory of the TDL configuration file that has TDL REST URL, username (islander email), password
+    protected $token; //$token (authentication token) returned to perform POST,PUT,DELETE request
+    protected $tdl_email; //store the TDL username/email credential from tdlconfig.ini
+    protected $tdl_pwd;  //store the authentication TDL password
+    protected $baseUrl; //store the TDL REST URL
+
+    //Constructor:
+    //Read the file, set email, password, base URL
+    // Login (TDL_LOGIN) if needed
+    // Set token
     function __construct($iToken = null)
     {
         $root = substr(getcwd(),0,strpos(getcwd(),"htdocs\\")); //point to xampp// directory
@@ -40,6 +45,12 @@ class TDLPublishJob
     //login
     //method: POST
     //desc: given email and password, login and retrieve dspace-rest-token ($token)
+    /**********************************************
+     * Function: TDL_LOGIN
+     * Description: login to TDL's Dspace, store the token value from the returned header
+     * Parameter(s): None
+     * Return value(s): None
+     ***********************************************/
     public function TDL_LOGIN()
     {
         $ch = curl_init();
@@ -69,6 +80,12 @@ class TDLPublishJob
     //method: GET
     //@Param: $str : URI
     //return: GET output
+    /**********************************************
+     * Function: TDL_CUSTOM_GET
+     * Description: custom GET request for TDL REST API
+     * Parameter(s): $str (string) - appended REST endpoint. For example: "collections/1/items/" to return all items in collection 1
+     * Return value(s): return a HTTP header
+     ***********************************************/
     public function TDL_CUSTOM_GET($str)
     {
         $ch = curl_init($this->baseUrl . $str);
@@ -85,6 +102,13 @@ class TDLPublishJob
     //method: DELETE
     //@Param: $str : URI
     //return: http code (200 = OK)
+    /**********************************************
+     * Function: TDL_CUSTOM_DELETE
+     * Description: custom DELETE request for TDL REST API
+     * Parameter(s): $str (string) - appended REST endpoint. For example: "items/5662" to delete item ID 5662
+     *               $certURL (str - Default: null) - location of CA certificate file (for SSL), null = SSL disabled
+     * Return value(s): Info code: "200" means GOOD, "500" = internal server error, "404" not found ,....
+     ***********************************************/
     public function TDL_CUSTOM_DELETE($str,$certURL = null)
     {
         $header = array('rest-dspace-token:' . $this->token,'Accept:application/json');
@@ -110,6 +134,15 @@ class TDLPublishJob
         return $info['http_code'];
     }
 
+    /**********************************************
+     * Function: TDL_CUSTOM_PUT
+     * Description: custom PUT request for TDL REST API to update item
+     * Parameter(s): $str (string) - appended REST endpoint. For example: "items/5662" to delete item ID 5662
+     *               $filename (string) - name of the file that store new information (usually a JSON)
+     *               $mime (string) - mime type of the $filename (usually application/json)
+     *               $certURL (str - Default: null) - location of CA certificate file (for SSL), null = SSL disabled
+     * Return value(s): return header if header code is "200" , otherwise false
+     ***********************************************/
     function TDL_CUSTOM_PUT($str,$filename,$mime,$certURL = null)
     {
         $data = file_get_contents($filename); //read file into variables (json/xml)
@@ -148,6 +181,15 @@ class TDLPublishJob
         }
     }
 
+    /**********************************************
+     * Function: TDL_CUSTOM_POST
+     * Description: custom POST request for TDL REST API to publish item
+     * Parameter(s): $str (string) - appended REST endpoint. For example: "collections/3" to post new item to collection 3
+     *               $filename (string) - name of the file that store new information (usually a JSON)
+     *               $mime (string) - mime type of the $filename (usually application/json)
+     *               $certURL (str - Default: null) - location of CA certificate file (for SSL), null = SSL disabled
+     * Return value(s): return header if header code is "200" , otherwise false
+     ***********************************************/
     function TDL_CUSTOM_POST($str,$filename,$mime,$certURL = null)
     {
         $data = file_get_contents($filename); //read file into variables (json/xml)
@@ -191,6 +233,12 @@ class TDLPublishJob
     //check_status
     //method: GET
     //return: status (json)
+    /**********************************************
+     * Function: TDL_CHECK_STATUS
+     * Description: TEST REST API connection
+     * Parameter(s): None
+     * Return value(s): return a header from the TDL server
+     ***********************************************/
     public function TDL_CHECK_STATUS()
     {
         $hdr_arr = array("rest-dspace-token:" . $this->token,'Content-Type: application/json','Accept: application/json');
@@ -205,7 +253,12 @@ class TDLPublishJob
         return $output;
     }
 
-
+    /**********************************************
+     * Function: TDL_GET_BITSTREAMS
+     * Description: Get Bitstreams' metadata from an item in TDL given the item ID
+     * Parameter(s): $itemID (int) - item id in Dspace, stored in `document` table (dspaceID)
+     * Return value(s): return an array of bitstreams (metadata of bitstreams). For example: Md5 checksum, name, bitstreamID
+     ***********************************************/
     public function TDL_GET_BITSTREAMS($itemID)
     {
         $ch = curl_init($this->baseUrl . "items/" . $itemID . "/bitstreams");
@@ -220,6 +273,12 @@ class TDLPublishJob
     //get_communities, if $communityID = null, return all communities
     //method: GET
     //return: list of all communities (json)
+    /**********************************************
+     * Function: TDL_GET_COMMUNITIES
+     * Description: Get Community (communities) metadata from TDL
+     * Parameter(s): $communityID (int - Default : NULL) - if no communityID = null -> return all communities if $communityID = null. otherwise, return the $communityID only
+     * Return value(s): return metadata about community(s)
+     ***********************************************/
     public function TDL_GET_COMMUNITIES($communityID = null)
     {
         if($communityID == null)
@@ -237,7 +296,13 @@ class TDLPublishJob
     //get_collections, if $communityID = null, get all collections, else get an array of collections of the specified community.
     //method: GET
     //return: list of all collections (json)
-    public function TDL_GET_COLLECTIONS($communityID = null,$collectionID = null)
+    /**********************************************
+     * Function: TDL_GET_COLLECTIONS
+     * Description: Get Collection(s) (ALL collections in TDL OR Collections in 1 community) metadata from TDL
+     * Parameter(s): $communityID (int - Default : NULL) - if no communityID, return all collections in TDL
+     * Return value(s): return information about collection(s)
+     ***********************************************/
+    public function TDL_GET_COLLECTIONS($communityID = null)
     {
         if($communityID == null)
             $ch = curl_init($this->baseUrl . "collections");
@@ -255,6 +320,12 @@ class TDLPublishJob
     //method: GET
     //@param: $collection_id
     //return: all items if $collectionid is blank OR all items in a specified collection
+    /**********************************************
+     * Function: TDL_GET_ITEMS
+     * Description: Get Item(s) (ALL items in TDL OR Items in 1 collection) metadata from TDL
+     * Parameter(s): $tdlCollectionID (int - Default : NULL) - if no $tdlCollectionID, return all items in TDL
+     * Return value(s): return information about item(s)
+     ***********************************************/
     public function TDL_GET_ITEMS($tdlCollectionID = null)
     {
         if($tdlCollectionID != null)
@@ -276,6 +347,16 @@ class TDLPublishJob
     // 		  $cert_url (certification .crt file path in config.php OR leave it blank)
     //return value: if the POST is good (http_code == 200) => return the handle uri (include item_id)
     //				else return -1
+
+    /**********************************************
+     * Function: TDL_POST_NEW_ITEM
+     * Description: POST a new ITEM to TDL
+     * Parameter(s): $tdlCollectionID (int) - TDL collection (ID) where the new item will be posted to
+     *               $fileName (string) - name of the file that store new information (usually a JSON)
+     *               $mime (string) - mime type of the $filename (usually application/json)
+     *               $certURL (str - Default: null) - location of CA certificate file (for SSL), null = SSL disabled
+     * Return value(s): return a header if httpcode = 200, otherwise, false
+     ***********************************************/
     public function TDL_POST_NEW_ITEM($tdlCollectionID,$fileName,$mime,$certURL = null)
     {
         $data = file_get_contents($fileName); //read file into variables (json/xml)
@@ -321,6 +402,15 @@ class TDLPublishJob
     //@param: $itemid, $name (filepath+name, $postname (filename)
     // 		  $cert_url (certification .crt file path in config.php OR leave it blank)
     //return value: return the http_code
+    /**********************************************
+     * Function: TDL_POST_BITSTREAM
+     * Description: POST a new Bitstream to an item in TDL
+     * Parameter(s): $itemID (int) - TDL item (ID) where the new file will be attached to
+     *               $name (string) - filename (the original in BandoCat server)
+     *               $postName (string) - Name of the file in TDL server
+     *               $certURL (str - Default: null) - location of CA certificate file (for SSL), null = SSL disabled
+     * Return value(s): return a http code from the header
+     ***********************************************/
     public function TDL_POST_BITSTREAM($itemID,$name,$postName,$certUrl = null)
     {
         $header = array('rest-dspace-token:' . $this->token,'Accept:application/json');
@@ -355,7 +445,13 @@ class TDLPublishJob
 
     }
 
-
+    /**********************************************
+     * Function: TDL_DELETE_BITSTREAM
+     * Description: DELETE a Bitstream to an item in TDL
+     * Parameter(s): $bitstreamID (int) - bitstreamID of the bitstream in TDL to be deleted
+     *               $certURL (str - Default: null) - location of CA certificate file (for SSL), null = SSL disabled
+     * Return value(s): return a http code from the header
+     ***********************************************/
     public function TDL_DELETE_BITSTREAM($bitstreamID,$certUrl = null)
     {
         $header = array('rest-dspace-token:' . $this->token,'Accept:application/json');
@@ -386,6 +482,13 @@ class TDLPublishJob
     //@param: $itemid
     // 		  $cert_url (certification .crt file path in config.php OR leave it blank)
     //return value: return the http_code
+    /**********************************************
+     * Function: TDL_DELETE_ITEM
+     * Description: DELETE an item in TDL
+     * Parameter(s): $itemID (int) - TDL item ID of the item to be deleted
+     *               $certURL (str - Default: null) - location of CA certificate file (for SSL), null = SSL disabled
+     * Return value(s): return a http code from the header
+     ***********************************************/
     public function TDL_DELETE_ITEM($itemID,$certUrl = null)
     {
         $header = array('rest-dspace-token:' . $this->token,'Accept:application/json');
