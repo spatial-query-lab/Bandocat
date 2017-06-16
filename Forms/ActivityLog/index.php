@@ -2,6 +2,7 @@
 //for admin use only
 include '../../Library/SessionManager.php';
 $session = new SessionManager();
+
 if($session->isAdmin()) {
     require('../../Library/DBHelper.php');
     $DB = new DBHelper();
@@ -36,6 +37,16 @@ $Render = new ControlsRender();
                 "destroy": true,
                 "order": [[ 0, "desc" ]],
                 "ajax": "activitylog_processing.php?col=" + collection,
+                "columnDefs": [
+                    //column Document Index: Replace with Hyperlink
+                    {
+                        "render": function ( data, type, row) {
+                            
+                            return data;
+                        },
+                        "targets": 6
+                    },
+                ],
                 "initComplete": function() {
                     this.api().columns().every( function () {
                         var column = this;
@@ -46,6 +57,7 @@ $Render = new ControlsRender();
                             case 3:
                             case 4:
                             case 5:
+                            case 6:
                                 var input = $('<input type="text" style="width:100%" placeholder="Search..." value=""></input>')
                                     .appendTo( $(column.footer()).empty() )
                                     .on( 'keyup change', function () {
@@ -82,13 +94,15 @@ $Render = new ControlsRender();
         }
 
         $(document).ready(function() {
-            $( "#ddlCollection" ).change(function() {
+            $( "#ddlCollection" ).change(function()
+            {
                 switch ($("#ddlCollection").val())
                 {
                     case "": break;
                     default: SSP_DataTable($("#ddlCollection").val());
                 }
             });
+
         });
     </script>
 </head>
@@ -113,11 +127,13 @@ $Render = new ControlsRender();
                                 <th width="150px">Library Index</th>
                                 <th width="100px">Username</th>
                                 <th>Notes</th>
+                                <th id="AuthorNameDTColumn">Author Name</th>
 
                             </tr>
                             </thead>
                             <tfoot>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -133,4 +149,7 @@ $Render = new ControlsRender();
 </div>
 <?php include '../../Master/footer.php'; ?>
 </body>
+<script>
+
+</script>
 </html>
