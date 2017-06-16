@@ -24,7 +24,7 @@ $isBack = $_GET['type'] == "back" ? true : false; //identify if this map is a fr
 $georec_entries = $DB->GEOREC_ENTRIES_SELECT($_GET['docID'],$isBack);
 //get georec status for this map from document table
 $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
-
+//Old Working Server version with added esri code.
 ?>
 <!DOCTYPE html>
 <html>
@@ -106,38 +106,55 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
 
     var map = L.mapbox.map("map");
     L.control.mousePosition().addTo(map);
-
+    //pk.eyJ1Ijoic2FsbHJlZCIsImEiOiJjajN1N3pjbzkwMDUwMnFsaTZhNGxvcnpsIn0.YcXPcOqQeZ556qHY4B5o8A
+    //old pk.eyJ1Ijoic3BhdGlhbHF1ZXJ5bGFiIiwiYSI6ImNpeW43eHZ2YTAwMTgzMnBjNGF4bWVuaHIifQ.H-IzkkctQwbBRjhS9VLddA
     //Base layers with leaflet layer control and access token
-    var street = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic3BhdGlhbHF1ZXJ5bGFiIiwiYSI6ImNpeW43eHZ2YTAwMTgzMnBjNGF4bWVuaHIifQ.H-IzkkctQwbBRjhS9VLddA', {
+    var street = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic2FsbHJlZCIsImEiOiJjajN1N3pjbzkwMDUwMnFsaTZhNGxvcnpsIn0.YcXPcOqQeZ556qHY4B5o8A', {
         maxZoom: 20,
         maxNativeZoom: 18,
         attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors'
     }).addTo(map);
 
-    var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic3BhdGlhbHF1ZXJ5bGFiIiwiYSI6ImNpeW43eHZ2YTAwMTgzMnBjNGF4bWVuaHIifQ.H-IzkkctQwbBRjhS9VLddA', {
+    var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic2FsbHJlZCIsImEiOiJjajN1N3pjbzkwMDUwMnFsaTZhNGxvcnpsIn0.YcXPcOqQeZ556qHY4B5o8A', {
         maxZoom: 20,
         maxNativeZoom: 18,
         attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors'
     });
-
+    mapLink = '<a href="http://www.esri.com/">Esri</a>';
+    wholink = 'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+    var esriSat =  L.tileLayer(
+        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; '+mapLink+', '+wholink,
+            maxZoom: 20,
+        });
+    var Boundaries =  L.tileLayer(
+        'http://server.arcgisonline.com/arcgis/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; '+mapLink+', '+wholink,
+            maxZoom: 20,
+        });
+    var esriTransportation = L.tileLayer(
+        'http://server.arcgisonline.com/arcgis/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; '+mapLink+', '+wholink,
+            maxZoom: 20,
+        });
+    var items = new L.FeatureGroup([esriSat,esriTransportation]);
     var baseMaps = {
         "Street": street,
-        "Satellite": satellite
+        "Satellite": satellite,
+        "Esri Sat": esriSat
     };
-    L.control.layers(baseMaps).addTo(map);
+
+    var overlayMaps = {
+        "Esri Transportation": esriTransportation
+    }
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+
 
     //adds geocoder to map
     new L.Control.GeoSearch({
         provider: new L.GeoSearch.Provider.Esri(),
         showMarker: false
     }).addTo(map);
-
-    var targetIcon = L.icon({
-        iconUrl: '../../Images/target.png',
-        iconSize:     [50, 50], // size of the icon
-        iconAnchor: [25.5, 24.5],
-        popupAnchor: [0, 0]
-    });
 
     L.control.polylineMeasure({
         position: 'topright',                    // Position to show the control. Possible values are: 'topright', 'topleft', 'bottomright', 'bottomleft'
@@ -357,7 +374,7 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
     {
         if(measureControl._measureModeGet() == true) {
 
-        }
+        } 
         else{
             gcpMarker(event, 'mapMarker');
         }
