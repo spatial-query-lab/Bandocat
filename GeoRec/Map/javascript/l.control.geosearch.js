@@ -108,7 +108,7 @@ L.Control.GeoSearch = L.Control.extend({
 					return null;
 				}
 
-				addGCP(count, lat, lng, rasterCoords[rasterCount-1].x, rasterCoords[rasterCount-1].y);
+				addGCP(count, lat, lng, rasterCoords[rasterCount-1].rlat, rasterCoords[rasterCount-1].rlong, rasterCoords[rasterCount-1].x, rasterCoords[rasterCount-1].y);
 
 				//creates marker and popup
 				marker = L.marker([lat, lng], {icon:icon});
@@ -126,25 +126,36 @@ L.Control.GeoSearch = L.Control.extend({
 				//creates table
 			var table = document.getElementById("table");
 			var row = table.insertRow(count+1);
-			var cell1 = row.insertCell(0);
-			var cell2 = row.insertCell(1);
-			var cell3 = row.insertCell(2);
-			var cell4 = row.insertCell(3);
-			var cell5 = row.insertCell(4);
-			cell1.innerHTML =  "<button id = 'zoomToMarker' onclick = 'zoomToMarker(" + count + ")' style = 'background-color:" + markerColors[colorCount-1] + "'>" + count + "</button>";  
-			cell2.innerHTML = gcpList[count-1].lat;
-			cell3.innerHTML = gcpList[count-1].lng;
-			cell4.innerHTML = gcpList[count-1].x;
-			cell5.innerHTML = gcpList[count-1].y;
-				
-				lat = null;
-				lng = null;	
+                var cell1 = row.insertCell(0);
+                $(cell1).attr('id', 'marker-'+gcpList[count-1].id);
+                var cell2 = row.insertCell(1);
+                $(cell2).attr('id', 'markerLat-'+gcpList[count-1].id);
+                var cell3 = row.insertCell(2);
+                $(cell3).attr('id', 'markerLong-'+gcpList[count-1].id);
+                var cell4 = row.insertCell(3);
+                $(cell4).attr('id', 'rasterLat-'+gcpList[count-1].id);
+                var cell5 = row.insertCell(4);
+                $(cell5).attr('id', 'rasterLong-'+gcpList[count-1].id);
+                var cell6 = row.insertCell(5);
+                $(cell6).attr('id', 'rasterX-'+gcpList[count-1].id);
+                var cell7 = row.insertCell(6);
+                $(cell7).attr('id', 'rasterY-'+gcpList[count-1].id);
+                cell1.innerHTML = "<button id = 'zoomToMarker' onclick = 'zoomToMarker(" + count + ")' style = 'background-color:" + markerColors[colorCount - 1] + "'>" + count + "</button>";
+                cell2.innerHTML = gcpList[count - 1].lat;
+                cell3.innerHTML = gcpList[count - 1].lng;
+                cell4.innerHTML = gcpList[count - 1].rlat;
+                cell5.innerHTML = gcpList[count - 1].rlong;
+                cell6.innerHTML = gcpList[count - 1].x;
+                cell7.innerHTML = gcpList[count - 1].y;
+                //hide column raster lat and raster long
+                cell4.style.display = "none";
+                cell5.style.display = "none";
 			}
 			else
 			{
 				alert("Select point from raster");
 			}
-		})
+		});
         return this._container;
     },
 

@@ -49,6 +49,7 @@ $columns = array(
     array( 'db' => '`document`.`libraryindex`', 'dt' => 3, 'field' => 'libraryindex'),
     array( 'db' => '`user`.`username`', 'dt' => 4,'field' => 'username' ),
     array( 'db' => '`log`.`comments`',  'dt' => 5, 'field' => 'comments' )
+   // array( 'db' => '`author`.`authorname`', 'dt' => 6, 'field' => 'authorname'),
 
 );
 
@@ -58,9 +59,19 @@ $columns = array(
  */
 
 require('../../Library/sspwithjoin.class.php');
+if($config['TemplateID'] == '2')
+{
+    array_push($columns,array( 'db' => '`log`.`comments`', 'dt' => 6, 'field' => 'comments'));
+    $joinQuery = " FROM `log` LEFT JOIN `user` ON (`user`.`userID` = `log`.`userID`) LEFT JOIN `collection` ON (`collection`.`collectionID` = `log`.`collectionID`) 
+ LEFT JOIN `$config[DbName]`.`document` ON (`log`.`docID` = `document`.`documentID`) ";
+}
+else
+{
+   array_push($columns,array( 'db' => '`author`.`authorname`', 'dt' => 6, 'field' => 'authorname'));
+    $joinQuery = " FROM `log` LEFT JOIN `user` ON (`user`.`userID` = `log`.`userID`) LEFT JOIN `collection` ON (`collection`.`collectionID` = `log`.`collectionID`) 
+ LEFT JOIN `$config[DbName]`.`document` ON (`log`.`docID` = `document`.`documentID`) LEFT JOIN `$config[DbName]`.`author` ON (`author`.`authorID` = `document`.`authorID`) ";
+}
 
-$joinQuery = " FROM `log` LEFT JOIN `user` ON (`user`.`userID` = `log`.`userID`) LEFT JOIN `collection` ON (`collection`.`collectionID` = `log`.`collectionID`) 
- LEFT JOIN `$config[DbName]`.`document` ON (`log`.`docID` = `document`.`documentID`)";
 $extraWhere = " `log`.`status` = 'success' AND `log`.`collectionID` = '$config[CollectionID]'";
 echo json_encode(
     SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns, $joinQuery, $extraWhere )

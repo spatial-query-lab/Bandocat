@@ -1,5 +1,8 @@
 <?php
 /* PHP INCLUDES */
+
+
+
 spl_autoload_register(function ($class_name) {
     require_once "../../Library/" . $class_name . '.php';});
 $session = new SessionManager();
@@ -113,6 +116,7 @@ $Render = new ControlsRender();
                     "targets": 0
                 },
                 {
+
                     "render": function ( data, type, row ) {
                         switch(data)
                         {
@@ -149,6 +153,7 @@ $Render = new ControlsRender();
                     "render": function ( data, type, row ) {
                         switch(row[2])
                         {
+                            //Push, Update, Pop commands are routed through the performAction even
                             case "0": return "<a href='' onclick='performAction(event," + '"push"' + "," + row[0] +")'>Push</a>";//publish
                             case "1": return "<a href='' onclick='performAction(event," + '"update"' + "," + row[0] +")'>Update</a>  | <a href='' onclick='performAction(event," + '"unpublish"' + "," + row[0] +")'>Unpublish</a>";
                             case "2": return "<a href='' onclick='performAction(event," + '"pop"' + "," + row[0] +")'>Pop</a>"; //in publish queue
@@ -235,10 +240,12 @@ $Render = new ControlsRender();
         $("#ddlCollection").change();
     });
 
+    //***************************************************************
     //Description: pass action and data to index_actionprocessing.php
     //Parameter: event: to prevent Default event of the action
     //           action: type of action
     //           docID: target document ID
+    //**************************************************************
     function performAction(event,action,docID)
     {
         event.preventDefault();

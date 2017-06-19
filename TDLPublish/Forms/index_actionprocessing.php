@@ -16,24 +16,29 @@ $docID = $_POST['docID'];
 //collect metadata of the document, given collectionName, templateID and documentID
 switch($collection["templateID"])
 {
+    //Case 1: Map Templates
     case 1: //map template
         $DB = new MapDBHelper();
         $doc = $DB->SP_TEMPLATE_MAP_DOCUMENT_SELECT($collectionName,$docID);
         break;
+    //Case 2: Jobfolder Template
     case 2: //jobfolder template
         $DB = new FolderDBHelper();
         $doc = $DB->SP_TEMPLATE_FOLDER_DOCUMENT_SELECT($collectionName,$docID);
         $doc['Authors'] = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collectionName,$docID); //multiple authors to 1 document
         break;
+    //Case 3: Fieldbook Template
     case 3: //fieldbook template
         $DB = new FieldBookDBHelper();
         $doc = $DB->SP_TEMPLATE_FIELDBOOK_DOCUMENT_SELECT($collectionName,$docID);
         $doc['Crews'] = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collectionName,$docID); //multiple crews
         break;
+    //Case 4: Indices Template
     case 4: //indices template
         $DB = new IndicesDBHelper();
         $doc = $DB->SP_TEMPLATE_INDICES_DOCUMENT_SELECT($collectionName,$docID);
         break;
+    //Default error!
     default:
         $doc = null;
         echo "Error initializing class!";
@@ -46,6 +51,8 @@ $doc += $collection;
 //switch to the currently working Database
 $DB->SWITCH_DB($collectionName);
 //GET ITEM INFO
+//returns the dspace info located on the document in the db.
+//if the document is not published the dspaceID should be 0
 $dspaceDocInfo = $DB->PUBLISHING_DOCUMENT_GET_DSPACE_INFO($docID);
 $dspaceID = $dspaceDocInfo['dspaceID'];
 
@@ -53,10 +60,12 @@ $dspaceID = $dspaceDocInfo['dspaceID'];
 //Specify different actions to perform in this SWITCH/CASE statement
 switch($_POST['action'])
 {
+    //Case:1 updates the DBS with status
     case "push":
         //PUSH
-        $ret = $DB->PUBLISHING_DOCUMENT_UPDATE_STATUS($docID,2); //push to queue;
+        $ret = $DB->PUBLISHING_DOCUMENT_UPDATE_STATUS($docID,2); //update status in DB to publishing;
         break;
+    //Case:2 updates the DBS with status
     case "pop":
         //POP
         $ret = $DB->PUBLISHING_DOCUMENT_UPDATE_STATUS($docID,0);
