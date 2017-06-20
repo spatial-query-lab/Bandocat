@@ -182,40 +182,41 @@ foreach ($file->document as $a) {
                                 <textarea rows = "4" cols = "35" id="txtComments" name="txtComments"/><?php echo $doc1->comments; ?></textarea>
                                 <br><br><br>
                             </div>
-                        </td>
-                        <div class="cell">
-                            <table>
-                                <tr>
-                                    <td style="text-align: center">
-                                        <!--SCAN OF FRONT-->
-                                        <span class="label" style="text-align: center">Scan of Front</span><br>
-                                        <?php
-                                        echo "<a id='download_front' href=\"download.php?file=$doc1->frontimage\"><br><img src='". $doc1->frontthumbnail . " ' alt = Error /></a>";
-                                        echo "<br>Size: " . round(filesize($doc1->frontimage)/1024/1024, 2) . " MB";
-                                        echo "<br><a href=\"download.php?file=$doc1->frontimage\">(Click to download)</a>";
-                                        ?>
-                                    </td>
-                                    <td style="padding-right:20px"></td>
-                                    <td style="text-align: center">
-                                        <!--SCAN OF BACK-->
-                                        <?php
-                                        if($doc1->backimage != '../Training_Newbie_Images/Images/') //has Back Scan
-                                        {
+                            <div class="cell">
+                                <table>
+                                    <tr>
+                                        <td style="text-align: center">
+                                            <!--SCAN OF FRONT-->
+                                            <span class="label" style="text-align: center">Scan of Front</span><br>
+                                            <?php
+                                            echo "<a id='download_front' href=\"download.php?file=$doc1->frontimage\"><br><img src='". $doc1->frontthumbnail . " ' alt = Error /></a>";
+                                            echo "<br>Size: " . round(filesize($doc1->frontimage)/1024/1024, 2) . " MB";
+                                            echo "<br><a href=\"download.php?file=$doc1->frontimage\">(Click to download)</a>";
+                                            ?>
+                                        </td>
+                                        <td style="padding-right:20px"></td>
+                                        <td style="text-align: center">
+                                            <!--SCAN OF BACK-->
+                                            <?php
+                                            if($doc1->backimage != '../Training_Newbie_Images/Images/') //has Back Scan
+                                            {
 
-                                            echo '<span class="label" style="text-align: center">Scan of Back</span><br>';
-                                            echo "<a id='download_front' href=\"download.php?file=$doc1->backimage\"><br><img src='". $doc1->backthumbnail . " ' alt = Error /></a>";
-                                            echo "<br>Size: " . round(filesize($doc1->backimage) / 1024 / 1024, 2) . " MB";
-                                            echo "<br><a href=\"download.php?file=$doc1->backimage\">(Click to download)</a>";
-                                        }
-                                        else
-                                        {
-                                            echo '<span class="label" style="text-align: center">No Scan of Back</span><br>';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                                                echo '<span class="label" style="text-align: center">Scan of Back</span><br>';
+                                                echo "<a id='download_front' href=\"download.php?file=$doc1->backimage\"><br><img src='". $doc1->backthumbnail . " ' alt = Error /></a>";
+                                                echo "<br>Size: " . round(filesize($doc1->backimage) / 1024 / 1024, 2) . " MB";
+                                                echo "<br><a href=\"download.php?file=$doc1->backimage\">(Click to download)</a>";
+                                            }
+                                            else
+                                            {
+                                                echo '<span class="label" style="text-align: center">No Scan of Back</span><br>';
+                                            }
+                                            ?>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+
                         <tr>
                             <td colspan="2">
                                 <div class="cell" style="text-align: center;padding-top:20px">
@@ -263,8 +264,6 @@ foreach ($file->document as $a) {
 
 
 <?php
-
-
 	if (isset($_POST['submit'])) 
 	{
 		$_SESSION[$userfile] = $doc_id;
@@ -284,6 +283,7 @@ foreach ($file->document as $a) {
 	  	writeXMLtag($doc_id, "endmonth", $_POST['ddlEndMonth'], $userfile);
 	  	writeXMLtag($doc_id, "endday", $_POST['ddlEndDay'], $userfile);
 	  	writeXMLtag($doc_id, "endyear", $_POST['ddlEndYear'], $userfile);
+        writeXMLtag($doc_id, "completed", 1, $userfile);
 	  	echo "<script>window.location = 'mapEditingProcess.php'</script>";
 
 	}

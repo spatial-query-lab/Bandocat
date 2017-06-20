@@ -1,11 +1,11 @@
 <?php 
 
-
 function writeXMLtag($id, $tag, $data, $username){
 	$document  = new DOMDocument();
 
+    var_dump($data);
 //Determine if the file exist so to create a new folder with the new xml files; newbie and intern
-    $filename = $username . ".xml";
+    $filename = "../Training_Collections/jobfolder/" . $username . "/" . $username . "_newbie.xml";
 
     if (file_exists($filename)) {
         var_dump("does exist");
@@ -25,11 +25,6 @@ function writeXMLtag($id, $tag, $data, $username){
 				//echo $data." ".$id."<br>";
 		}
 	}
-
 	$document->save($username.'.xml');
 }
-
-
- 
-
- ?>
+?>

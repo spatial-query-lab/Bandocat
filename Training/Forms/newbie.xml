@@ -28,7 +28,7 @@
 		<backimage></backimage>
 		<frontthumbnail></frontthumbnail>
 		<backthumbnail></backthumbnail>
-		<completed></completed>
+		<completed>0</completed>
 	</document>
 <document collection = "jobfolder">
 	<id>1</id>
@@ -59,6 +59,7 @@
 	<backimage></backimage>
 	<frontthumbnail>149-A_016.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>2</id>
@@ -89,6 +90,7 @@
 	<backimage></backimage>
 	<frontthumbnail>143-(envelope).jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>3</id>
@@ -119,6 +121,7 @@
 	<backimage></backimage>
 	<frontthumbnail>142-_038.1.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>4</id>
@@ -149,6 +152,7 @@
 	<backimage></backimage>
 	<frontthumbnail>142-_038.3.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>5</id>
@@ -179,6 +183,7 @@
 	<backimage></backimage>
 	<frontthumbnail>140-H_012.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>6</id>
@@ -209,6 +214,7 @@
 	<backimage>140G-_005.6_back.tif</backimage>
 	<frontthumbnail>140G-_005.6.jgp</frontthumbnail>
 	<backthumbnail>140G-_005.6_back.jpg</backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>7</id>
@@ -239,6 +245,7 @@
 	<backimage>140-F_083_back.tif</backimage>
 	<frontthumbnail>140-F_083.jpg</frontthumbnail>
 	<backthumbnail>140-F_083_back.jpg</backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>8</id>
@@ -269,6 +276,7 @@
 	<backimage></backimage>
 	<frontthumbnail>140G-_002.18.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>9</id>
@@ -299,6 +307,7 @@
 	<backimage></backimage>
 	<frontthumbnail>140-_003.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>10</id>
@@ -329,6 +338,7 @@
 	<backimage></backimage>
 	<frontthumbnail>142-_020.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>11</id>
@@ -359,6 +369,7 @@
 	<backimage></backimage>
 	<frontthumbnail>126-_001.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 <document collection = "jobfolder">
 	<id>12</id>
@@ -389,5 +400,6 @@
 	<backimage></backimage>
 	<frontthumbnail>88-A_104.jpg</frontthumbnail>
 	<backthumbnail></backthumbnail>
+	<completed>0</completed>
 </document>
 </data>

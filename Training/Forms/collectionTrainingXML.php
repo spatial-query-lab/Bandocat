@@ -63,8 +63,4 @@ if ($training_location == 'children') {
 }
 
 
-
-
-
-
 ?>
