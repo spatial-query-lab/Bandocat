@@ -51,7 +51,7 @@ class TDLPublishJob
      * Parameter(s): None
      * Return value(s): None
      ***********************************************/
-    public function TDL_LOGIN()
+    public function TDL_LOGIN($cert = null)
     {
         $ch = curl_init();
         $data = array("email" => $this->tdl_email, "password" => $this->tdl_pwd);
@@ -65,11 +65,28 @@ class TDLPublishJob
         curl_setopt_array($ch, $options);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
-                'Content-Length: ' . strlen($data_str))
-        );
+                'Content-Length: ' . strlen($data_str),
+
+        ));
         // $output contains the output string
-        curl_setopt($ch,CURLOPT_HEADER,false); //do not return header
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //disable SSL
+        if($cert != null)
+        {
+            $certURL = getcwd() . "\\" . "USERTrustRSACertificationAuthority.crt";
+            curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);
+            curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,true);
+            curl_setopt($ch,CURLOPT_CAINFO, $certURL);
+            //curl_setopt($ch,CURLOPT_CAPATH, $certURL);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION,true);
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+        }
+        else {
+
+            curl_setopt($ch, CURLOPT_HEADER, false); //do not return header
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //disable SSL
+        }
+        curl_exec($ch);
+        $httpCode = curl_getinfo($ch);
         $this->token = curl_exec($ch);
         // close curl resource to free up system resources
         curl_close($ch);
@@ -386,8 +403,8 @@ class TDLPublishJob
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
         curl_close($ch);
-
-
+       // print_r($result);
+       // print_r($info);
         if($info['http_code'] == "200") //if http_code is 200, extract the item id from the header
             return $result;
         else

@@ -106,6 +106,10 @@ class TDLSchema
         $this->addField($output,"dc.contributor",$doc["TDLAuthorName"]);
         $this->addField($output,"dc.contributor",$doc["CompanyName"]);
 
+        if(isset($doc["Provenance"]))
+            $this->addField($output,"dc.description.provenance",$doc["Provenance"]);
+
+
 
         //need FieldBook and Job Folder relation (dc.relation title) and PDF (dc.relation.url)
 
@@ -204,6 +208,7 @@ class TDLSchema
      ***********************************************/
     function addField(&$arr,$key,$val)
     {
+        if($val == null) return;
         if(trim($val) !== "")
             array_push($arr,array("key" => $key,"value" => $val));
         else //empty

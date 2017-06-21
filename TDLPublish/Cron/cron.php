@@ -11,6 +11,27 @@ require_once __DIR__ . '\..\..\Library\TDLPublishDB.php';
 require_once __DIR__ . '\..\..\Library\TDLSchema.php';
 require_once __DIR__ . '\..\..\Library\TDLPublishJob.php';
 
+//generate dc.provenance field (manually)
+function generateProvenance($dspaceID)
+{
+    $TDL = new TDLPublishJob();
+    $item = json_decode($TDL->TDL_CUSTOM_GET("items/" . $dspaceID . "/metadata"));
+    $bitstreams = json_decode($TDL->TDL_CUSTOM_GET("items/" . $dspaceID . "/bitstreams"));
+    $datetime = null;
+    $noBitstreams = count($bitstreams);
+    foreach($item as $elem)
+    {
+        if($elem->key == "dc.date.available") {
+            $datetime = $elem->value;
+            break;
+        }
+    }
+    $provenance = "Made available in DSpace on " . $datetime . " No. of bitstreams: " . $noBitstreams;
+    foreach($bitstreams as $bitstream) {
+        $provenance .= " " . $bitstream->name . ": " . $bitstream->sizeBytes . " bytes, checksum: " . $bitstream->checkSum->value . " (" . $bitstream->checkSum->checkSumAlgorithm . ")";
+    }
+    return $provenance;
+}
 
 class bitstream{
     public $name;
@@ -291,6 +312,21 @@ class bitstream{
 
         if($http_retval == "200" && !$bitStreamError) {
             fwrite($logfile, date(DATE_RFC2822) . ": Bitstream(s) uploaded....\r\n");
+
+            //UPDATE DC.PROVENANCE
+
+            $doc['Provenance'] = generateProvenance($dspaceID);
+
+            $convertedSchema = $Schema->convertSchema($collection['templateID'],$doc,false); //convert from BandoCat to TDL schema using method in TDLSchema
+            //save the converted schema in a temporary json file
+            $jsonfilename = __DIR__ . '\\' . $docID . '.json';
+            $fp = fopen($jsonfilename, 'w');
+            fwrite($fp, $convertedSchema);
+            fclose($fp);
+            $ret = $DS->TDL_CUSTOM_PUT("items/" . $dspaceID . "/metadata",$jsonfilename,"application/json",null);
+            unlink($jsonfilename);
+            //END update DC.Provenance
+
             fwrite($logfile, date(DATE_RFC2822) . ": Document ID: $docID has been published!\r\n");
             $DB->PUBLISHING_DOCUMENT_UPDATE_STATUS($docID,1); //set status to Published
 
