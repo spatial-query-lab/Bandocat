@@ -65,6 +65,9 @@ else $userfile = $username;
             </div>
             <div id="divright">
                 <h2 id="page_title">Training</h2>
+                <div id="trainingProgress">
+                    <div id="progressBar"></div>
+                </div>
                 <div id="divscroller" style="display: none;">
                     <table id="dtable" class="display compact cell-border hover stripe" cellspacing="0" width="100%" data-page-length='20'>
                         <thead>
@@ -73,7 +76,7 @@ else $userfile = $username;
                             <th>Library Index</th>
                             <th>Document Title</th>
                             <th>Classification</th>
-                            <th>Completed</th>
+                            <th>Needs Review</th>
                         </tr>
 
                         </thead>
@@ -134,9 +137,12 @@ else $userfile = $username;
         </div>
     </div>
 
-    <a href="#" id="newbieLink" onclick="displayBlock(0)"><img src="../../Images/beginner.jpg" id='newbie' style="margin: 6% -4% 25% 24%"></a>
-    <a href="#" id="interLink" onclick="displayBlock(1)"><img src="../../Images/intermediate.png" id='intermediate' style="margin: 0% 0% 0% -23%"></a>
-
+    <!--<a href="#" id="newbieLink" onclick="displayBlock(0)"><img src="../../Images/beginner.jpg" id='newbie' style="margin: 6% -4% 25% 24%"></a>
+    <a href="#" id="interLink" onclick="displayBlock(1)"><img src="../../Images/intermediate.png" id='intermediate' style="margin: 0% 0% 0% -23%"></a>-->
+    <div id="trainingProgress">
+        <span>Progress Bar</span>
+        <div id="progressBar"></div>
+    </div>
     <h1 id="welcomeMsg" style="display: none; position: absolute; left: 35%; top: 35%; z-index:2;">Welcome to the Document List</h1>
 
 
@@ -257,6 +263,46 @@ else $userfile = $username;
                 this.form.submit();
             });
         });
+
+        //Count the number of completed training documents to display in a progress bar
+        function trainingProgress() {
+            var xhttp = new XMLHttpRequest();
+            progress = 0;
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    progressComplete(this);
+                }
+            };
+            xhttp.open("GET", "<?php echo $training_user_dir.'/'.$userfile.'_newbie.xml' ?>", true);
+            xhttp.send();
+
+            function progressComplete(xml) {
+                var xmlDoc = xml.responseXML;
+                completeTags = xmlDoc.getElementsByTagName('completed');
+                for(i=0; i < completeTags.length; i++) {
+                    //console.log(completeTags[i].childNodes[0].nodeValue);
+                    if(completeTags[i].childNodes[0].nodeValue == 1)
+                        progress++;
+                }
+                var elem = document.getElementById("progressBar");
+                var width = (progress/completeTags.length)*100;
+                progress = parseInt(width);
+                var id = setInterval(frame, 121);
+                function frame() {
+                    if (width >= progress+1) {
+                        clearInterval(id);
+                    } else {
+                        width++;
+                        elem.style.width = width + '%';
+                        elem.style.backgroundColor = 'green';
+                        elem.style.textAlign = 'center';
+                        elem.innerHTML = progress + ' %';
+                    }
+                }
+            }
+        }
+
+        trainingProgress()
 
     </script>
 	</body>
