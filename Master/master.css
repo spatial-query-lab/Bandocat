@@ -17,6 +17,10 @@ body{
 }
 /* Define how each icon button should look like */
 
+
+
+
+
 #thetable
 {
     width:100%;
@@ -51,10 +55,12 @@ body{
     width:79%;
     overflow-y:hidden;
 }
+
 #divscroller {
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 2px;
+    z-index: 1;
 }
 
 
@@ -71,6 +77,7 @@ nav {
     line-height: 1.5;
     margin: 15px 15px 40px 15px ;
     min-width: 300px;
+    width: 100%
     /*-webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.2);*/
     /*-moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.2);*/
     /*box-shadow: 2px 2px 5px rgba(0,0,0,0.2);*/
@@ -225,6 +232,10 @@ nav {
     user-select: none;
 }
 
+
+
+
+
 .nowrap
 {
     white-space: nowrap;
@@ -260,6 +271,8 @@ nav {
     -webkit-box-shadow: 0 0 .05em rgba(0,0,0,0.4);
 
 }
+
+
 
 .button, .button span
 {
@@ -382,7 +395,8 @@ nav {
 }
 #divscroller::-webkit-scrollbar-thumb {
 
-   background-color: #0099FF;
+    background-color: blue;
+
 }
 ::-webkit-scrollbar-thumb:hover {
     background-color: transparent;
@@ -400,6 +414,37 @@ nav {
 
 
 /* end scrollbar style */
+/*scrollbar style */
+#fireworkscroller {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 2px;
+    z-index: 1;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+#fireworkscroller::-webkit-scrollbar {
+    width: 15px;
+}
+::-webkit-scrollbar-track {
+    background-color: #eaeaea;
+    border-left: 1px solid #ccc;
+}
+#fireworkscroller::-webkit-scrollbar-thumb {
+
+    background-color: #0099FF;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+
+    background-color: transparent;
+}
+#fireworkscroller::-webkit-scrollbar-thumb:hover {
+    background-color: #73a55b;
+}
 /* _______________________________________________________________________________________  */
 /*table styles */
 .tbl{border-collapse: collapse;width:100%;color:#474E53;overflow-x:scroll;}
@@ -477,6 +522,10 @@ footer{
     clear:both;
 }
 
+
+
+
+
 footer a{
     text-decoration: none;
     color: #000;
@@ -547,9 +596,10 @@ footer a:hover
     background-color:  #007F3E;
 }
 .Collection_Table .Collection_Button:active {
-     position:relative;
-     top:1px;
- }
+    position:relative;
+    top:1px;
+
+}
 .Collection_Table .Collection_Button:disabled{
     border: 1px solid #999999;
     background-color: #cccccc;
@@ -595,27 +645,152 @@ div#dhtmlx_window_active, div#dhx_modal_cover_dv { position: fixed !important; }
 }
 /*********Tabs for the statistics page*************************/
 
-ul.tab {
+
+
+
+#titleDocumentCount {
+    text-align: center;
+    margin-left: -60px;
+    font-size: 25px;
+    martin-top: -20px;
+}
+
+
+
+#chartDocumentCount {
+    margin-top: -20px;
+    width: 400px;
+    height: 400px;
+
+
+}
+
+
+
+#displayTotal {
+    text-align: center;
+    margin-left: -60px;
+    margin-top: -15px;
+    font-size: 20px;
+
+
+}
+
+
+
+#storage_header{
+
+    margin-top:0px;
+}
+
+
+#weeklyPerfHeader{
+
+    position:relative;
+    margin-top: 20px;
+    font-size: 22px;
+
+
+}
+
+
+.alnright { text-align: right; }
+
+
+
+
+h3 {
+
+    text-align: center;
+}
+
+
+
+
+
+
+div ul.tab {
+    display:flex;
+    justify-content: space-around;
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
+    height:20px;
 }
 
 /* Float the list items side by side */
-ul.tab li {float: left;}
+
+#top {
+    display:flex;
+    justify-content: flex-start;
+}
+
+
+
+
+
 
 ul.tab li a {
+
+
+    white-space: nowrap;
+    overflow: hidden;
+
+
     display: inline-block;
     color: black;
     text-align: center;
-    padding: 14px 16px;
+
+
+
+
+    margin : 0 2px;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 2px;
+    padding-bottom: 10px;
+
     text-decoration: none;
     transition: 0.3s;
-    font-size: 17px;
+    font-size: 12px;
+    height: 7px;
+
+    -moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #007dc1), color-stop(1, #0061a7));
+    background:-moz-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-webkit-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-o-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-ms-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#007dc1', endColorstr='#0061a7',GradientType=0);
+    background-color:#007dc1;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    border:1px solid #124d77;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+
+
+    text-decoration:none;
+    text-shadow:0px 1px 0px #154682;
+
+
+
+
 }
+
+
+
+
+
 
 /* Change background color of links on hover */
 ul.tab li a:hover {
@@ -632,5 +807,109 @@ ul.tab li a:focus, .active {
     display: none;
     padding: 6px 12px;
     border: 1px solid #ccc;
-    border-top: none;
+
 }
+
+
+#weeklyPerformanceRow{
+
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+}
+
+
+
+
+
+/* Styles the Description Box */
+#tableClass {
+    width: 88%;
+    box-shadow: 0px 0px 2px;
+    margin: -14% 0% 1% 4%;
+    border-radius: 5%;
+}
+/*************For fireworks display****************/
+@keyframes fadeout {
+    0%{ opacity: 1;}
+    25% {opacity: .75;}
+    50%{ opacity: .5;}
+    75% {opacity: .25;}
+    100%{ opacity: 0;}
+}
+
+
+
+@keyframes pulse {
+    0% {transform: scale(1);}
+    50% {transform: scale(1.5);}
+    100% {transform: scale(1);}
+}
+.pulse {
+    animation-name: pulse;
+    animation-duration: 2s;
+    animation-iteration-count: 0;
+    text-align: center;
+    font-weight: bold;
+    margin-top:15px;
+}
+
+
+#storage_button {
+    -moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #007dc1), color-stop(1, #0061a7));
+    background:-moz-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-webkit-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-o-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-ms-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#007dc1', endColorstr='#0061a7',GradientType=0);
+    background-color:#007dc1;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    border:1px solid #124d77;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:13px;
+    padding:6px 24px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #154682;
+}
+#storage_button:hover {
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0061a7), color-stop(1, #007dc1));
+    background:-moz-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:-webkit-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:-o-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:-ms-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0061a7', endColorstr='#007dc1',GradientType=0);
+    background-color:#0061a7;
+}
+#storage_button:active {
+    position:relative;
+    top:1px;
+}
+
+
+
+
+#storage_info{
+
+    border-size: 1px;
+    border-width: 0px; border-style:solid;
+    border-color:LightGray; padding:5px;
+    margin-top: 0px;
+
+
+}
+
+
+
+
+
+
+

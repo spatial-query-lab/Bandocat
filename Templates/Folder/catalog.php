@@ -39,6 +39,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
     <script type="text/javascript" src="../../ExtLibrary/jQuery-2.2.3/jquery-2.2.3.min.js"></script>
     <script type="text/javascript" src="../../ExtLibrary/jQueryUI-1.11.4/jquery-ui.js"></script>
     <script type="text/javascript" src="../../Master/master.js"></script>
+
 </head>
 <!-- END HTML HEADER -->
 <body>
@@ -48,6 +49,25 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
         <div id="divleft">
             <?php include '../../Master/header.php';
             include '../../Master/sidemenu.php' ?>
+            <div id="descriptionBox">
+                <table id="tableClass">
+                    <tr>
+                        <th>
+                            <h3 id="txtClass" style="margin: 2% 4% 0% 4%; background-color: #0067C5; color: white">Classification Description</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h4 id="className" style="text-align: center; margin: 2% 0% 0% 0%"></h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p id="classDesc" style="text-align: center; margin: -1% 0% 4% 0%"></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <div id="divright">
             <h2 id="page_title"><?php echo $config['DisplayName'];?> Catalog Form</h2>
@@ -213,10 +233,11 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
     </div>
 
 <?php include '../../Master/footer.php'; ?>
+<script type="text/javascript" src="../../Master/errorHandling.js"></script>
 </body>
 <!-- END HTML BODY -->
 <script>
-    /**********************************************
+     /**********************************************
      * Function: add_fields
      * Description: adds more fields for authors
      * Parameter(s):
@@ -252,6 +273,17 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
         {
             event.preventDefault();
             /* stop form from submitting normally */
+            /*On submit error handling of the form elements*/
+                    //formElement = $("form").serializeArray();
+            var error = errorHandling($('#txtLibraryIndex'), '<?php echo $collection ?>');
+            if(error.answer){
+                for(i = 0; i < error.desc.length; i++) {
+                    alert(error.desc[i].message)
+                }
+                return false
+            }
+
+
             //This attaches the entire "#theform" in addition to the crews to the post
             var formData = new FormData($(this)[0]);
 
@@ -302,6 +334,20 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
 
         });
     });
+
+    //List of classification and classification descriptions
+    var classList = '<?php echo json_encode($DB->GET_FOLDER_CLASSIFICATION_LIST($collection), JSON_HEX_APOS)?>';
+    $('#ddlClassification').change(function () {
+        var classText = $('#ddlClassification option:selected').text();
+        classes = JSON.parse(classList);
+        $("#className").text(classText);
+        for(var x = 0; x < classes.length; x++) {
+            if(classes[x][0] == classText) {
+                $('#classDesc').text(classes[x][1])
+            }
+        }
+
+    })
 </script>
 <style>
 

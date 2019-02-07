@@ -1,0 +1,1 @@
+php C:\xampp\htdocs\BandoCat\TDLPublish\UpdateCron\updatecron.php

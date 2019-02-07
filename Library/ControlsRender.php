@@ -138,7 +138,8 @@ class ControlsRender
     function GET_DDL2($array,$selected)
     {
         echo '<option value="">Select</option>';
-        foreach ($array as $item) {
+        foreach ($array as $item)
+		{
             if ($selected == $item)
                 echo '<option value="' . $item . '" selected>' . $item . '</option>';
             else echo '<option value="' . $item . '">' . $item . '</option>';

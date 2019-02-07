@@ -47,16 +47,12 @@ $columns = array(
     array( 'db' => '`document`.`documentID`', 'dt' => 0, 'field' => 'documentID' ),
     array( 'db' => '`document`.`libraryindex`', 'dt' => 1,'field' => 'libraryindex'),
     array( 'db' => '`document`.`title`', 'dt' => 2,'field' => 'title' ),
-    array( 'db' => '`document`.`subtitle`',  'dt' => 3, 'field' => 'subtitle' ),
-    array( 'db' => '`customer`.`customername`', 'dt' => 4,'field' => 'customername'),
-    array( 'db' => '`document`.`enddate`', 'dt' => 5,'field' => 'enddate'),
-    array( 'db' => '`document`.`hascoast`', 'dt' => 6, 'field' => 'hascoast'),
-    array( 'db' => '`document`.`filename`', 'dt' => 7,'field' => 'filename'),
-    array( 'db' => '`document`.`filenameback`', 'dt' => 8,'field' => 'filenameback'),
-    array( 'db' => '`document`.`hasPOI`', 'dt' => 9,'field' => 'hasPOI'),
-    array( 'db' => '`document`.`rectifiability`', 'dt' => 10,'field' => 'rectifiability'),
-    array( 'db' => '`document`.`georecFrontStatus`', 'dt' => 11,'field' => 'georecFrontStatus'),
-    array( 'db' => '`document`.`georecBackStatus`', 'dt' => 12,'field' => 'georecBackStatus')
+    array( 'db' => '`document`.`enddate`', 'dt' => 3,'field' => 'enddate'),
+    array( 'db' => '`document`.`filename`', 'dt' => 4,'field' => 'filename'),
+    array( 'db' => '`document`.`filenameback`', 'dt' => 5,'field' => 'filenameback'),
+    array( 'db' => '`document`.`rectifiability`', 'dt' => 6,'field' => 'rectifiability'),
+    array( 'db' => '`document`.`georecFrontStatus`', 'dt' => 7,'field' => 'georecFrontStatus'),
+    array( 'db' => '`document`.`georecBackStatus`', 'dt' => 8,'field' => 'georecBackStatus')
 
 );
 

@@ -45,8 +45,13 @@ require '../../Library/DBHelper.php';
                             echo "<option value='" . $col['collectionID'] .  "'>$col[displayname]</option>";
                     ?>
                 </select>
-                <h3>Subject / Library Index:</h3>
-                <input type = "text" name = "txtSubject" id = "txtSubject" size="32" required/>
+                <h3>Library Index:</h3>
+                <div class="divSubject" id="divSubject0">
+                    <input type = "text" class="txtSubject" name = "txtSubject" id = "txtSubject0" size="32" required/>
+                    <input type="button" onclick="add_fields($(':text').length, null)" value="+">
+                    <input type="button" onclick="remove_fields($(':text').length)" value="-">
+                </div>
+
 
                 <h3>What's wrong?</h3>
                 <textarea name = "txtDesc" id="txtDesc" rows = "10" cols = "70" required/></textarea>
@@ -61,16 +66,32 @@ require '../../Library/DBHelper.php';
 </body>
 <script>
 
+    //Window Height
+    var windowHeight = window.innerHeight;
+    $('#divscroller').height(windowHeight - (windowHeight * 0.3));
+
+    $(window).resize(function (event) {
+        windowHeight = event.target.innerHeight;
+        $('#divscroller').height(windowHeight - (windowHeight * 0.3));
+    });
+
+    var libArray = [];
     $( document ).ready(function() {
         /* attach a submit handler to the form */
         $('#frm_ticket').submit(function (event) {
             /* stop form from submitting normally */
             event.preventDefault();
+            /*Converts the list of Library indexes into a JSON format*/
+            $.each($(".txtSubject"), function (index, libIndex) {
+                libArray.push({"libraryIndex": libIndex.value});
+            });
+            var strLib = JSON.stringify(libArray);
+
             /* Send the data using post */
             $.ajax({
                 type: 'post',
                 url: 'index_processing.php',
-                data: {dbname: $('#ddlDBname :selected').val(), subject: $('#txtSubject').val(), description: $('#txtDesc').val()},
+                data: {dbname: $('#ddlDBname :selected').val(), subject: $('.txtSubject').val(), description: $('#txtDesc').val(), libIndex: strLib},
                 success:function(data){
                     if(data == "true")
                     {
@@ -82,6 +103,29 @@ require '../../Library/DBHelper.php';
             });
         });
     });
+
+    /**********************************************
+     * Function: add_fields
+     * Description: adds more fields for authors
+     * Parameter(s): length (integer) Length of Author's cells
+     * val (String ) - name of the author
+     * Return value(s): None
+     ***********************************************/
+
+    function add_fields(length, val) {
+        if (val == null)
+            val = "";
+        $('#divSubject' + (length - 1)).after('' +
+         '<div class="divSubject" id="divSubject' + length + '" style="margin-top: 2%">' +
+         '<input type = "text" class="txtSubject" name = "txtSubject" id = "txtSubject0" size="32" value="' + val + '" required/>' +
+         '</div>');
+    }
+    
+    function remove_fields(length) {
+        if(length < 2)
+            return false;
+        $(".divSubject").last().remove();
+    }
 
 </script>
 </html>

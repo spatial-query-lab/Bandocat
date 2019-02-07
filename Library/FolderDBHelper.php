@@ -306,5 +306,113 @@ class FolderDBHelper extends DBHelper
             return $result;
         } else return false;
     }
+	/**********************************************
+     * Function: GET_FOLDERS
+     * Description: retrieve unique FOLDERS in `foldername` field of `document` table in the targeted collection
+     * Parameter(s):
+     * $collection (in string) - name of the collection
+     * Return value(s):
+     * false if fail, else return an array of folder names
+     ***********************************************/
+    function GET_FOLDERS($collection)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //selects the fieldbook collection names from the fieldbook collection
+            $sth = $this->getConn()->prepare("SELECT DISTINCT `foldername` FROM `document` WHERE `foldername` ORDER BY `foldername` ASC");
+            $sth->execute();
+            //return the collection names
+            $result = $sth->fetchAll(PDO::FETCH_NUM);
+            return $result;
+        } else return false;
+    }
+	/**********************************************
+     * Function: UPDATE_FIELDBOOK_READYFORPDF
+     * Description: attempts to get the list of fieldbook collection names
+     * Parameter(s):
+     * $collection (in string) - name of the collection
+     * Return value(s):
+     * True if good, False if fail
+     ***********************************************/
+    function UPDATE_JOBFOLDER_READYFORPDF($collection, $iFolderName,$iReadyForPdf)
+    {
+            $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection));
+            $db = $dbname['DbName'];
+            if ($db != null && $db != "")
+            {
+                $this->getConn()->exec('USE ' . $db);
+
+                $call = $this->getConn()->prepare("CALL SP_TEMPLATE_JOBFOLDER_DOCUMENT_READYFORPDF_UPDATE(:iFolderName,:iReadyForPdf)");
+                if (!$call)
+                    trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+                //bind parameters into variables for the above SQL statement
+                $call->bindParam(':iFolderName', ($iFolderName), PDO::PARAM_STR);
+                $call->bindParam(':iReadyForPdf', ($iReadyForPdf), PDO::PARAM_INT);
+
+                $ret = $call->execute();
+                //Execute Statement
+
+                if($ret)
+                    return true;
+                return false;
+            }
+
+    }
+	 /**********************************************
+     * Function: GET_ALL_FOLDER_FILENAMES_BY_FOLDERNAME
+     * Description: attempts to get the list of fieldbook collection names
+     * Parameter(s):
+     * $collection (in string) - name of the collection
+     * Return value(s):
+     * True if good, False if fail
+     ***********************************************/
+    function GET_ALL_FOLDER_FILENAMES_BY_FOLDERNAME($collection,$foldername)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //selects the fieldbook collection names from the fieldbook collection
+            $sth = $this->getConn()->prepare("SELECT `filename` FROM `document` WHERE `foldername` = :foldername");
+            $sth->bindParam(':foldername',$foldername,PDO::PARAM_STR);
+            $sth->execute();
+            //return the collection names
+            $result = $sth->fetchAll(PDO::FETCH_NUM);
+            return $result;
+        } else return false;
+    }
+	/**********************************************
+     * Function: GET_FIELDBOOK_CREWS_AND_PARTIAL_DOCUMENT_BY_BOOKTITLE_AND_DOCID
+     * Description: Returns the information from the documents needed for PDF generation + lists all crew members associated with that document in column[0].
+     * Parameter(s): booktitle
+     * $collection (in string) - name of the collection
+     * $booktitle (in Int) - document booktitle
+     * Return value(s):
+     * Array of possible values if success
+     ***********************************************/
+    function GET_FOLDER_AUTHOR_AND_PARTIAL_DOCUMENT_BY_FOLDERNAME($collection,$foldername)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //selects the fieldbook collection names from the fieldbook collection
+            //$sth = $this->getConn()->prepare("SELECT libraryindex, jobnumber,startdate,enddate,indexedpage,filenamepath,jobtitle FROM `document` WHERE `booktitle` = :booktitle ORDER BY `jobnumber`");
+            $sth = $this->getConn()->prepare("SELECT (SELECT GROUP_CONCAT(a.`authorname`) FROM `documentauthor` AS da LEFT JOIN `author` AS a ON da.`authorID` = a.`authorID` WHERE da.`docID` IN (SELECT documentID WHERE `foldername` = :foldername ) GROUP BY da.`docID`) as `authorlist`,libraryindex,insubfolder,startdate,enddate,filenamepath,filenamebackpath,foldername,cc.classificationname FROM `document` LEFT JOIN `classification` AS cc ON document.classificationID = cc.`classificationID` WHERE `foldername` = :foldername ");
+            $sth->bindParam(':foldername',$foldername,PDO::PARAM_STR);
+            $sth->execute();
+            //return the collection names
+            $result = $sth->fetchAll(PDO::FETCH_NUM);
+            return $result;
+        } else return false;
+
+    }
+	
+	
 
 }

@@ -13,7 +13,15 @@ if(isset($_GET['col']) && isset($_GET['doc']))
     //get appropriate DB
     $config = $DB->SP_GET_COLLECTION_CONFIG($collection);
     //find the document by passing collection and docid
-    $document = $DB->SP_TEMPLATE_MAP_DOCUMENT_SELECT($collection,$docID);
+     if($collection != "pennyfenner")
+    {
+        $document = $DB->SP_TEMPLATE_MAP_DOCUMENT_SELECT($collection,$docID);
+    }
+    else if($collection == "pennyfenner")
+    {
+        $document = $DB->SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_SELECT($collection,$docID);
+		
+    }
     //var_dump($document);
 }
 else header('Location: ../../');
@@ -126,12 +134,134 @@ $date = new DateHelper();
                                 </select>
                             </td>
                         </tr>
-
-                        <tr>
+			<?php if($collection == "pennyfenner") : ?>
+                        <tr> <!-- row 1 -->
                             <!-- MAP SCALE -->
                             <td><span class="label">Map Scale:</span></td>
                             <td> <input type = "text" name = "txtMapScale" id = "txtMapScale" size="26" value="<?php echo htmlspecialchars($document['MapScale'],ENT_QUOTES); ?>"  />
                             </td>
+							
+                                <td>
+                                    <!-- FIELD BOOK NUMBER -->
+                                    <span class="label">Job Number:</span>
+                                </td>
+                                <td>
+                                    <input type = "text" name = "txtJobNumber" id = "txtJobNumber" size="26" value="<?php if($document['JobNumber'] != 0 && $document['JobNumber'] != null) {echo htmlspecialchars($document['JobNumber'],ENT_QUOTES);} ?>"/><span class = "errorInput" id = "customernameErr"></span>
+                                </td>
+								<td>
+						</tr>
+						<tr>
+							<td>
+								<span class="labelradio"><mark>Is Map:</mark><p hidden><b></b>This is to signal if it is a map</p></span>
+							</td>
+							 
+                             <!-- IS MAP -->
+                        
+                             <td>
+                                 <input type = "radio" name = "rbIsMap" id = "rbIsMap_yes" size="26" value="1" <?php if($document['IsMap'] == 1) echo "checked"; ?>/>Yes
+                                 <input type = "radio" name = "rbIsMap" id = "rbIsMap_no" size="26" value="0"  <?php if($document['IsMap'] == 0) echo "checked"; ?>/>No
+                             </td>
+								<td>
+                                <!-- FIELD BOOK NUMBER -->
+									<span class="label">Field Book Number:</span>
+								</td>
+								<td>
+									<input type = "text" name = "txtFieldBookNumber" id = "txtFieldBookNumber" size="26" value="<?php if($document['FieldBookNumber'] != 0 && $document['FieldBookNumber'] != null) {echo htmlspecialchars($document['FieldBookNumber'],ENT_QUOTES);} ?>"/><span class = "errorInput" id = "customernameErr"></span>
+								</td>
+    
+                         </tr>
+						
+                        <tr>
+                            <td>
+                                <span class="labelradio" ><mark>Needs Review:</mark><p hidden><b></b>This is to signal if a review is needed</p></span>
+                            </td>
+                            <td>
+                                <!-- NEEDS REVIEW -->
+                                <input type = "radio" name = "rbNeedsReview" id = "rbNeedsReview_yes" size="26" value="1" <?php if($document['NeedsReview'] == 1) echo "checked"; ?>/>Yes
+                                <input type = "radio" name = "rbNeedsReview" id = "rbNeedsReview_no" size="26" value="0" <?php if($document['NeedsReview'] == 0) echo "checked"; ?>/>No
+                            </td>
+							<!--FIELD BOOK PAGE-->
+                             <td><span class="label">Field Book Page:</span></td>
+                             <td><input type = "text" name = "txtFieldBookPage" id = "txtFieldBookPage" size="26" value="<?php echo htmlspecialchars($document['FieldBookPage'],ENT_QUOTES); ?>" />
+                             </td>
+                           
+							
+                            
+                        </tr>
+                        <tr>
+                            <!-- HAS NORTH ARROW -->
+                                <td><span class="labelradio"><mark>Has North Arrow:</mark><p hidden><b></b>This is to signal if it has a North Arrow</p></span>
+                                </td>
+                                <td>
+                                    <input type = "radio" name = "rbHasNorthArrow" id = "rbHasNorthArrow_yes" size="26" value="1" <?php if($document['HasNorthArrow'] == 1) echo "checked"; ?>/>Yes
+                                    <input type = "radio" name = "rbHasNorthArrow" id = "rbHasNorthArrow_no" size="26" value="0"  <?php if($document['HasNorthArrow'] == 0) echo "checked"; ?>/>No
+                                </td>
+								  <?php $readrec = array("POOR","GOOD","EXCELLENT"); ?>
+								 <td>
+                              
+                                <span class="label"><span style = "color:red;"> * </span>Readability:</span>
+								</td>
+								 <td>
+                                <!-- READABILITY -->
+                                <select id="ddlReadability" name="ddlReadability" required style="width:215px">
+                                    <?php
+                                    $Render->GET_DDL2($readrec,$document['Readability']);
+                                    ?>
+                                </select>
+								</td>
+								
+                               
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="labelradio"><mark>Has Street:</mark><p hidden><b></b>This is to signal if a Street(s) are present</p></span>
+                            </td>
+                            <td>
+                                <!-- HAS STREETS -->
+                                <input type = "radio" name = "rbHasStreets" id = "rbHasStreets_yes" size="26" value="1" <?php if($document['HasStreets'] == 1) echo "checked"; ?>/>Yes
+                                <input type = "radio" name = "rbHasStreets" id = "rbHasStreets_no" size="26" value="0" <?php if($document['HasStreets'] == 0) echo "checked"; ?> />No
+                            </td>
+							 <td>
+                                     <span class="label"><span style = "color:red;"> * </span>Rectifiability:</span>
+                                </td>
+                                <td>
+                                    <!-- POPULATE THE DDL RECTIFIABILITY -->
+                                <select id="ddlRectifiability" name="ddlRectifiability" required style="width:215px">
+                                    <?php
+                                    $Render->GET_DDL2($readrec,$document['Rectifiability']);
+                                    ?>
+                                </select>
+                                </td>
+                           
+                        </tr>
+                        <tr>
+                            <td>
+                                <!-- HAS POINT OF INTEREST -->
+                                <span class="labelradio"><mark>Has POI:</mark><p hidden><b></b>This is to signal if a Point of Interest is present</p></span>
+                            </td>
+                            <td>
+                                <input type = "radio" name = "rbHasPOI" id = "rbHasPOI_yes" size="26" value="1" <?php if($document['HasPOI'] == 1) echo "checked"; ?>/>Yes
+                                <input type = "radio" name = "rbHasPOI" id = "rbHasPOI_no" size="26" value="0"  <?php if($document['HasPOI'] == 0) echo "checked"; ?>/>No
+                            </td>
+							 <td>
+                                <span class="label">Company Name:</span>
+
+                            </td>
+                            <td>
+                                <!-- POPULATE DDL WITH COMPANY NAMES -->
+                                <input type = "text" list="lstCompany" name = "txtCompany" id = "txtCompany" size="26" value="<?php echo $document['CompanyName'];?>" />
+                                <datalist id="lstCompany">
+                                    <?php $Render->getDataList($DB->GET_COMPANY_LIST($collection)); ?>
+                                </datalist>
+                            </td>
+                            <td>
+            <?php else: ?>
+							 <tr> <!-- row 1 -->
+                            <!-- MAP SCALE -->
+                            <td><span class="label">Map Scale:</span></td>
+                            <td> <input type = "text" name = "txtMapScale" id = "txtMapScale" size="26" value="<?php echo htmlspecialchars($document['MapScale'],ENT_QUOTES); ?>"  />
+                            </td>
+							
                             <td>
                                 <!-- FIELD BOOK NUMBER -->
                                 <span class="label">Field Book Number:</span>
@@ -192,7 +322,8 @@ $date = new DateHelper();
                                     <!-- POPULATE THE DDL RECTIFIABILITY -->
                                 <select id="ddlRectifiability" name="ddlRectifiability" required style="width:215px">
                                     <?php
-                                    $Render->GET_DDL2($readrec,$document['Rectifiability']);
+                                    $Render->GET_DDL2($readrec,$document["Rectifiability"]);
+			
                                     ?>
                                 </select>
                                 </td>
@@ -234,6 +365,8 @@ $date = new DateHelper();
                             <td>
                                 <input type = "text" name = "txtType" id = "txtType" size="26" value="<?php echo htmlspecialchars($document['Type'],ENT_QUOTES);?>" />
                             </td>
+                        </tr>
+							 <?php endif; ?>
                         </tr>
                         <tr>
                             <td>
@@ -483,6 +616,7 @@ $date = new DateHelper();
         //resize height of the scroller
         $("#divscroller").height($(window).outerHeight() - $(footer).outerHeight() - $("#page_title").outerHeight() - 55);
         $("#divleft").height($("#divscroller").height());
+		
 
     });
 

@@ -29,21 +29,32 @@ $ticket = $DB->SP_ADMIN_TICKET_SELECT($tID); //assoc array contains ticket info
 
 </head>
 <body>
-<table id = "thetable">
-    <tr>
-        <td class="menu_left" id="thetable_left">
+<div id="wrap">
+    <div id="main">
+        <div class="menu_left" id="thetable_left" style="padding: 0px;float:left; width: 20%; overflow-y: auto; overflow-x: hidden">
             <?php include '../../Master/header.php';
             include '../../Master/sidemenu.php' ?>
-        </td>
-        <td class="Collection" id="thetable_right">
-            <h2>Ticket View</h2>
-            <form id="frmTicket" name="frmTicket">
+        </div>
+    </div>
+</div>
+
+<div class="Collection" id="thetable_right" style="float: left; width: 79%; overflow-x: hidden">
+    <h2>Ticket View</h2>
+    <div id="divscroller" style="overflow-x: hidden;overflow-y: auto; padding-right: 2px">
+        <form id="frmTicket" name="frmTicket">
             <table class="Collection_Table" style="width: 95%; font-size: 15px; padding-top: 0%; margin-bottom: 2%; padding-bottom: 1%; margin-top: 4%; margin-bottom: 2%; overflow: auto;">
                 <tr>
                     <td>
                         <div id="Left_Display" style="text-align: left">
                             <h3>Collection Name: <span id="Collection_Name"></span></h3>
-                            <h3>Library Index/Subject: <span id="Subject"></span></h3>
+                            <div id="libraryIndex">
+                                <h3>Library Index/Subject:
+                                    <span class="Subject" id="Subject0"></span>
+                                </h3>
+                                <table id="libraryIndexList" style="margin-left: 5%">
+                                    <tr id="libraryIndexRow0"></tr>
+                                </table>
+                            </div>
                             <h3>Description: <span id="Description"></span></h3>
                             <h3>Status:
                                 <input type="radio" value="0" name="Status"><span>Open</span>
@@ -80,19 +91,112 @@ $ticket = $DB->SP_ADMIN_TICKET_SELECT($tID); //assoc array contains ticket info
                 </tr>
                 <tr>
             </table>
-            </form>
+        </form>
+    </div>
+</div>
 
             <?php include '../../Master/footer.php'; ?>
 
 </body>
 
 <script>
+    //Window Height
+    var windowHeight = window.innerHeight;
+    $('#divscroller').height(windowHeight - (windowHeight * 0.2));
+
+    $(window).resize(function (event) {
+        windowHeight = event.target.innerHeight;
+        $('#divscroller').height(windowHeight - (windowHeight * 0.2));
+    });
+
     $( document ).ready(function() {
         //Variable that stores in a json the information of the ticket retrieved from the database.
         var data = <?php echo json_encode($ticket); ?>;
         //Series of document elements in which the data from the ticket is saved into their inner text.
         document.getElementById("Collection_Name").innerText = data.Collection;
-        document.getElementById("Subject").innerText = data.Subject;
+        //JSON with the library index information
+        var libIdxJSON = JSON.parse(data.LibraryIndex);
+        //Switch statement that selects the collection name and file name to be used to link the ticket with its document
+        switch(data.Collection) {
+            case 'Blucher Maps':
+                var dbCol = 'bluchermaps';
+                var file = 'Map';
+                break;
+            case 'Green Maps':
+                var dbCol = 'greenmaps';
+                var file = 'Map';
+                break;
+            case 'Job Folder':
+                var dbCol = 'jobfolder';
+                var file = 'Folder';
+                break;
+            case 'Blucher Field Book':
+                var dbCol = 'blucherfieldbook';
+                var file = 'FieldBook';
+                break;
+            case 'Map Indices':
+                var dbCol = 'mapindices';
+                var file = 'Indices';
+                break;
+        }
+
+        //Object that will be posted to ticketLink.php is initialized
+        var ticketData = {};
+        //Object property data is initialized as an array
+        ticketData['data'] = [];
+        //For each element from the JSON with the library index information by index and by element
+        $.each(libIdxJSON, function (index, obj) {
+            var libraryIndex = obj;
+            /*Data pushed to the data object to be posted to ticketLink; library index collection, and
+            library index name*/
+            ticketData['data'].push({"subjectCol": dbCol, "subject": libraryIndex});
+        });
+
+        $.ajax({
+            url: 'ticketLink.php',
+            type: 'post',
+            data: ticketData,
+            /*If the function was executed correctly then it will return the document id and library index in a data
+             object: RETURNED Object FORMAT: {"data":[[Document Id, Library Index],...[]]}*/
+            success: function (libData) {
+                var libInfo = JSON.parse(libData);
+                $.each(libInfo, function (data, info) {
+                    for(var ticket = 0; ticket < info.length; ticket++){
+                        //Document ID
+                        documentID = info[ticket][0];
+                        //Library Index
+                        documentLibIndex = info[ticket][1];
+
+                        /*LINK*/
+                        //If the document id was fetched from database
+                        if(documentID !== false){
+                            if(ticket > 0){
+                                $('#libraryIndexList tr:last').html("<a href='../../Templates/" + file + "/review.php?doc=" + documentID + "&col=" + dbCol + "' target='_blank' >"+ documentLibIndex +"</a>");
+                            }
+                            else
+                                $('#libraryIndexRow' + ticket).html("<a href='../../Templates/" + file + "/review.php?doc=" + documentID + "&col=" + dbCol + "' target='_blank' >"+ documentLibIndex +"</a>");
+                            //Inserts a row to the last after the last row element in the table
+                            var tc = ticket + 1;
+                            $('#libraryIndexList tr:last').after('<tr id="libraryIndexRow"' + tc + '></tr>');
+                        }
+
+                        /*NO LINK*/
+                        else{
+                            if(ticket > 0){
+                                $('#libraryIndexList tr:last').html(documentLibIndex);
+                            }
+                            else
+                                $('#libraryIndexRow' + ticket).html(documentLibIndex);
+                            //Inserts a row to the last after the last row element in the table
+                            var tc = ticket + 1;
+                            $('#libraryIndexList tr:last').after('<tr id="libraryIndexRow"' + tc + '></tr>');
+                        }
+                    }
+                });
+            }
+        });
+
+        //document.getElementById("Subject").innerText = data.LibraryIndex;
         document.getElementById("Description").innerText = data.Description;
 
         /*Input tags compared conditionally with the status data, from the ticket, to determine if it should be

@@ -55,7 +55,6 @@ $columns = array(
  */
 
 require('../../Library/sspwithjoin.class.php');
-
 $joinQuery = " FROM `ticket` INNER JOIN `collection` ON (`ticket`.`collectionID` = `collection`.`collectionID`)
  INNER JOIN `user` ON (`ticket`.`posterID` = `user`.`userID`)";
 $extraWhere = "";

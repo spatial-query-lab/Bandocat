@@ -33,10 +33,11 @@ class DBHelper
 
     function __construct()
     {
+
      $root = substr(getcwd(),0,strpos(getcwd(),"htdocs\\")); //point to xampp// directory
      $config = parse_ini_file($root . DBHelper::$ini_dir);
      $this->host = $config['servername'];
-     $this->user = $config['username'];
+     $this->user = $config['username']; //
      $this->pwd = $config['password'];
      $this->maindb = $config['dbname'];
         /*if not currently connected, attempt to connect to DB*/
@@ -107,6 +108,14 @@ class DBHelper
     {
         return $this->pwd;
     }
+
+    /**********************************************
+     * Function: DB_CLOSE
+     * Description: Closes connection to XAMPP db. localhost/phpadmin.
+     * Parameter(s):
+     * Return value(s):
+
+     ***********************************************/
 
     function DB_CLOSE()
     {
@@ -229,9 +238,10 @@ class DBHelper
              return false;
          }
          $output = $sth->fetch(PDO::FETCH_ASSOC);
-
          if(password_verify($iPassword,$output['password']))
          {
+
+
              if($output['role'] === "Inactive")
              {
                  $oMessage = "Inactive";
@@ -354,6 +364,11 @@ class DBHelper
 
     /**********************************************
     /**********************************************
+     * Function: GET_ACTION_UNIQUE()
+     * Description: Selects distinct action associative array from log.
+     * Parameter(s): NONE
+     * Return value(s): Returns the queried associative array $result from table.
+     * $result  (associative array) - return associative array of collection infos
 
      ***********************************************/
     function GET_ACTION_UNIQUE()
@@ -480,7 +495,7 @@ class DBHelper
      * $iDescription (in string) - description of what goes wrong
      * Return value(s): true if success, false if fail
      ***********************************************/
-    function SP_TICKET_INSERT($iSubject, $iPosterID, $iCollectionID, $iDescription)
+    function SP_TICKET_INSERT($iSubject, $iPosterID, $iCollectionID, $iDescription, $iLibraryIndex)
     {
         //Switch to correct DB
         $this->getConn()->exec('USE ' . $this->maindb);
@@ -488,8 +503,8 @@ class DBHelper
         /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
         //The ? in the functions parameter list is a variable that we bind a few lines down.
         //CALL is sql for calling the function built into the db at localhost/phpmyadmin
-        $call = $this->getConn()->prepare("CALL SP_TICKET_INSERT(?,?,?,?)");
-        //Error handleing
+        $call = $this->getConn()->prepare("CALL SP_TICKET_INSERT(?,?,?,?,?)");
+        //Error handling
         if (!$call)
             trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
         //bind parameters to the sql statement
@@ -497,6 +512,7 @@ class DBHelper
         $call->bindParam(2, $iPosterID, PDO::PARAM_INT);
         $call->bindParam(3, $iCollectionID, PDO::PARAM_INT);
         $call->bindParam(4, $iDescription, PDO::PARAM_STR, strlen($iDescription));
+        $call->bindParam(5, $iLibraryIndex, PDO::PARAM_STR, strlen($iLibraryIndex));
         /* EXECUTE STATEMENT */
         $call->execute();
         if ($call)
@@ -651,7 +667,7 @@ class DBHelper
         /* PREPARE STATEMENT */
         /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
         // sql statement CALL calls the function pointed to in the db
-        $call = $this->getConn()->prepare("CALL SP_ADMIN_TICKET_SELECT(?,@oSubject,@oSubmissionDate,@oSolvedDate,@oPoster,@oCollection,@oDescription,@oNotes,@oSolver,@oStatus,@oLastSeen)");
+        $call = $this->getConn()->prepare("CALL SP_ADMIN_TICKET_SELECT(?,@oSubject,@oSubmissionDate,@oSolvedDate,@oPoster,@oCollection,@oDescription,@oNotes,@oSolver,@oStatus,@oLastSeen,@oLibraryIndex)");
         if (!$call)
             trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
         //bind variable to the ? in the above call statement
@@ -660,7 +676,7 @@ class DBHelper
         $call->execute();
         /* RETURN RESULT */
         //select appropriate ticket
-        $select = $this->getConn()->query('SELECT @oSubject AS Subject,@oSubmissionDate AS SubmissionDate,@oSolvedDate AS SolvedDate,@oPoster AS Submitter,@oCollection AS Collection,@oDescription AS Description,@oNotes AS Notes,@oSolver AS Solver,@oStatus AS Status,@oLastSeen AS LastSeen');
+        $select = $this->getConn()->query('SELECT @oSubject AS Subject,@oSubmissionDate AS SubmissionDate,@oSolvedDate AS SolvedDate,@oPoster AS Submitter,@oCollection AS Collection,@oDescription AS Description,@oNotes AS Notes,@oSolver AS Solver,@oStatus AS Status,@oLastSeen AS LastSeen, @oLibraryIndex AS LibraryIndex');
         //return appropriate ticket
         $result = $select->fetch(PDO::FETCH_ASSOC);
         return $result;
@@ -669,17 +685,19 @@ class DBHelper
     /**********************************************
      * Function: TICKET_UPDATE_LASTSEEN
      * Description: UPDATE `lastseen` field in `ticket` table to current timestamp, given the ticket ID
-     * Parameter(s):
+     * Parameter(s):($iTicketID)
      * $iTicketID (in Integer) - ticket ID
-     * Return value(s):
+     * Return value(s):($ret)
      * $result (assoc array) - return 1 if success, otherwise fail
      ***********************************************/
     function TICKET_UPDATE_LASTSEEN($iTicketID)
     {
         //switch to correct db
         $this->getConn()->exec('USE ' . $this->maindb);
+        //connect to db and update ticket table, set lastseen column to current date where ticketID colum is equal to ticketID LIMIT 1.
         $sth = $this->getConn()->prepare('UPDATE `ticket` SET `lastseen` = NOW() WHERE `ticketID` = :ticketID LIMIT 1');
         $sth->bindParam(':ticketID',$iTicketID,PDO::PARAM_INT);
+        //executes query
         $ret = $sth->execute();
         return $ret;
     }
@@ -687,9 +705,9 @@ class DBHelper
     /**********************************************
      * Function:  GET_DOCUMENT_COUNT
      * Description: Count number of rows for the table specified by the Col parameter
-     * Parameter(s):
+     * Parameter(s): $collection
      * collection (in string) - name of the collection
-     * Return value(s):
+     * Return value(s): $result
      * $result (integer) - Number of rows as an integer
      ***********************************************/
     function GET_DOCUMENT_COUNT($collection)
@@ -1081,6 +1099,63 @@ class DBHelper
             return $result;
         } else return false;
     }
+    /**********************************************
+     * Function: GET_DOCUMENT_FILTEREDNEEDSREVIEW_COUNT
+     * Description: function responsible for returning all documents that have a coastline
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+     ***********************************************/
+    function GET_DOCUMENT_FILTEREDNEEDSREVIEW0_COUNT($collection,$booktitle)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+
+            //select booktitles where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT COUNT(`documentID`) FROM `document` WHERE `needsreview`='0' AND `booktitle`=:bookTitle");
+            $sth->bindParam(':bookTitle',$booktitle,PDO::PARAM_INT);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+
+    /**********************************************
+     * Function: GET_DOCUMENT_MATCHBOOKTITLE_COUNT
+     * Description: function responsible for returning all documents that have a coastline
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+     * $booktitle (in String) - Title of book
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+     ***********************************************/
+
+    function GET_DOCUMENT_MATCHBOOKTITLE_COUNT($collection,$booktitle)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select booktitles where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT COUNT(`documentID`) FROM `document` WHERE `booktitle`=:bookTitle");
+            $sth->bindParam(':bookTitle',$booktitle,PDO::PARAM_INT);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+    
+
+
 
     /**********************************************
      * Function: GET_DOCUMENT_FILTEREDTITLE_COUNT
@@ -1106,6 +1181,8 @@ class DBHelper
         } else return false;
     }
 
+
+
     /**********************************************
      * Function: SP_WEEKLYREPORT_INSERT
      * Description: INSERT INTO WEEKLYREPORT TABLE FROM COUNTING ENTRIES IN LOG TABLE
@@ -1117,6 +1194,7 @@ class DBHelper
      ***********************************************/
     function SP_WEEKLYREPORT_INSERT($iYear,$iWeek,$iCollectionID)
     {
+
         //get appropriate DB
         $this->getConn()->exec('USE ' . $this->maindb);
         /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
@@ -1125,13 +1203,15 @@ class DBHelper
         if (!$call)
             trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
         //binds variables to the above SQL statement
+
         $call->bindParam(1, $iYear, PDO::PARAM_INT);
         $call->bindParam(2, $iWeek, PDO::PARAM_INT);
         $call->bindParam(3, $iCollectionID,PDO::PARAM_INT);
         /* EXECUTE STATEMENT */
         $ret = $call->execute();
+
         return $ret;
-    }
+   }
 
 
     //****************************Where the Map Functions used to be
@@ -1153,10 +1233,13 @@ class DBHelper
         /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
         // selects the weeks from weeklyreport db that satisfy the year and collection id parameters
         $sth = $this->getConn()->prepare('SELECT `weeklyreport`.`week`,`weeklyreport`.`count` FROM `weeklyreport` WHERE `weeklyreport`.`year` = ? AND `weeklyreport`.`collectionID` = ?');
+
+
         //bind parameters to the sql statement
         $sth->bindParam(1,$iYear,PDO::PARAM_INT);
         $sth->bindParam(2,$iCollectionID,PDO::PARAM_INT);
         $sth->execute();
+
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -1174,12 +1257,15 @@ class DBHelper
         $this->getConn()->exec('USE ' . $this->maindb);
         /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
         // selects the weeks from weeklyreport db that satisfy the year and collection id parameters
-        $call = $this->getConn()->prepare("CALL SP_LOG_WEEKLYTRANSCRIPTIONREPORT_COUNT(:iYear,:iColID)");
-        //bind variables to the above sql statement
-        $call->bindParam(':iYear',$iYear,PDO::PARAM_INT);
-        $call->bindParam(':iColID',$iCollectionID,PDO::PARAM_INT);
-        $call->execute();
-        return $call->fetchAll(PDO::FETCH_NUM);
+        $sth = $this->getConn()->prepare('SELECT `weeklytranscriptionreport`.`week`,`weeklytranscriptionreport`.`count` FROM `weeklytranscriptionreport` WHERE `weeklytranscriptionreport`.`year` = ? AND `weeklytranscriptionreport`.`collectionID` = ?');
+
+
+        //bind parameters to the sql statement
+        $sth->bindParam(1,$iYear,PDO::PARAM_INT);
+        $sth->bindParam(2,$iCollectionID,PDO::PARAM_INT);
+        $sth->execute();
+
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**********************************************
@@ -1198,6 +1284,7 @@ class DBHelper
         // selects the weeks from weeklyreport db that satisfy the year and collection id parameters
         $call = $this->getConn()->prepare("SELECT COUNT(*), u1.`username` FROM `log` LEFT JOIN `user` AS u1 ON `log`.`userID` = u1.`userID` WHERE MONTH(`log`.`timestamp`) = :iMonth AND YEAR(`log`.`timestamp`) = :iYear AND `log`.`action`= :iAction AND `log`.`status` = 'success' AND `log`.`userID` = :iUserID");
 
+
            //bind variables to the above sql statement
         //bind variables to the above sql statement
         $call->bindParam(':iYear',$iYear,PDO::PARAM_INT);
@@ -1206,6 +1293,24 @@ class DBHelper
         $call->bindParam(':iAction',$iAction,PDO::PARAM_STR);
         $call->execute();
         return $call->fetch(PDO::FETCH_NUM);
+
+    }
+
+    function SELECT_DOCID_BY_SUBJECT($iSubject, $iCollection)
+    {
+        $bolDB = $this->SWITCH_DB($iCollection);
+        if($bolDB){
+            /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
+            // selects the weeks from weeklyreport db that satisfy the year and collection id parameters
+            $call = $this->getConn()->prepare("SELECT `documentID`, `libraryindex` FROM `document` WHERE `libraryindex` = :iSubject");
+
+
+            //bind variables to the above sql statement
+            //bind variables to the above sql statement
+            $call->bindParam(':iSubject',$iSubject,PDO::PARAM_STR);
+            $call->execute();
+            return $call->fetch(PDO::FETCH_NUM);
+        }
     }
 
     /**********************************************
@@ -1332,6 +1437,8 @@ class DBHelper
         return $ret;
     }
 
+
+
     /**********************************************
      * Function: USER_UPDATE_INFO
      * Description: attempts to UPDATE user's email and fullname in the specified UserID
@@ -1352,6 +1459,10 @@ class DBHelper
         return $ret;
     }
 
+
+
+
+
     /**********************************************
      * Function: USER_UPDATE_PASSWORD
      * Description: attempts to UPDATE user's password in the specified UserID
@@ -1371,12 +1482,14 @@ class DBHelper
             $sth->bindParam(':newpwd', $iNewPassword, PDO::PARAM_STR);
             $sth->bindParam(':uID', $iUserID, PDO::PARAM_INT);
             $ret = $sth->execute();
+
             if ($ret)
                 $ret = $sth->rowCount(); //return number of rows affected (must be 1 or 0)
             return $ret;
         }
         return false;
     }
+
 
     /**********************************************
      * Function: USER_VERIFY_PWD
@@ -1434,4 +1547,553 @@ class DBHelper
         $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
         return $ret;
     }
+
+
+
+    function TRUNCATE(){
+        $this->getConn()->exec('USE ' . $this->maindb);
+
+        $trunc = $this->getConn()->prepare("TRUNCATE TABLE storage");
+        $trunc ->execute();
+
+    }
+
+    function TRUNCATE_TOTAL_STATS(){
+        $this->getConn()->exec('USE ' . $this->maindb);
+
+        $trunc = $this->getConn()->prepare("TRUNCATE TABLE storagestatistics");
+        $trunc ->execute();
+
+    }
+
+
+    function INSERT_INTO_STORAGE_COLLECTIONS($icollection, $isize, $idate) {
+
+        /* PREPARE STATEMENT */
+        $call = $this->getConn()->prepare("INSERT INTO storage VALUES (\"$icollection\", \"$isize\", \"$idate\")");
+        if (!$call)
+            trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+        $ret = $call->execute();
+
+        return $ret;
+    }
+
+
+    function INSERT_INTO_STORAGE_All_COLLECTIONS($iallCollections, $isize, $idate) {
+
+        /* PREPARE STATEMENT */
+        $call = $this->getConn()->prepare("INSERT INTO storagestatistics VALUES (\"$iallCollections\" , \"$isize\", \"$idate\")");
+        if (!$call)
+            trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+        $ret = $call->execute();
+
+        return $ret;
+    }
+
+
+    function INSERT_INTO_STORAGE_DISKSPACE($idiskspace, $isize, $idate) {
+
+        /* PREPARE STATEMENT */
+        $call = $this->getConn()->prepare("INSERT INTO storagestatistics VALUES (\"$idiskspace\", \"$isize\", \"$idate\")");
+        if (!$call)
+            trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+        $ret = $call->execute();
+
+        return $ret;
+    }
+
+
+
+
+
+
+
+
+    function DISPLAY_STORAGE_INTO_TABLE()
+    {
+        $call= mysqli_connect($this->getHost(), $this->getUser(), $this->getPwd(), "bandocatdb") or die ("could not connect");
+        /* check connection */
+        if (!$call)
+            trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+
+        $query = "SELECT collection, size FROM storage";
+
+        echo "<table  border = '0' cellpadding='0' padding-right='0' padding-left = '0' cellspacing='0' style ='font-size: 18px;'  >";
+         
+
+
+        $time = "";
+
+        if ($result = mysqli_query($call, $query))
+        {
+
+            /* fetch associative array */
+            while ($row = mysqli_fetch_assoc($result) )
+            {
+                echo "<tr> <td>" , $row["collection"], "</td> <td style = 'padding-left: 20px;'> " , $row["size"], "</td> </tr> " ;
+
+            }
+            echo "</table>";
+
+
+
+
+            /* free result set */
+            mysqli_free_result($result);
+        }
+
+
+    }
+
+
+    function DISPLAY_STATS()
+    {
+
+
+        $call= mysqli_connect($this->getHost(), $this->getUser(), $this->getPwd(), "bandocatdb") or die ("could not connect");
+        /* check connection */
+        if (!$call)
+            trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+
+        $query = "SELECT stats, size, date FROM storagestatistics";
+
+
+        echo "<table border = '0' cellpadding='0' padding-right='0' padding-left = '0' cellspacing='0' style ='font-size: 18px;'>";
+
+        $time = "";
+
+        if ($result = mysqli_query($call, $query))
+        {
+
+
+
+            /* fetch associative array */
+            while ($row = mysqli_fetch_assoc($result) )
+            {
+                echo "<tr style = 'font-weight: bold'> <td>" , $row["stats"], "</td> <td style = 'padding-left: 30px;'> " , $row["size"], "</td> </tr>" ;
+                $time = $row["date"];
+            }
+
+
+            echo "<tr style = 'font-weight: bold'><td colspan = 2>" , "Updated: ", $time, "</td></tr>";
+            echo "</table>";
+
+            /* free result set */
+            mysqli_free_result($result);
+        }
+
+    }
+	/********************************************* 
+	 * SAM DEVELOPMENT
+	 ********************************************/
+	 
+	 /**********************************************
+     * Function: GET_DOCUMENT_BY_FILENAME
+     * Description: function responsible for returning all documents that match the filename
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+     ***********************************************/
+    function GET_DOCUMENT_BY_FILENAME($collection, $filename)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT * FROM `document` WHERE `filename` = :filename");
+			$sth->bindParam(':filename',$filename,PDO::PARAM_STR);
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	 /**********************************************
+     * Function: GET_DOCUMENT_BY_FILENAME_BACK
+     * Description: function responsible for returning all documents that match the filename BACK
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+	 * This function was created to avoid any mismatches with a fuzzy search
+     ***********************************************/
+    function GET_DOCUMENT_BY_FILENAME_BACK($collection, $filenameback)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT * FROM `document` WHERE `filenameback` = :filenameback");
+			$sth->bindParam(':filenameback',$filenameback,PDO::PARAM_STR);
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	 /**********************************************
+     * Function: GET_DOCUMENT_BY_GEOTIFF_FRONT
+     * Description: function responsible for returning the document that matches the geotiffname
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+     ***********************************************/
+    function GET_DOCUMENT_BY_GEOTIFF_FRONT($collection, $geotifffrontpath)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT * FROM `document` WHERE `georecFrontDirGeoTIFF` = :geotifffrontpath");
+			$sth->bindParam(':geotifffrontpath',$geotifffrontpath,PDO::PARAM_STR);
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	 /**********************************************
+     * Function: GET_DOCUMENT_BY_GEOTIFF_BACK
+     * Description: function responsible for returning the document that matches the geotiffname
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+	 * This function was created to avoid any mismatches with a fuzzy search
+     ***********************************************/
+    function GET_DOCUMENT_BY_GEOTIFF_BACK($collection, $geotiffbackpath)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT * FROM `document` WHERE `georecBackDirGeoTIFF` = :geotiffbackpath");
+			$sth->bindParam(':geotiffbackpath',$geotiffbackpath,PDO::PARAM_STR);
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	/**********************************************
+     * Function: GET_DOCUMENT_BY_KMZ_FRONT
+     * Description: function responsible for returning the document that matches the kmzfrontpath
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+     ***********************************************/
+    function GET_DOCUMENT_BY_KMZ_FRONT($collection, $kmzfrontpath)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT * FROM `document` WHERE `georecFrontDirKMZ` = :kmzfrontpath");
+			$sth->bindParam(':kmzfrontpath',$kmzfrontpath,PDO::PARAM_STR);
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	 /**********************************************
+     * Function: GET_DOCUMENT_BY_KMZ_BACK
+     * Description: function responsible for returning the document that matches the kmzfrontpath
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+	 * This function was created to avoid any mismatches with a fuzzy search
+     ***********************************************/
+    function GET_DOCUMENT_BY_KMZ_BACK($collection, $kmzbackpath)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT * FROM `document` WHERE `georecBackDirKMZ` = :kmzbackpath");
+			$sth->bindParam(':kmzbackpath',$kmzbackpath,PDO::PARAM_STR);
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	
+	 /**********************************************
+     * Function: GET_10_SPECIFIED_DOCUMENTS_FOR_AUTOMATION_TESTING
+     * Description: function responsible for returning the document that matches the kmzfrontpath
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+	 * This function was created to avoid any mismatches with a fuzzy search
+     ***********************************************/
+    function GET_10_SPECIFIED_DOCUMENTS_FOR_AUTOMATION_TESTING($collection)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT documentID FROM `document` WHERE `dspaceURI` = '1969.6/1563' OR `dspaceURI` = '1969.6/1564' OR `dspaceURI` = '1969.6/1565' OR `dspaceURI` = '1969.6/1566' OR `dspaceURI` = '1969.6/2583' OR `dspaceURI` = '1969.6/2760' OR `dspaceURI` = '1969.6/6951' OR `dspaceURI` = '1969.6/6952' OR `dspaceURI` = '1969.6/6953' OR `dspaceURI` = '1969.6/6962' ");		
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	
+	/**********************************************
+     * Function: GET_ALL_PUBLISHED_DOCUMENTS_FOR_AUTOMATION_TESTING
+     * Description: function responsible for returning the document that matches the kmzfrontpath
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+	 * This function was created to avoid any mismatches with a fuzzy search
+     ***********************************************/
+    function GET_ALL_PUBLISHED_DOCUMENTS_FOR_AUTOMATION_TESTING($collection)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT documentID FROM `document` WHERE dspaceURI != '' OR dspaceURI != NULL");
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+	/**********************************************
+     * Function: GET_ALL_PUBLISHED_DOCUMENTS_FOR_AUTOMATION_TESTING
+     * Description: function responsible for returning the document that matches the kmzfrontpath
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+	 * $filename (in String) - Name of the file
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+	 * This function was created to avoid any mismatches with a fuzzy search
+     ***********************************************/
+    function GET_ALL_UNIQUE_PUBLISHED_DOCUMENTS_FOR_AUTOMATION_TESTING($collection)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT * FROM `document` WHERE dspaceURI != '' OR dspaceURI != NULL group by dspaceURI");
+            $sth->execute();
+            //return statement
+            $ret = $sth->fetchAll(PDO::FETCH_ASSOC);
+			//var_dump($ret);
+            return $ret;
+        } else return false;
+    }
+
+
+	 /**********************************************
+     * Function: GET_DOCUMENT_FILTEREDNEEDSREVIEW0_COUNT_FIELDBOOK
+     * Description: function responsible for returning all documents that have a coastline
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+     ***********************************************/
+    function GET_DOCUMENT_FILTEREDNEEDSREVIEW0_COUNT_FIELDBOOK($collection,$booktitle)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select booktitles where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT COUNT(`documentID`) FROM `document` WHERE `needsreview`='0' AND `booktitle`=:bookTitle");
+            $sth->bindParam(':bookTitle',$booktitle,PDO::PARAM_INT);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+	/**********************************************
+     * Function: GET_DOCUMENT_FILTEREDNEEDSREVIEW0_COUNT_JOBFOLDER
+     * Description: function responsible for returning all documents that have a coastline
+     * Parameter(s):
+     * $collection (in String) - Name of the collection
+     * Return value(s):
+     * $result  (array) - true if success, otherwise, false
+     ***********************************************/
+    function GET_DOCUMENT_FILTEREDNEEDSREVIEW0_COUNT_JOBFOLDER($collection,$foldername)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select foldernames where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT COUNT(`documentID`) FROM `document` WHERE `needsreview`='0' AND `foldername`=:folderName");
+            $sth->bindParam(':folderName',$foldername,PDO::PARAM_STR);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+
+    function GET_DOCUMENT_MATCHBOOKTITLE_COUNT_FIELDBOOK($collection,$booktitle)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select booktitles where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT COUNT(`documentID`) FROM `document` WHERE `booktitle`=:bookTitle");
+            $sth->bindParam(':bookTitle',$booktitle,PDO::PARAM_INT);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+	 function GET_DOCUMENT_MATCHBOOKTITLE_COUNT_JOBFOLDER($collection,$foldername)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select booktitles where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT COUNT(`documentID`) FROM `document` WHERE `foldername`=:folderName");
+            $sth->bindParam(':folderName',$foldername,PDO::PARAM_STR);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+    function GET_DOCUMENT_MATCHBOOKTITLE_PDFSTAGE($collection,$booktitle)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select booktitles where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT `RdyForPdf` FROM `document` WHERE `booktitle`=:bookTitle");
+            $sth->bindParam(':bookTitle',$booktitle,PDO::PARAM_INT);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+	function GET_DOCUMENT_MATCHFOLDERNAME_PDFSTAGE($collection,$foldername)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select booktitles where needs review = 0
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT `RdyForPdf` FROM `document` WHERE `foldername`=:folderName");
+            $sth->bindParam(':folderName',$foldername,PDO::PARAM_STR);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+
+    function GET_DOCUMENT_FILTEREDNEEDSREVIEW1_COUNT($collection,$booktitle)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select booktitles where needs review = 1
+            // AND `weeklyreport`.`collectionID` = ?'
+            $sth = $this->getConn()->prepare("SELECT COUNT(`documentID`) FROM `document` WHERE `needsreview`='1' AND `booktitle`=:bookTitle");
+            $sth->bindParam(':bookTitle',$booktitle,PDO::PARAM_INT);
+            $sth->execute();
+            //return the result
+            $result = $sth->fetchColumn();
+            return $result;
+        } else return false;
+    }
+
+
+
+
+
+
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

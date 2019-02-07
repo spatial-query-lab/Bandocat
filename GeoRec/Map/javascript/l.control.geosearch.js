@@ -67,6 +67,18 @@ L.Control.GeoSearch = L.Control.extend({
         searchbox.placeholder = this._config.searchLabel;
         this._searchbox = searchbox;
 
+        //create the form that will contain the coordinate input
+        var coordForm = L.DomUtil.create('form','displayNone', this._container);
+        //creates the coordinates input
+        var coordInput = L.DomUtil.create('input', 'coordinateInput', coordForm);
+        coordInput.type = 'text';
+        coordInput.placeholder = 'Enter Coordinates Ex. 27.80, -97.41';
+        this._coordinates = coordInput;
+
+        //Event that is triggered every time a key in pressed into the input box
+        L.DomEvent.addListener(this._coordinates, 'keypress', this._onCoordinatesPress, this);
+
+
         var msgbox = L.DomUtil.create('div', 'leaflet-bar message displayNone', this._container);
         this._msgbox = msgbox;
 
@@ -77,6 +89,7 @@ L.Control.GeoSearch = L.Control.extend({
 
                 if (L.DomUtil.hasClass(form, 'displayNone')) {
                     L.DomUtil.removeClass(form, 'displayNone'); // unhide form
+                    L.DomUtil.addClass(form, 'geosearch')
                     searchbox.focus();
                 } else {
                     L.DomUtil.addClass(form, 'displayNone'); // hide form
@@ -94,57 +107,24 @@ L.Control.GeoSearch = L.Control.extend({
 		
 		//Adds button on leaflet map that allows user to add a gcp by entering in latlng coordinates manually.
 		L.DomEvent.on(link1, 'click', function(){
-			Maki_Icon = icon = L.MakiMarkers.icon({icon: colorCount+1, color: markerColors[colorCount], size: "m"});
-			
-			if(!mapSelected)
-			{	
-				var lat = window.prompt("Enter Latitude. Format, Decimal degrees; example: 27.758488");
-				var lng = window.prompt("Enter Longitude. Format, Decimal degrees; example: -97.433644");
 
-				if(lat == null | lng == null | lat == "" | lng == "")
-				{
+            if(!mapSelected) {
+                if (L.DomUtil.hasClass(coordForm, 'displayNone')) {
+                    L.DomUtil.removeClass(coordForm, 'displayNone');
+                    L.DomUtil.addClass(coordForm, 'coordForm')
+                }
+                else {
+                    L.DomUtil.addClass(coordForm, 'displayNone'); // hide form
+                }
+            }
 
-					setMarkerByLatLngSelected = true;
-					return null;
-				}
+            else if(!L.DomUtil.hasClass(coordForm, 'displayNone') || !mapSelected) {
+                L.DomUtil.addClass(coordForm, 'displayNone'); // hide form
+            }
 
-				addGCP(count, lat, lng, rasterCoords[rasterCount-1].x, rasterCoords[rasterCount-1].y);
-
-				//creates marker and popup
-				marker = L.marker([lat, lng], {icon:icon});
-				markerArray.push(marker);
-				map.addLayer(marker);
-			
-				colorCount++;
-				if(colorCount > 11)
-					alert("Maximum amount of points reached");
-				count++;
-				rasterSelected = false;
-				mapSelected = true;
-				setMarkerByLatLngSelected = true;
-
-				//creates table
-			var table = document.getElementById("table");
-			var row = table.insertRow(count+1);
-			var cell1 = row.insertCell(0);
-			var cell2 = row.insertCell(1);
-			var cell3 = row.insertCell(2);
-			var cell4 = row.insertCell(3);
-			var cell5 = row.insertCell(4);
-			cell1.innerHTML =  "<button id = 'zoomToMarker' onclick = 'zoomToMarker(" + count + ")' style = 'background-color:" + markerColors[colorCount-1] + "'>" + count + "</button>";  
-			cell2.innerHTML = gcpList[count-1].lat;
-			cell3.innerHTML = gcpList[count-1].lng;
-			cell4.innerHTML = gcpList[count-1].x;
-			cell5.innerHTML = gcpList[count-1].y;
-				
-				lat = null;
-				lng = null;	
-			}
-			else
-			{
-				alert("Select point from raster");
-			}
-		})
+            else
+                alert("Select point from raster");
+		});
         return this._container;
     },
 
@@ -340,6 +320,114 @@ L.Control.GeoSearch = L.Control.extend({
             e.stopPropagation();
 
             this.startSearch();
+        }
+    },
+
+    _getCoordinates: function () {
+        Maki_Icon = icon = L.MakiMarkers.icon({icon: colorCount+1, color: markerColors[colorCount], size: "m"});
+        if(!mapSelected){
+
+            //Gets the coordinate values from the input box
+            var coord = this._coordinates.value;
+            //Splits the coordinate input
+            arrayCoord = coord.split(',');
+            if(arrayCoord.length <= 1 || arrayCoord.length > 2) {
+                alert('Uneven amount of coordinates')
+            }
+
+            else{
+                if(arrayCoord[0] > 0) {
+                    if(arrayCoord[1] < 0){
+                        lat = arrayCoord[0];
+                        lng = arrayCoord[1]
+                    }
+                    else{
+                        alert("Wrong longitude or wrong input");
+                        return false
+                    }
+
+                }
+                else{
+                    if(arrayCoord[1] > 0) {
+                        lat = arrayCoord[1];
+                        lng = arrayCoord[0]
+                    }
+                    else{
+                        alert("Wrong longitude or wrong input");
+                        return false
+                    }
+
+                }
+
+            }
+
+            //Removes any extra whitespaces
+            lat = lat.trim();
+            lng = lng.trim();
+
+            if(lat == null | lng == null | lat == "" | lng == "")
+            {
+
+                setMarkerByLatLngSelected = true;
+                return null;
+            }
+
+            addGCP(count, lat, lng, rasterCoords[rasterCount-1].rlat, rasterCoords[rasterCount-1].rlong, rasterCoords[rasterCount-1].x, rasterCoords[rasterCount-1].y);
+
+            //creates marker and popup
+            marker = L.marker([lat, lng], {icon:icon});
+            markerArray.push(marker);
+            map.addLayer(marker);
+
+            colorCount++;
+            if(colorCount > 11)
+                alert("Maximum amount of points reached");
+            count++;
+            rasterSelected = false;
+            mapSelected = true;
+            setMarkerByLatLngSelected = true;
+
+            //creates table
+            var table = document.getElementById("table");
+            var row = table.insertRow(count+1);
+            var cell1 = row.insertCell(0);
+            $(cell1).attr('id', 'marker-'+gcpList[count-1].id);
+            var cell2 = row.insertCell(1);
+            $(cell2).attr('id', 'markerLat-'+gcpList[count-1].id);
+            var cell3 = row.insertCell(2);
+            $(cell3).attr('id', 'markerLong-'+gcpList[count-1].id);
+            var cell4 = row.insertCell(3);
+            $(cell4).attr('id', 'rasterLat-'+gcpList[count-1].id);
+            var cell5 = row.insertCell(4);
+            $(cell5).attr('id', 'rasterLong-'+gcpList[count-1].id);
+            var cell6 = row.insertCell(5);
+            $(cell6).attr('id', 'rasterX-'+gcpList[count-1].id);
+            var cell7 = row.insertCell(6);
+            $(cell7).attr('id', 'rasterY-'+gcpList[count-1].id);
+            cell1.innerHTML = "<button id = 'zoomToMarker' onclick = 'zoomToMarker(" + count + ")' style = 'background-color:" + markerColors[colorCount - 1] + "'>" + count + "</button>";
+            cell2.innerHTML = gcpList[count - 1].lat;
+            cell3.innerHTML = gcpList[count - 1].lng;
+            cell4.innerHTML = gcpList[count - 1].rlat;
+            cell5.innerHTML = gcpList[count - 1].rlong;
+            cell6.innerHTML = gcpList[count - 1].x;
+            cell7.innerHTML = gcpList[count - 1].y;
+            //hide column raster lat and raster long
+            cell4.style.display = "none";
+            cell5.style.display = "none";
+        }
+        else
+            alert("Select point from raster");
+
+    },
+
+    _onCoordinatesPress: function (e) {
+        var enterKey = 13;
+
+        if(e.keyCode === enterKey) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            this._getCoordinates();
         }
     }
 });

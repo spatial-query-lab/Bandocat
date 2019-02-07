@@ -44,7 +44,7 @@ $Render = new ControlsRender();
                             Select Collection:
                             <select name="ddlCollection" id="ddlCollection">
                                 <!-- Renders the Dropdownlist with the collections -->
-                                <?php $Render->GET_DDL_COLLECTION($DB->GET_COLLECTION_FOR_DROPDOWN_FROM_TEMPLATEID(array(4),false),"bluchermaps");?>
+                                <?php $Render->GET_DDL_COLLECTION($DB->GET_COLLECTION_FOR_DROPDOWN_FROM_TEMPLATEID(array(4),false),"");?>
                             </select>
                         </form>
                         </td>
@@ -170,26 +170,45 @@ $Render = new ControlsRender();
     /*Submit event that obtains teh information from the user form and calls the newuser_processing.php page, which links to
      a procedure in the database that insert the information into the bandocatdb database in the user table .*/
     $(document).ready(function () {
-        displayLog();
+        //displayLog();
         $( "#ddlCollection" ).change(function() {
             switch ($("#ddlCollection").val())
             {
                 case "": break;
-                default: loadQueue();
+                default: {
+					console.log("Loading Queue...");
+					console.log($("#ddlCollection").val());
+					loadQueue();
+					//displayLog();
+				}
             }
             //resize height of the scroller
             $("#divscroller").height(450);
         });
 
         $("#ddlCollection").change(); //run this when the page is loaded
-
+		
         //Reload queue after 10sec, reload Queue every 10sec
         window.setInterval(function(){
-            loadQueue();
+			if($("#ddlCollection").val() == "")
+			{
+				console.log("Selection box is empty");
+			}
+			else{
+				loadQueue();
+			}
+            
         }, 10000);
         //Reload queue after 18sec, reload Log every 10sec
         window.setInterval(function(){
-            displayLog();
+			if($("#ddlCollection").val() == "")
+			{
+				console.log("Selection box is empty");
+			}
+			else{
+				displayLog();
+			}
+            //
         }, 18000);
 
     });

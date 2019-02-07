@@ -2,6 +2,8 @@
 //Menu
 include '../../Library/SessionManager.php';
 $session = new SessionManager();
+$username = $_SESSION['username'];
+
 if(isset($_GET['col']))
 {
     //get collection name passed in from side menu
@@ -29,9 +31,8 @@ else header('Location: ../../');
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- The title of the page -->
     <title><?php echo $config["DisplayName"]." Menu"; ?></title>
-    <link rel = "stylesheet" type = "text/css" href = "CSS/Map_Collection.css" >
     <link rel = "stylesheet" type = "text/css" href = "../../Master/master.css" >
-    <script type="text/javascript" src="ExtLibrary/jQuery-2.2.3/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="../../ExtLibrary/jQuery-2.2.3/jquery-2.2.3.js"></script>
 
 </head>
 <!-- HTML BODY -->
@@ -72,7 +73,7 @@ else header('Location: ../../');
                 </tr>
                 <tr>
                     <td class="Collection_data">
-                        <a class="Collection_Button" href="../../Training/Forms/list.php?col=<?php echo $collection; ?>&action=training&type=none" style="text-decoration: none; color: white; display: block">Training</a>
+                        <a id="training" class="Collection_Button" href="../../Training/jobfolder/Forms/list.php?col=<?php echo $collection; ?>&action=training&type=none" style="text-decoration: none; color: white; display: block">Training</a>
                     </td>
                 </tr>
             </table>
@@ -80,6 +81,19 @@ else header('Location: ../../');
     </tr>
 
 </table>
+
+<script>
+    //On click event that check for the existence of the users training XML documents
+    $('#training').click(function () {
+        var newType = {"col": '<?php echo $collection ?>', "ntype": 'newbie', "itype": 'inter', "user": '<?php echo $username?>'};
+        $.ajax({
+                type: 'post',
+                url: "../../Training/"+ '<?php echo $collection ?>/' +"Forms/collectionTrainingXML.php",
+                data: newType
+            });
+        }
+    )
+</script>
 
 <?php include '../../Master/footer.php'; ?>
 

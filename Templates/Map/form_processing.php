@@ -21,7 +21,7 @@ $session = new SessionManager();
     if($action != "delete")
     {
         //data pre-processing
-        //Date
+        //DateF
         require '../../Library/DateHelper.php';
         $date = new DateHelper();
         $startdate = $date->mergeDate($data['ddlStartMonth'], $data['ddlStartDay'], $data['ddlStartYear']);
@@ -38,13 +38,28 @@ $session = new SessionManager();
     //if the action is review
     if($action == "review")
     {
-        $valid = true;
-        $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_UPDATE($collection,$data['txtDocID'],$data['txtLibraryIndex'],$data['txtTitle'],$data['txtSubtitle'],
-            $data['rbIsMap'],$data['txtMapScale'],$data['rbHasNorthArrow'],$data['rbHasStreets'],
+        if($collection != "pennyfenner")
+        {
+            $valid = true;
+            $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_UPDATE($collection,$data['txtDocID'],$data['txtLibraryIndex'],$data['txtTitle'],$data['txtSubtitle'],
+                $data['rbIsMap'],$data['txtMapScale'],$data['rbHasNorthArrow'],$data['rbHasStreets'],
                 $data['rbHasPOI'],$data['rbHasCoordinates'],$data['rbHasCoast'],$data['rbNeedsReview'],
                 $data['txtComments'],$customerID,$startdate,$enddate,$data['txtFieldBookNumber'],$data['txtFieldBookPage'],$data['ddlReadability'],
-            $data['ddlRectifiability'],$companyID,$data['txtType'],$mediumID,$authorID);
-        $comments = "Library Index:" . $data['txtLibraryIndex'];
+                $data['ddlRectifiability'],$companyID,$data['txtType'],$mediumID,$authorID);
+            $comments = "Library Index:" . $data['txtLibraryIndex'];
+        }
+        else if ($collection == "pennyfenner")
+        {
+            $valid = true;
+			$data['txtType'] = null;
+            $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_UPDATE($collection,$data['txtDocID'],$data['txtLibraryIndex'],$data['txtTitle'],$data['txtSubtitle'],
+                $data['rbIsMap'],$data['txtMapScale'],$data['rbHasNorthArrow'],$data['rbHasStreets'],
+                $data['rbHasPOI'],$data['rbHasCoordinates'],$data['rbHasCoast'],$data['rbNeedsReview'],
+                $data['txtComments'],$customerID,$startdate,$enddate,$data['txtJobNumber'],$data['txtFieldBookNumber'],$data['txtFieldBookPage'],$data['ddlReadability'],
+                $data['ddlRectifiability'],$companyID,$data['txtType'],$mediumID,$authorID);
+            $comments = "Library Index:" . $data['txtLibraryIndex'];
+        }
+       
        // array_push($msg,"Update Query: GOOD");
     }
     //catalog (new document)
@@ -163,13 +178,27 @@ $session = new SessionManager();
             if($hasBack == true)
                 $backpath = str_replace($config['StorageDir'],"",$filenamebackpath) . "/" . $filenameback;
            // INSERT QUERY
-            $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_INSERT($collection, $data['txtLibraryIndex'], $data['txtTitle'], $data['txtSubtitle'],
-                $data['rbIsMap'], $data['txtMapScale'], $data['rbHasNorthArrow'], $data['rbHasStreets'],
-                $data['rbHasPOI'], $data['rbHasCoordinates'], $data['rbHasCoast'], $filename, $filenameback, $data['rbNeedsReview'],
-                $data['txtComments'], $customerID, $startdate, $enddate, $data['txtFieldBookNumber'], $data['txtFieldBookPage'], $data['ddlReadability'],
-                $data['ddlRectifiability'], $companyID, $data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
-            $data['txtDocID'] = $retval;
-            $comments = "Library Index: " . $data['txtLibraryIndex'];
+             if($collection != "pennyfenner")
+            {
+                $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_INSERT($collection, $data['txtLibraryIndex'], $data['txtTitle'], $data['txtSubtitle'],
+                    $data['rbIsMap'], $data['txtMapScale'], $data['rbHasNorthArrow'], $data['rbHasStreets'],
+                    $data['rbHasPOI'], $data['rbHasCoordinates'], $data['rbHasCoast'], $filename, $filenameback, $data['rbNeedsReview'],
+                    $data['txtComments'], $customerID, $startdate, $enddate, $data['txtFieldBookNumber'], $data['txtFieldBookPage'], $data['ddlReadability'],
+                    $data['ddlRectifiability'], $companyID, $data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
+                $data['txtDocID'] = $retval;
+                $comments = "Library Index: " . $data['txtLibraryIndex'];
+            }
+            else if($collection == "pennyfenner")
+            {
+				$data['txtType'] = null;
+                $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_INSERT($collection, $data['txtLibraryIndex'], $data['txtTitle'], $data['txtSubtitle'],
+                    $data['rbIsMap'], $data['txtMapScale'], $data['rbHasNorthArrow'], $data['rbHasStreets'],
+                    $data['rbHasPOI'], $data['rbHasCoordinates'], $data['rbHasCoast'], $filename, $filenameback, $data['rbNeedsReview'],
+                    $data['txtComments'], $customerID, $startdate, $enddate, $data['txtJobNumber'], $data['txtFieldBookNumber'], $data['txtFieldBookPage'], $data['ddlReadability'],
+                    $data['ddlRectifiability'], $companyID,$data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
+                $data['txtDocID'] = $retval;
+                $comments = "Library Index: " . $data['txtLibraryIndex'];
+            }
 
 
             //script for thumbnail

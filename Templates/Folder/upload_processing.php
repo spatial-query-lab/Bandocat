@@ -1,4 +1,4 @@
- <?php
+<?php
 //check for session
 require '../../Library/SessionManager.php';
 $session = new SessionManager();

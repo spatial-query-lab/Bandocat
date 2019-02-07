@@ -10,13 +10,6 @@ if(isset($_GET['col']))
     $DB = new DBHelper();
     //get appropriate DB
     $config = $DB->SP_GET_COLLECTION_CONFIG($collection);
-    $userRole = $session -> getRole();
-    //If the user is a reader automatically redirect them to the edit page because only one button remains, and is pointless
-    //to have 1 button to go to one place.
-    if($userRole == "Reader")
-    {
-        header('Location: ./list.php?col='.$collection.'&action=review');
-    }
 }
 else header('Location: ../../');
 ?>
@@ -56,19 +49,19 @@ else header('Location: ../../');
                 <tr>
                     <td class="Collection_data">
                         <!-- Upload Documents Button, Php code sends the collection name to upload.php -->
-                        <a class="Collection_Button" id="uploadBtn" href="./upload.php?col=<?php echo $collection; ?>" style="text-decoration: none; color: white; display: block">Upload Documents</a>
+                        <a class="Collection_Button" href="./upload.php?col=<?php echo $collection; ?>" style="text-decoration: none; color: white; display: block">Upload Documents</a>
                     </td>
                 </tr>
                 <tr>
                     <td class="Collection_data">
                         <!-- Catalog Documents Button, Php code sends the collection name to list.php and send variable action=catalog -->
-                        <a class="Collection_Button" id="catalogBtn" href="./list.php?col=<?php echo $collection; ?>&action=catalog" style="text-decoration: none; color: white; display: block">Catalog Document</a>
+                        <a class="Collection_Button" href="./list.php?col=<?php echo $collection; ?>&action=catalog" style="text-decoration: none; color: white; display: block">Catalog Document</a>
                     </td>
                 </tr>
                 <tr>
                     <td class="Collection_data">
                         <!-- Edit/View Documents Button, Php code sends the collection name to list.php and send variable action=review -->
-                        <a class="Collection_Button" id="editBtn" href="./list.php?col=<?php echo $collection; ?>&action=review" style="text-decoration: none; color: white; display: block">Edit/View Document</a>
+                        <a class="Collection_Button" href="./list.php?col=<?php echo $collection; ?>&action=review" style="text-decoration: none; color: white; display: block">Edit/View Document</a>
                     </td>
                 </tr>
             </table>
@@ -83,15 +76,4 @@ else header('Location: ../../');
 <style type="text/css">
     nav{margin: -1px 0px 40px 15px !important;}
 </style>
-<script>
-    //Script checks the users role. If the role is set as "Reader" Then certain functionality is hidden
-    $( document ).ready(function()
-    {
-        var userRole = '<?php echo $session -> getRole(); ?>';
-        if(userRole == "Reader")
-        {
-            header('Location: ../../list.php?col=<?php echo $collection; ?>&action=review');
-        }
-    });
-</script>
 </html>

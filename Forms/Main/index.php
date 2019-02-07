@@ -45,11 +45,11 @@ require '../../Library/AnnouncementDBHelper.php';
         <td class="menu_left" id="thetable_left">
             <?php include '../../Master/sidemenu.php' ?>
         </td>
-        <td class="tg-zhyu"><h2>BandoCat</h2>
-            <div>
-                <object type="text/html" data="http://spatialquerylab.com/category/map-scanning/"" width="100%" height="680px" style="overflow:auto">
+        <td class="tg-zhyu" ><h2>BandoCat</h2>
+
+                <object type="text/html" data="http://spatialquerylab.com/category/map-scanning/"" width="100%" height="680px" style="overflow:auto;">
                 </object>
-            </div>
+
         </td>
         <td class="tg-0za1"><h2>Announcements</h2>
             <div id="divscroller" style="text-align: center">
@@ -64,6 +64,7 @@ require '../../Library/AnnouncementDBHelper.php';
 <script>
     $( document ).ready(function()
     {
+
         var map = [];
         var down = [];
         $(document).keydown(function(e)
@@ -109,6 +110,40 @@ require '../../Library/AnnouncementDBHelper.php';
 
                     break;
                 }
+                //if asteroids
+                if (value == "65")
+                {
+                    if(down[index+1] == "83")
+                    {
+                        if(down[index+2] == "84")
+                        {
+                            if(down[index+3] == "69")
+                            {
+                                if(down[index+4] == "82")
+                                {
+                                    if(down[index+5] == "79")
+                                    {
+                                        if(down[index+6] == "73")
+                                        {
+                                            if(down[index+7] == "68")
+                                            {
+                                                if(down[index+8] == "83")
+                                                {
+                                                    window.location.replace("../Main/index_asteroids.php");
+                                                    // ../../Transcription/Indices/list.php?
+                                                    down.length = 0;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+                }
             }
 
             // down.length = 0;
@@ -141,15 +176,16 @@ require '../../Library/AnnouncementDBHelper.php';
 
         //Prepends an announcement button to the scrolling div if the user has admin privileges
         var admin = '<?php echo $admin; ?>';
-        if(admin == 1) {
+        if(admin == 1)
+        {
             $('#divscroller').prepend('<input class="bluebtn" id="announcer" type="button" onclick="createAnnouncement()" value="CREATE ANNOUNCEMENT" style="font-size: 0.775vw;">')
         }
 
     /***************************************************
      * <A    N   N   O   U   N   C   E   M   E   N   T>
      ***************************************************/
-    //Announcement information for post in JSON format
-    var announcementPost = '<?php echo $announcementJSON ?>';
+
+
 
 
     /**********************************************
@@ -177,7 +213,7 @@ require '../../Library/AnnouncementDBHelper.php';
     }
 
 
-
+    var announcementPost = '<?php echo $announcementJSON ?>';
     //JSON object with the announcement information
     var post = JSON.parse(announcementPost);
 
@@ -215,12 +251,12 @@ require '../../Library/AnnouncementDBHelper.php';
         if(announcementLength > 0) {
             for(var i = 0; i < announcementLength; i++) {
                 //Post element and components appended to the post div with information obtained from the database
-                $("#post").append("<div id = 'post-" + i + "' class='anno'><h2 id ='title-" + i + "' ondblclick='editAnnouncement(" + 0 + ")'></h2><p id='message-" + i + "' ondblclick='editAnnouncement(" + 1 + ")' style='padding: 5%;'></p></div> ");
+                $("#post").append("<div id = 'post-" + i + "' class='anno'><h2 id ='title-" + i + "' ondblclick='editAnnouncement(" + 0 + ",this.id)'></h2><p id='message-" + i + "' ondblclick='editAnnouncement(" + 1 + ",this.id)' style='padding: 5%;'></p></div> ");
                 titleText = post[i].title;
                 messageText = post[i].message;
                 //$("#title-" + i).text(specialCharReplace(titleText));
-                $("#title-" + 0).text(specialCharReplace(titleText));
-                $("#message-" + 0).text(specialCharReplace(messageText));
+                $("#title-" + i).text(specialCharReplace(titleText));
+                $("#message-" + i).text(specialCharReplace(messageText));
             }
         }
     }
@@ -243,7 +279,7 @@ require '../../Library/AnnouncementDBHelper.php';
             //Prevents the creation of two new announcement containers
             if(annoLenght < 1){
                 //Prepends to the div id = post the create announcement container id = annoCreate with all of its elements
-                $("#post").prepend("<div id='annoCreate' class='anno'>" +
+                $("#post").prepend("<div id='annoCreate'  class='anno'>" +
                     "<h2 id='h2Announcement'>Announcement</h2>" +
                     "<form id='announcement'>" +
                     "<input type='text' id='annoTitle' value='Title' required>"+
@@ -312,12 +348,25 @@ require '../../Library/AnnouncementDBHelper.php';
             type: 'post',
             url: "announcement_processing.php",
             data: announcementData,
-            success: function (data) {
+            success: function (data)
+            {
                 $('#annoCreate').remove();
                 postDivs = $("#post > div").length;
+                //We need to pull new list of announcements
+                <?php
+
+                $announcement = new AnnouncementDBHelper();
+                $announcementData = $announcement->GET_ANNOUNCEMENT_DATA();
+                $announcementJSON = json_encode($announcementData);
+                ?>
+                var announcementPost = '<?php echo $announcementJSON ?>';
+                //JSON object with the announcement information
+                var post = JSON.parse(announcementPost);
                 dismissCreate(postDivs, title, message);
+
             }
         });
+
     }
 
     /**********************************************
@@ -344,36 +393,58 @@ require '../../Library/AnnouncementDBHelper.php';
      * Parameter(s): int, title = 0
      * Return value(s): NONE
      ***********************************************/
-    function editAnnouncement(element){
-        var postIndex =getPostIndex(event.target);
-        var elemEvent = event.target;
-        var elemID = $(elemEvent).attr('id');
-        var elemParent = $(elemEvent).parent().attr('id');
-        var message = post[postIndex].message;
-        var title = post[postIndex].title;
-        var date = post[postIndex].endtime;
+    function editAnnouncement(element,id){
+        if(admin == 1)
+        {
+            var postIndex =getPostIndex(event.target);
+            //elemEvent holds the id
+            var elemEvent = event.target;
+            var elemID = $(elemEvent).attr('id');
+            var elemParent = $(elemEvent).parent().attr('id');
+            $.ajax({
+                type: "POST",
+                url: "./announcement_refresh.php",
+                success: function (data)
+                {
+                    var incommingData = data;
+                    // console.log(test);
+                    post = JSON.parse(incommingData);
+                    console.log(post);
 
-        if(element == 1){
-            $('#'+elemID).remove();
-            $('#'+elemParent).append("<textarea id='editMessage-"+ postIndex +"' class='edit' style='height: 50px; width: 85%' maxlength='800'></textarea>");
-            $('#editMessage-' + postIndex).text(specialCharReplace(message));
+                    var message = post[postIndex].message;
+                    var title = post[postIndex].title;
+                    var date = post[postIndex].endtime;
+                    //var text = test.textContent;
+                    //   console.log(text);
+
+                    if(element == 1){
+                        $('#'+elemID).remove();
+                        $('#'+elemParent).append("<textarea id='editMessage-"+ postIndex +"' class='edit' style='height: 50px; width: 85%' maxlength='800'></textarea>");
+                        $('#editMessage-' + postIndex).text(specialCharReplace(message));
+                    }
+                    if(element == 0){
+                        $('#'+elemID).remove();
+                        $('#'+elemParent).prepend("<h2><input id='editTitle-"+ postIndex +"' class='edit'></h2>");
+                        $('#editTitle-'+postIndex).val(specialCharReplace(title));
+
+                    }
+
+                    var editLength = $("#updateAnnouncement-"+postIndex).length;
+                    if(editLength <= 0) {
+                        $('#'+elemParent).append("<p id = 'textEdit-"+ postIndex +"' style='margin: 3% 2% -4% 2%;'>Expiration Date: <input id='editDeleteDate-"+ postIndex +"' style='width: 40%; text-align: center' value=" + date + "></p>" +
+                            "<input id = 'updateAnnouncement-"+ postIndex +"' class='bluebtn' type ='submit' onclick='updateAnnouncement("+ postIndex +")' value='Edit' style='margin-top: 5%'>" +
+                            "<input id = 'cancelEdit-" + postIndex + "' class='bluebtn' type='button' onclick='dismissEdit(event.target, post[" + postIndex + "].title, post[" + postIndex + "].message)' value='Cancel'>");
+                        $(function () {
+                            $("#editDeleteDate-"+postIndex).datepicker();
+                        });
+                    }
+                }
+            });
         }
-        if(element == 0){
-            $('#'+elemID).remove();
-            $('#'+elemParent).prepend("<h2><input id='editTitle-"+ postIndex +"' class='edit'></h2>");
-            $('#editTitle-'+postIndex).val(specialCharReplace(title));
+//        var test = document.getElementById(id);
+//        console.log(test);
 
-        }
 
-            var editLength = $("#updateAnnouncement-"+postIndex).length;
-            if(editLength <= 0) {
-                $('#'+elemParent).append("<p id = 'textEdit-"+ postIndex +"' style='margin: 3% 2% -4% 2%;'>Expiration Date: <input id='editDeleteDate-"+ postIndex +"' style='width: 40%; text-align: center' value=" + date + "></p>" + "<br>" +
-                    "<input id = 'updateAnnouncement-"+ postIndex +"' class='bluebtn' type ='submit' onclick='updateAnnouncement("+ postIndex +")' value='Edit' style='margin-top: 5%'>" +
-                "<input id = 'cancelEdit-" + postIndex + "' class='bluebtn' type='button' onclick='dismissEdit(event.target, post[" + postIndex + "].title, post[" + postIndex + "].message)' value='Cancel'>");
-                $(function () {
-                    $("#editDeleteDate-"+postIndex).datepicker();
-                });
-            }
     }
 
     /**********************************************
@@ -444,7 +515,7 @@ require '../../Library/AnnouncementDBHelper.php';
      * Return value(s): NONE
      ***********************************************/
     function dismissCreate(i, title, message){
-        $("#post").append("<div id = 'post-" + i + "' class='anno'><h2 id ='title-" + i + "' ondblclick='editAnnouncement(" + 0 + ")'></h2><p id='message-" + i + "' ondblclick='editAnnouncement(" + 1 + ")' style='padding: 5%;'></p></div> ");
+        $("#post").append("<div id = 'post-" + i + "' class='anno'><h2 id ='title-" + i + "' ondblclick='editAnnouncement(" + 0 + ",this.id)'></h2><p id='message-" + i + "' ondblclick='editAnnouncement(" + 1 + ",this.id)' style='padding: 5%;'></p></div> ");
         $("#title-" + i).html(title);
         $("#message-" + i).html(message);
     }
@@ -468,7 +539,7 @@ require '../../Library/AnnouncementDBHelper.php';
         $('#message-' + postIndex).remove();
 
             //A div is appended to a div id = post with a title header and message
-                $("#post-"+postIndex).prepend("<h2 id ='title-" + postIndex + "' ondblclick='editAnnouncement(" + 0 + ")'></h2><p id='message-" + postIndex + "' ondblclick='editAnnouncement(" + 1 + ")' style='padding: 5%;'></p></div> ");
+                $("#post-"+postIndex).prepend("<h2 id ='title-" + postIndex + "' ondblclick='editAnnouncement(" + 0 + ",this.id)'></h2><p id='message-" + postIndex + "' ondblclick='editAnnouncement(" + 1 + ",this.id)' style='padding: 5%;'></p></div> ");
                 $("#title-" + postIndex).html(title);
                 $("#message-" + postIndex).html(message);
     }

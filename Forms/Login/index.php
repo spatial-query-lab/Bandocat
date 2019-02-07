@@ -161,7 +161,7 @@ session_start();
 
     <p>Contact Information:</p>
     <ul>
-        <li>Website Admin: <a href="mailto:snguyen1@islander.tamucc.edu" target="_top">snguyen1@islander.tamucc.edu</a></li>
+        <li>Website Admin: <a href="mailto:sallred@islander.tamucc.edu" target="_top">sallred@islander.tamucc.edu</a></li>
         <li>Project Manager: <a href="mailto:richard.smith@tamucc.edu" target="_top">richard.smith@tamucc.edu</a></li>
     </ul>
         <p class = "Copyrights">Copyright <span id="CBI_Year"></span> Conrad Blucher Institute for Surveying and Science  </p>

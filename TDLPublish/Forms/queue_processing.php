@@ -18,7 +18,15 @@ switch($collectionConfig['TemplateID']) //switch $hasRec to true if the collecti
 switch($_GET['action'])
 {
     case "load":
-        echo json_encode($DB->PUBLISHING_GET_PUBLISH_QUEUE());
+	    //echo $_POST['ddlCollection'];
+		$collectionNameFile = "../CRON/currentCollection.txt";
+		if(!file_exists($collectionNameFile))
+			$collectionName = fopen($collectionNameFile, "w"); // creates error log file to log progess of each item (write)
+		else $collectionName = fopen($collectionNameFile,"w"); //open error log file and append to it if file already exists
+		
+		fwrite($collectionName,$_POST['ddlCollection']);
+		fclose($collectionName);
+        echo json_encode($DB->PUBLISHING_GET_PUBLISH_QUEUE());	
         break;
     case "reset":
         echo json_encode($DB->PUBLISHING_RESET_QUEUE());

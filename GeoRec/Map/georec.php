@@ -24,7 +24,7 @@ $isBack = $_GET['type'] == "back" ? true : false; //identify if this map is a fr
 $georec_entries = $DB->GEOREC_ENTRIES_SELECT($_GET['docID'],$isBack);
 //get georec status for this map from document table
 $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
-
+//Old Working Server version with added esri code.
 ?>
 <!DOCTYPE html>
 <html>
@@ -46,10 +46,11 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
     <script src="javascript/l.geosearch.provider.esri.js"></script>
     <script type="text/javascript" src="javascript/bandocatRectification.js"></script>
     <script src="../../ExtLibrary/PolylineMeasure/PolylineMeasure.js"></script>
+    <script src="../../ExtLibrary/L.GeometryUtil/L.GeometryUtil.js"></script>
     <script type="text/javascript" src="../../ExtLibrary/L.Control.MousePosition/L.Control.MousePosition.js"></script>
 </head>
 <style>
-/*    Styles for popup Update Status */
+    /*    Styles for popup Update Status */
     #divUpdateGeoRecStatus{
         position:absolute;
         z-index: 1000;
@@ -106,38 +107,61 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
 
     var map = L.mapbox.map("map");
     L.control.mousePosition().addTo(map);
-
+    //pk.eyJ1Ijoic2FsbHJlZCIsImEiOiJjajN1N3pjbzkwMDUwMnFsaTZhNGxvcnpsIn0.YcXPcOqQeZ556qHY4B5o8A
+    //old pk.eyJ1Ijoic3BhdGlhbHF1ZXJ5bGFiIiwiYSI6ImNpeW43eHZ2YTAwMTgzMnBjNGF4bWVuaHIifQ.H-IzkkctQwbBRjhS9VLddA
     //Base layers with leaflet layer control and access token
-    var street = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic3BhdGlhbHF1ZXJ5bGFiIiwiYSI6ImNpeW43eHZ2YTAwMTgzMnBjNGF4bWVuaHIifQ.H-IzkkctQwbBRjhS9VLddA', {
-        maxZoom: 20,
-        maxNativeZoom: 18,
-        attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors'
-    }).addTo(map);
+//    var street = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic2FsbHJlZCIsImEiOiJjajN1N3pjbzkwMDUwMnFsaTZhNGxvcnpsIn0.YcXPcOqQeZ556qHY4B5o8A', {
+//        maxZoom: 20,
+//        maxNativeZoom: 18,
+//        attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors'
+//    }).addTo(map);
 
-    var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic3BhdGlhbHF1ZXJ5bGFiIiwiYSI6ImNpeW43eHZ2YTAwMTgzMnBjNGF4bWVuaHIifQ.H-IzkkctQwbBRjhS9VLddA', {
-        maxZoom: 20,
-        maxNativeZoom: 18,
-        attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors'
-    });
+//    var street = L.tileLayer(
+//        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+//            attribution: '&copy; '+mapLink+', '+wholink,
+//            maxZoom: 20,
+//    }).addTo(map);
+
+//    var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoic2FsbHJlZCIsImEiOiJjajN1N3pjbzkwMDUwMnFsaTZhNGxvcnpsIn0.YcXPcOqQeZ556qHY4B5o8A', {
+//        maxZoom: 20,
+//        maxNativeZoom: 18,
+//        attribution: '&copy; <a href="https://www.mapbox.com/">Mapbox</a> contributors'
+//    });
+    mapLink = '<a href="http://www.esri.com/">Esri</a>';
+    wholink = 'i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+    var esriSat =  L.tileLayer(
+        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; '+mapLink+', '+wholink,
+            maxZoom: 20,
+        });
+    var esriStreet =  L.tileLayer(
+        'http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; '+mapLink+', '+wholink,
+            maxZoom: 20,
+        }).addTo(map);
+    var esriTransportation = L.tileLayer(
+        'http://server.arcgisonline.com/arcgis/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; '+mapLink+', '+wholink,
+            maxZoom: 20,
+        });
+    var items = new L.FeatureGroup([esriSat,esriTransportation]);
 
     var baseMaps = {
-        "Street": street,
-        "Satellite": satellite
+        "Street": esriStreet,
+        "Esri Sat": esriSat
     };
-    L.control.layers(baseMaps).addTo(map);
+
+    var overlayMaps = {
+        "Esri Transportation": esriTransportation
+    }
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+
 
     //adds geocoder to map
     new L.Control.GeoSearch({
         provider: new L.GeoSearch.Provider.Esri(),
         showMarker: false
     }).addTo(map);
-
-    var targetIcon = L.icon({
-        iconUrl: '../../Images/target.png',
-        iconSize:     [50, 50], // size of the icon
-        iconAnchor: [25.5, 24.5],
-        popupAnchor: [0, 0]
-    });
 
     L.control.polylineMeasure({
         position: 'topright',                    // Position to show the control. Possible values are: 'topright', 'topleft', 'bottomright', 'bottomleft'
@@ -275,80 +299,80 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
                 alert("Select point from raster");
             }
             return;
-            }
+        }
 
-            if(markerType == 'mapMarker'){
+        if(markerType == 'mapMarker'){
             if(!mapSelected) {
                 //creates new object of gcpList
-            addGCP(count, markerLayer.latlng.lat, markerLayer.latlng.lng, rasterCoords[rasterCount - 1].rlat, rasterCoords[rasterCount - 1].rlong, rasterCoords[rasterCount - 1].x, rasterCoords[rasterCount - 1].y);
+                addGCP(count, markerLayer.latlng.lat, markerLayer.latlng.lng, rasterCoords[rasterCount - 1].rlat, rasterCoords[rasterCount - 1].rlong, rasterCoords[rasterCount - 1].x, rasterCoords[rasterCount - 1].y);
 
-            //creates marker and popup
-            marker = L.marker(markerLayer.latlng, {icon: icon});
-            marker.bindPopup("Edit").openPopup().closePopup;
-            markerArray.push(marker);
-            map.addLayer(marker);
+                //creates marker and popup
+                marker = L.marker(markerLayer.latlng, {icon: icon});
+                marker.bindPopup("Edit").openPopup().closePopup;
+                markerArray.push(marker);
+                map.addLayer(marker);
 
-            var markerIndex = marker.on('click', function clickIndex(event) {
-                for (i = 0; i < gcpList.length; i++) {
-                    if (gcpList[i].lat == event.latlng.lat) {
-                        markerIndex = i;
+                var markerIndex = marker.on('click', function clickIndex(event) {
+                    for (i = 0; i < gcpList.length; i++) {
+                        if (gcpList[i].lat == event.latlng.lat) {
+                            markerIndex = i;
+                        }
                     }
-                }
-                event.target.dragging.enable();
-                return markerIndex;
-            });
+                    event.target.dragging.enable();
+                    return markerIndex;
+                });
 
-            marker.on('dragend', function (event) {
-                var marker = event.target;
-                var latitude = marker._latlng.lat;
-                gcpList[markerIndex].lat = latitude;
-                var longitude = marker._latlng.lng;
-                gcpList[markerIndex].lng = longitude;
-                $('#markerLat-' + markerIndex).text(gcpList[markerIndex].lat);
-                $('#markerLong-' + markerIndex).text(gcpList[markerIndex].lng);
-            });
+                marker.on('dragend', function (event) {
+                    var marker = event.target;
+                    var latitude = marker._latlng.lat;
+                    gcpList[markerIndex].lat = latitude;
+                    var longitude = marker._latlng.lng;
+                    gcpList[markerIndex].lng = longitude;
+                    $('#markerLat-' + markerIndex).text(gcpList[markerIndex].lat);
+                    $('#markerLong-' + markerIndex).text(gcpList[markerIndex].lng);
+                });
 
 
-            //alert(colorCount);
-            colorCount++;
-            if (colorCount > 11)
-                alert("Maximum amount of points reached");
+                //alert(colorCount);
+                colorCount++;
+                if (colorCount > 11)
+                    alert("Maximum amount of points reached");
 
-            count++;
-            rasterSelected = false;
-            mapSelected = true;
+                count++;
+                rasterSelected = false;
+                mapSelected = true;
 
-            //creates table
-            var table = document.getElementById("table");
-            var row = table.insertRow(count + 1);
-            var cell1 = row.insertCell(0);
-            $(cell1).attr('id', 'marker-'+gcpList[count-1].id);
-            var cell2 = row.insertCell(1);
-            $(cell2).attr('id', 'markerLat-'+gcpList[count-1].id);
-            var cell3 = row.insertCell(2);
-            $(cell3).attr('id', 'markerLong-'+gcpList[count-1].id);
-            var cell4 = row.insertCell(3);
-            $(cell4).attr('id', 'rasterLat-'+gcpList[count-1].id);
-            var cell5 = row.insertCell(4);
-            $(cell5).attr('id', 'rasterLong-'+gcpList[count-1].id);
-            var cell6 = row.insertCell(5);
-            $(cell6).attr('id', 'rasterX-'+gcpList[count-1].id);
-            var cell7 = row.insertCell(6);
-            $(cell7).attr('id', 'rasterY-'+gcpList[count-1].id);
-            cell1.innerHTML = "<button id = 'zoomToMarker' onclick = 'zoomToMarker(" + count + ")' style = 'background-color:" + markerColors[colorCount - 1] + "'>" + count + "</button>";
-            cell2.innerHTML = gcpList[count - 1].lat;
-            cell3.innerHTML = gcpList[count - 1].lng;
-            cell4.innerHTML = gcpList[count - 1].rlat;
-            cell5.innerHTML = gcpList[count - 1].rlong;
-            cell6.innerHTML = gcpList[count - 1].x;
-            cell7.innerHTML = gcpList[count - 1].y;
-            //hide column raster lat and raster long
-            cell4.style.display = "none";
-            cell5.style.display = "none";
-        }else {
-            alert("Select point from raster");
-        }
+                //creates table
+                var table = document.getElementById("table");
+                var row = table.insertRow(count + 1);
+                var cell1 = row.insertCell(0);
+                $(cell1).attr('id', 'marker-'+gcpList[count-1].id);
+                var cell2 = row.insertCell(1);
+                $(cell2).attr('id', 'markerLat-'+gcpList[count-1].id);
+                var cell3 = row.insertCell(2);
+                $(cell3).attr('id', 'markerLong-'+gcpList[count-1].id);
+                var cell4 = row.insertCell(3);
+                $(cell4).attr('id', 'rasterLat-'+gcpList[count-1].id);
+                var cell5 = row.insertCell(4);
+                $(cell5).attr('id', 'rasterLong-'+gcpList[count-1].id);
+                var cell6 = row.insertCell(5);
+                $(cell6).attr('id', 'rasterX-'+gcpList[count-1].id);
+                var cell7 = row.insertCell(6);
+                $(cell7).attr('id', 'rasterY-'+gcpList[count-1].id);
+                cell1.innerHTML = "<button id = 'zoomToMarker' onclick = 'zoomToMarker(" + count + ")' style = 'background-color:" + markerColors[colorCount - 1] + "'>" + count + "</button>";
+                cell2.innerHTML = gcpList[count - 1].lat;
+                cell3.innerHTML = gcpList[count - 1].lng;
+                cell4.innerHTML = gcpList[count - 1].rlat;
+                cell5.innerHTML = gcpList[count - 1].rlong;
+                cell6.innerHTML = gcpList[count - 1].x;
+                cell7.innerHTML = gcpList[count - 1].y;
+                //hide column raster lat and raster long
+                cell4.style.display = "none";
+                cell5.style.display = "none";
+            }else {
+                alert("Select point from raster");
             }
+        }
 
     }
 
@@ -406,7 +430,7 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
         //add tiles to raster viewer
         L.tileLayer(tiles, {
             noWrap: true,
-            attribution: ''
+            attribution: '<a href="http://spatialquerylab.com/">Spatial Query Lab {SQL}</a>'
         }).addTo(raster);
 
         L.control.polylineMeasure({
@@ -493,12 +517,13 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
                     gcpList[rastermarkerIndex].rlong = marker._latlng.lng;
                     rCoords =rc.project(event.target._latlng);
 
+                    //Georec Bug
                     gcpList[rastermarkerIndex].x = rCoords.x;
                     gcpList[rastermarkerIndex].y = rCoords.y;
                     $('#rasterX-' + rastermarkerIndex).text(gcpList[rastermarkerIndex].x);
                     $('#rasterY-' + rastermarkerIndex).text(gcpList[rastermarkerIndex].y);
                     $('#rasterLat-' + rastermarkerIndex).text(gcpList[rastermarkerIndex].rlat);
-                    $('#rasterLong' + rastermarkerIndex).text(gcpList[rastermarkerIndex].rlong);
+                    $('#rasterLong-' + rastermarkerIndex).text(gcpList[rastermarkerIndex].rlong);
                 });
 
                 //increment counters and adjust booleans
@@ -539,17 +564,17 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
                 <td width="300px">Update GeoRec Status</td>
                 <td><select style="height: 2.5em" id="ddlGeoStatus" name="ddlGeoStatus" required>
                         <?php
-                            $arrGeoStatus = array(array(0,"Not Rectified"),array(2,"Not Rectifiable"),array(4,"Research Required"));
-                            $Render->GET_DDL3($arrGeoStatus,$georec_status);
+                        $arrGeoStatus = array(array(0,"Not Rectified"),array(2,"Not Rectifiable"),array(4,"Research Required"));
+                        $Render->GET_DDL3($arrGeoStatus,$georec_status);
                         ?>
                         ?>
                     </select>
-                <input type="hidden" name="txtDocID" id="txtDocID" value="<?php echo $_GET['docID']; ?>">
+                    <input type="hidden" name="txtDocID" id="txtDocID" value="<?php echo $_GET['docID']; ?>">
                 </td>
             </tr>
             <tr>
                 <td colspan="2" style="text-align: center"><input type="Submit" class="bluebtn" name="btnUpdate" id="btnUpdate" value="Update">
-                &nbsp;&nbsp;
+                    &nbsp;&nbsp;
                     <button type="button" onclick="document.getElementById('divUpdateGeoRecStatus').style.visibility = 'hidden';" class="bluebtn">Close</button></td>
             </tr>
         </table>
@@ -565,35 +590,31 @@ $georec_status = $DB->DOCUMENT_GEORECSTATUS_SELECT($_GET['docID'],$isBack);
 
     $(document).ready(function(){
 
-            //check if the user is a reader
-            var userRole = '<?php echo $session -> getRole(); ?>';
+        //check if the user is a reader
+        var userRole = '<?php echo $session -> getRole(); ?>';
 
-            if(userRole == "Reader")
-            {
+        if(userRole == "Reader")
+        {
 
-                document.getElementById('deletePrevious').disabled = true;
-                document.getElementById('setStatus').disabled = true;
-                document.getElementById('rectify').disabled = true;
+            document.getElementById('deletePrevious').disabled = true;
+            document.getElementById('setStatus').disabled = true;
+            document.getElementById('rectify').disabled = true;
+        }
+        //load the points into the map and raster if there is any
+        var entries = <?php echo json_encode($georec_entries); ?>;
 
+        for(var i = 0; i < entries.length; i++)
+        {
+            var maplatlng = L.latLng(entries[i][1],entries[i][2]);
 
-
-
-            }
-            //load the points into the map and raster if there is any
-            var entries = <?php echo json_encode($georec_entries); ?>;
-
-            for(var i = 0; i < entries.length; i++)
-            {
-                var maplatlng = L.latLng(entries[i][1],entries[i][2]);
-
-                var rasterXY = L.Point(entries[i][5],entries[i][6]);
-                var rasterLatLng = L.latLng(entries[i][3],entries[i][4]);
-                //var rasterXY = ;
+            var rasterXY = L.Point(entries[i][5],entries[i][6]);
+            var rasterLatLng = L.latLng(entries[i][3],entries[i][4]);
+            //var rasterXY = ;
 
 
-                raster.fireEvent('click',{latlng:rasterLatLng,containerPoint:rasterXY});
-                map.fireEvent('click',{latlng:maplatlng});
-            }
+            raster.fireEvent('click',{latlng:rasterLatLng,containerPoint:rasterXY});
+            map.fireEvent('click',{latlng:maplatlng});
+        }
 
     });
     //action when submitting popup Update GeoRec Status

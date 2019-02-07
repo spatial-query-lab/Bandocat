@@ -242,6 +242,13 @@ $date = new DateHelper();
                                     <?php $Render->GET_DDL_YEAR(null); ?>
                                 </select>
                             </div>
+                            <?php if($collection == "pennyfenner") : ?>
+                                <div class="cell">
+                                    <!-- Job Number33334 NUMBER -->
+                                    <span class="label">Job Number:</span>
+                                    <input type = "text" name = "txtJobNumber" id = "txtJobNumber" size="26" value=""/>
+                                </div>
+                            <?php endif; ?>
                             <div class="cell">
                                 <!-- FIELD BOOK NUMBER -->
                                 <span class="label">Field Book Number:</span>
@@ -280,11 +287,13 @@ $date = new DateHelper();
                                     <?php $Render->getDataList($DB->GET_COMPANY_LIST($collection)); ?>
                                 </datalist>
                             </div>
-                            <div class="cell">
-                                <!-- DOCUMENT TYPE-->
-                                <span class="label">Document Type:</span>
-                                <input type = "text" name = "txtType" id = "txtType" size="26" value="" />
-                            </div>
+                            <?php if($collection != "pennyfenner") : ?>
+                                <div class="cell">
+                                    <!-- DOCUMENT TYPE-->
+                                    <span class="label">Document Type:</span>
+                                    <input type = "text" name = "txtType" id = "txtType" size="26" value="" />
+                                </div>
+                            <?php endif; ?>
                             <div class="cell">
                                 <!-- DOCUMENT MEDIUM -->
                                 <span class="label"><span style = "color:red;"> * </span>Document Medium:</span>
@@ -333,7 +342,7 @@ $date = new DateHelper();
 </div>
 </div>
 <?php include '../../Master/footer.php'; ?>
-
+<script type="text/javascript" src="../../Master/errorHandling.js"></script>
 </body>
 <script>
     $( document ).ready(function() {
@@ -342,6 +351,21 @@ $date = new DateHelper();
             /* stop form from submitting normally */
             var formData = new FormData($(this)[0]);
             /*jquery that displays the three points loader*/
+
+            var error = errorHandling($('#txtLibraryIndex'), '<?php echo $collection ?>');
+            if(error.answer){
+                for(i = 0; i < error.desc.length; i++) {
+                    alert(error.desc[i].message)
+                }
+                return false
+            }
+            var eScale = errorHandling($('#txtMapScale'), '<?php echo $collection ?>');
+            if(eScale.answer){
+                for(i = 0; i < eScale.desc.length; i++) {
+                    alert(eScale.desc[i].message)
+                }
+                return false
+            }
 
              //TODO:: removed libraryindex underscore validation
 //            if(validateFormUnderscore("txtLibraryIndex") == true)

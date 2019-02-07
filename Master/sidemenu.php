@@ -10,13 +10,14 @@
     //if user is admin, then add Admin section to the menu
     $userid = $session-> getUserID();
     $userticketCount = $DB1->GET_USER_CLOSEDTICKET_COUNT($userid);
+    $username = $_SESSION['username'];
     $ticketCount = 0;
     $admin = $session->isAdmin();
     if($session->isAdmin())
     {
         //queries the database for the number of tickets currently active
         $ticketCount = $DB1->GET_ADMIN_OPENTICKET_COUNT();
-        echo '<div class="menu-item menu-item_sub4">
+        echo '<div class="menu-item menu-item_sub5">
             <!--class for the visuals, data-badge to pass the number of tickets to the text in the badge -->
             <h4><a class="notificationBadge" data-badge='.$ticketCount.' id="adminNotificationBadge" href="">Admin </a></h4>    
              <div></div>
@@ -25,50 +26,75 @@
             <li><a class="notificationBadge" data-badge='.$ticketCount.' id="adminNotificationBadge2" href="../../Forms/Ticket/">View Tickets </a></li>
             <li><a href="../../Forms/ManageUser/">Manage User</a></li>
             <li><a href="../../Forms/NewUser/">Create New User</a></li>
+            <li><a href="../../Training/admin/admin.php">Training</a></li>
             </ul>
         </div>
-        <div class="menu-item menu-item_sub2">
+        <div class="menu-item menu-item_sub3">
         <h4><a href="#">TDL Publishing</a></h4>
         <ul>
             <li><a href="../../TDLPublish/Forms/index.php">Listing</a></li>
-            <li><a href="../../TDLPublish/Forms/queue.php">Queue</a></li>
+            <li><a href="../../TDLPublish/Forms/queue.php">Publishing Queue</a></li>
+			<li><a href="../../TDLPublish/Forms/updatequeue.php">Update Queue</a></li>
         </ul>
     </div>';
+	
     }
     ?>
     <script>
 
     </script>
     <!-- Collections Tab -->
-    <div class="menu-item menu-item_sub5">
+    <div class="menu-item menu-item_sub6">
         <h4><a href="#">Collections</a></h4>
         <ul>
             <li><a href="../../Templates/Map/index.php?col=bluchermaps">Blucher Maps</a></li>
             <li><a href="../../Templates/FieldBook/index.php?col=blucherfieldbook">Field Book</a></li>
             <li><a href="../../Templates/Map/index.php?col=greenmaps">Green Maps</a></li>
             <li><a href="../../Templates/Indices/index.php?col=mapindices">Indices</a></li>
+            <li><a href="../../Templates/FieldBookIndices/index.php?col=fieldbookindices">Field Book Indices</a></li>
             <li><a href="../../Templates/Folder/index.php?col=jobfolder">Job Folder</a></li>
+            <li><a href="../../Templates/Map/index.php?col=pennyfenner">Pennyfenner Maps</a></li>
+			<li><a href="../../../TonyAmos/Forms/TonyAmosCollection.php">Tony Amos</a></li>
+        </ul>
+    </div>
+    <!-- Training Tab -->
+    <div class="menu-item menu-item_sub3">
+        <h4><a href="#">Training</a></h4>
+        <ul>
+            <li class="trainingCol"><a href="../../Training/jobfolder/Forms/list.php?col=jobfolder&action=training&type=none">Job Folder Training</a></li>
+            <li class="trainingCol"><a href="../../Training/maps/Forms/list.php?col=maps&action=training&type=none">Maps Training</a></li>
+            <li class="trainingCol"><a href="../../Training/fieldbook/Forms/list.php?col=fieldbook&action=training&type=none">Field Book Training</a></li>
         </ul>
     </div>
     <!-- Indices Transcription Tab -->
-    <div class="menu-item">
-        <h4><a href="../../Transcription/Indices/list.php?col=mapindices">Indices Transcription</a></h4>
-    </div>
     <div class="menu-item menu-item_sub2">
+        <h4><a href="#">Indices Transcription</a></h4>
+        <ul>
+            <li><a href="../../Transcription/Indices/list.php?col=mapindices">Map Indices</a></li>
+            <li><a href="../../Transcription/FieldBookIndices/list.php?col=fieldbookindices">FieldBook Indices</a></li>
+
+        </ul>
+    </div>
+<!--    <div class="menu-item">-->
+<!--       -->
+<!--    </div>-->
+    <div class="menu-item menu-item_sub3">
         <h4><a href="#">GeoRectification</a></h4>
         <ul>
             <li><a href="../../GeoRec/Map/index.php?col=bluchermaps">Blucher Maps</a></li>
             <li><a href="../../GeoRec/Map/index.php?col=greenmaps">Green Maps</a></li>
+			<li><a href="../../GeoRec/Map/index.php?col=pennyfenner">Pennyfenner Maps</a></li>
         </ul>
     </div>
     <!-- Queries Tab -->
-    <div class="menu-item menu-item_sub4">
+    <div class="menu-item menu-item_sub5">
         <h4><a href="#">Queries</a></h4>
         <ul>
             <li><a href="../../Forms/Queries/hascoast.php">Coastal Maps</a></li>
             <li><a href="../../Forms/Queries/exportcollection.php">Export Document Index</a></li>
             <li><a href="../../Forms/Queries/mapswithouttitle.php">Maps Without Titles</a></li>
             <li><a href="../../Forms/Queries/manage_authorname.php">Manage TDL Author</a></li>
+		    <?php if($session->isAdmin()){echo '<li><a href="../../Forms/Queries/convert_and_compress.php">PDF System</a></li> '; } ?>
             <li><a href="#">Supplied Title Procedure</a></li>
         </ul>
     </div>
@@ -153,6 +179,27 @@
                 document.getElementById("userNotificationBadge2").className = "";
                 document.getElementById("userNotificationBadge").className = "";
             }
+        });
+
+        $('.trainingCol').click(function (e) {
+            switch (e.target.innerHTML) {
+                case 'Job Folder Training':
+                    var collection = 'jobfolder';
+                    break;
+                case 'Maps Training':
+                    var collection = 'maps';
+                    break;
+                case 'Field Book Training':
+                    var collection = 'fieldbook';
+                    break;
+            }
+
+            var newType = {"col": collection, "ntype": 'newbie', "itype": 'inter', "user": '<?php echo $username?>'};
+            $.ajax({
+                type: 'post',
+                url: "../../Training/"+ collection +"/Forms/collectionTrainingXML.php",
+                data: newType
+            });
         });
     </script>
 </nav>

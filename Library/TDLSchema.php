@@ -21,8 +21,8 @@ class TDLSchema
      *              $isPOST (boolean - DEFAULT: TRUE) - true if post new item, false if update item (different ways to convert)
      * Return value(s): return the converted schema
      ***********************************************/
-    function convertSchema($templateID,$doc,$isPOST = true)
-    {
+    function convertSchema($templateID,$doc,$isPOST = true , $numberOfPages = 0)
+    {	
         switch($templateID)
         {
             case "1": //map
@@ -32,7 +32,7 @@ class TDLSchema
                 $array =  $this->convertJobFolderWholeSchema($doc); //should be publishing PDF file of a whole job folder
                 break;
             case "3":
-                $array = $this->convertFieldBookWholeSchema($doc); //should be publishing PDF file of a whole Field Book
+                $array = $this->convertFieldBookWholeSchema($doc, $numberOfPages); //should be publishing PDF file of a whole Field Book
                 break;
             case "4": //indices template
                 break;
@@ -106,6 +106,9 @@ class TDLSchema
         $this->addField($output,"dc.contributor",$doc["TDLAuthorName"]);
         $this->addField($output,"dc.contributor",$doc["CompanyName"]);
 
+        if(isset($doc["Provenance"]))
+            $this->addField($output,"dc.description.provenance",$doc["Provenance"]);
+
 
         //need FieldBook and Job Folder relation (dc.relation title) and PDF (dc.relation.url)
 
@@ -137,7 +140,7 @@ class TDLSchema
             array("key" => "mc.classification","value" => $doc['Classification']),
             array("key" => "mc.classification.note","value" => $doc['ClassificationComment']),
             array("key" => "dc.format.mimetype","value" => ""),
-            array("key" => "dc.rights.holder","value" => $this->rightsholder),
+            array("key" => "dc.rights.holder","value" => $this->rightsholder1),
             array("key" => "dc.rights","value" => $this->rightsstatement),
             array("key" => "mc.note","value" => $doc["Comments"]),
             array("key" => "mc.collection","value" => $doc["TDLCollection"]),
@@ -154,30 +157,32 @@ class TDLSchema
         return $output;
     }
 
-    //NOT FINISHED!!!!
+    
     /**********************************************
      * Function: convertFieldBookWholeSchema
      * Description: convert a BandoCat's Field Book document into Field Book's TDL schema
      * Parameter(s): $doc (int) - document ID (internal BandoCat `documentID` in `document` table)
      * Return value(s): return the converted schema
      ***********************************************/
-    function convertFieldBookWholeSchema($doc)
+    function convertFieldBookWholeSchema($doc, $numberOfPages)
     {
         //extend: number of page in what??? Book or number of scan???
 
         //preprocess
         $output = array();
-
-        $this->addField($output,"dc.identifier.other",str_replace("-_","-",$doc['LibraryIndex']));
-        $this->addField($output,"dc.relation.ispartof",$doc["BookTitle"]);
-        $this->addField($output,"mc.collection",$doc["Collection"]);
+		$booktitlearray = explode("-",$doc["BookTitle"],2);
+		$this->addField($output,"dc.title","Book-" . $doc['BookTitle']);
+        $this->addField($output,"dc.identifier.other","Book " . $booktitlearray[0]);
+        $this->addField($output,"dc.relation.ispartof",$booktitlearray[0]);
         $this->addField($output,"dc.coverage.temporal",$this->mergeStrings($this->convertDate($doc["StartDate"]),$this->convertDate($doc["EndDate"])));
             //array("key" => "dc.relation.isbasedon","value" => $this->mergeStrings($doc["FieldBookNumber"],$doc["FieldBookPage"])),
         $this->addField($output,"mc.pagenumber",$doc["IndexedPage"]);
+		$this->addField($output, "dc.format.extent", $numberOfPages . " pages");
         $this->addField($output,"dc.relation.ispartof",$doc['JobNumber']);
         $this->addField($output,"dc.relation.ispartof",$doc['JobTitle']);
-        $this->addField($output,"dc.format.mimetype","image/jpeg");
-        $this->addField($output,"dc.rights.holder",$this->rightsholder);
+        $this->addField($output,"dc.format.mimetype","application/pdf");
+        $this->addField($output,"dc.rights.holder",$this->rightsholder1);
+		$this->addField($output,"dc.rights.holder",$this->rightsholder2);
         $this->addField($output,"dc.rights",$this->rightsstatement);
         $this->addField($output,"mc.note",$doc["Comments"]);
         $this->addField($output,"mc.collection",$doc["TDLCollection"]);
@@ -204,6 +209,7 @@ class TDLSchema
      ***********************************************/
     function addField(&$arr,$key,$val)
     {
+        if($val == null) return;
         if(trim($val) !== "")
             array_push($arr,array("key" => $key,"value" => $val));
         else //empty

@@ -119,13 +119,13 @@ require '../../Library/AnnouncementDBHelper.php';
                 </div>
             </div>
 
-            <div id="divscroller" style="text-align: center">
-                <div id="post"></div>
-            </div>
+          
         </td>
 
         <td class="tg-0za1" style="position: relative"><h2>Announcements</h2>
-
+		  <div id="divscroller" style="text-align: center">
+                <div id="post"></div>
+            </div>
 
         </td>
     </tr>

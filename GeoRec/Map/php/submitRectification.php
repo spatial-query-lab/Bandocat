@@ -38,7 +38,7 @@ $DB = new MapDBHelper();
     }
     //generate shell script for translate and warp
     $GeoTIFFsPath = "../Temp/GeoTIFFs/" . $imageInfo['geoTIFFName'];
-
+    
 	$command = $script->translate . " " . $inputTranslatePath . " " . $outputTranslatePath ; //translate script
 	$command2 = $script -> warp . " " . $outputTranslatePath . " " . $GeoTIFFsPath ; //warp script
 

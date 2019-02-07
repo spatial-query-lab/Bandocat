@@ -81,6 +81,7 @@ $imageInfo = array(
 	$zoom = ceil($zoom);
 	$command = "python ../../../ExtLibrary/GDAL/gdal2tiles-multiprocess.py -l -p raster -z 0-" . $zoom . " -w none -e " . $imagepath . " ../Temp/Tiles/". $imageInfo['tempSubDirectory'];
 	exec($command,$output,$ret);
+	//echo $command . "<br>";
 	//print_r(array($output,$ret)); //use this to debug $command
 //return image info array
 

@@ -235,6 +235,7 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
 
     }
 </script>
+<script type="text/javascript" src="../../Master/errorHandling.js"></script>
 <script>
     $( document ).ready(function()
     {
@@ -251,6 +252,15 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
         $('#theform').submit(function (event)
         {
             event.preventDefault();
+
+            var error = errorHandling($('#txtLibraryIndex'), '<?php echo $collection ?>');
+            if(error.answer){
+                for(i = 0; i < error.desc.length; i++) {
+                    alert(error.desc[i].message)
+                }
+                return false
+            }
+
             /* stop form from submitting normally */
             //This attaches the entire "#theform" in addition to the crews to the post
             var formData = new FormData($(this)[0]);

@@ -99,7 +99,7 @@ $date = new DateHelper();
                                 <div class="cell">
                                     <!--COMMENTS -->
                                     <span class="label"><span style = "color:red;"> </span>Comments:</span>
-                                    <textarea cols="35" rows="5" name="txtComments" id="txtComments" ><?php echo $document['Comments']?></textarea>
+                                    <textarea cols="35" rows="5" maxlength="1024" name="txtComments" id="txtComments" ><?php echo $document['Comments']?></textarea>
                                 </div>
                             </td>
                             <td id="col2">

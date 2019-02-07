@@ -41,7 +41,7 @@ else header('Location: ../../');
 <div id="divright">
     <!-- Title Displayed in Green style in master.css -->
     <h2><?php echo $config['DisplayName']; ?> Document Upload</h2>
-    <div id="divscroller">
+	<div id ="divscroller">
     <table class="Collection_Table">
         <form id="frmUpload" name="frmUpload" method="post" enctype="multipart/form-data">
         <tr>
@@ -82,7 +82,7 @@ else header('Location: ../../');
         </tr>
         </form>
     </table>
-    </div>
+	</div>
 </div>
 
 

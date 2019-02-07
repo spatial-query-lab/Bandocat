@@ -1,0 +1,31 @@
+SELECT
+( 
+   SELECT
+      Group_concat(c.`crewname`) 
+   FROM
+      `documentcrew` AS dc 
+      LEFT JOIN
+         `crew` AS c 
+         ON dc.`crewid` = c.`crewid` 
+   WHERE
+      dc.`docid` IN 
+      (
+         SELECT
+            documentid 
+         where
+            `booktitle` = :booktitle 
+      )
+   GROUP BY
+      dc.`docid`) AS `crewlist`,
+      libraryindex,
+      jobnumber,
+      startdate,
+      enddate,
+      indexedpage,
+      filenamepath,
+      jobtitle,
+      booktitle 
+   FROM
+      `document` 
+   WHERE
+      `booktitle` = :booktitle

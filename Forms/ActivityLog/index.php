@@ -109,7 +109,7 @@ $Render = new ControlsRender();
                             <tr>
                                 <th width="35px">ID</th>
                                 <th width="130px">Timestamp</th>
-                                <th width="100px">Action</th>
+                                <th width="60px">Action</th>
                                 <th width="150px">Library Index</th>
                                 <th width="100px">Username</th>
                                 <th>Notes</th>
@@ -118,12 +118,13 @@ $Render = new ControlsRender();
                             </thead>
                             <tfoot>
                             <tr>
+                                <th width="35px"></th>
+                                <th width="130px"></th>
+                                <th width="60px"></th>
+                                <th width="150px"> </th>
+                                <th width="100px"></th>
                                 <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+
                             </tr>
                             </tfoot>
                         </table>

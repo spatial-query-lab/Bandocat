@@ -1,13 +1,4 @@
 <?php
-//This trait provides general functions to select or update fields related to TDL in `document` table of every collections
-/**
- * Created by PhpStorm.
- * User: snguyen1
- * Date: 2/15/2017
- * Time: 12:22 PM
- */
-
-//this interface is currently empty
 interface TDLPublishDB
 {
 }
@@ -38,13 +29,24 @@ trait TDLPublishTrait
      * Parameter(s): None
      * Return value(s): documentID, return null if fail
      ***********************************************/
-    function PUBLISHING_DOCUMENT_GET_NEXT_IN_QUEUE_ID()
+    function PUBLISHING_DOCUMENT_GET_NEXT_IN_QUEUE_ID($collection)
     {
-        $sth = $this->getConn()->prepare("SELECT `documentID` FROM `document` WHERE `dspacePublished` = 2 ORDER BY `documentID` ASC LIMIT 1");
-        $ret = $sth->execute();
-        if($ret)
-            return $sth->fetchColumn();
-        return null;
+		$dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+            $sth = $this->getConn()->prepare("SELECT `documentID` FROM `document` WHERE `dspacePublished` = 2 ORDER BY `documentID` ASC LIMIT 1");
+			$ret = $sth->execute();
+            //return statement
+            if($ret)
+				return $sth->fetchColumn();
+			return $ret;
+        } else return false;
+		
+       
+		
+       
     }
 
     /**********************************************
@@ -53,13 +55,23 @@ trait TDLPublishTrait
      * Parameter(s): None
      * Return value(s): documentID, return null if fail
      ***********************************************/
-    function PUBLISHING_DOCUMENT_GET_PUBLISHING_ID()
+    function PUBLISHING_DOCUMENT_GET_PUBLISHING_ID($collection)
     {
+		$dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        $this->getConn()->exec('USE ' . $dbname);
+        if ($dbname != null && $dbname != "")
+        {
+            //select the number of documentID's where the libraryindex has a title
+           
             $sth = $this->getConn()->prepare("SELECT `documentID` FROM `document` WHERE `dspacePublished` = 10 OR `dspacePublished` = 11 ORDER BY `documentID` ASC LIMIT 1");
             $ret = $sth->execute();
+            //return statement
             if($ret)
-                return $sth->fetchColumn();
-            return null;
+				return $sth->fetchColumn();
+			return $ret;
+        } else return false;
+		
+         
     }
 
     //Status code: 2 = In publish Queue, 1 = Published, 0 = Not published, 10 = Publishing, 11 = Publishing with Error/Abandoned Job
@@ -159,5 +171,22 @@ trait TDLPublishTrait
             //print_r($sth->errorInfo());
         return $ret;
     }
+	 // SAMS MASTER WORK \\
+	 //Status code: 2 = In publish Queue, 1 = Published, 0 = Not published, 10 = Publishing, 11 = Publishing with Error/Abandoned Job
+    /**********************************************
+     * Function: PUBLISHING_DOCUMENT_UPDATE_STATUS
+     * Description: update the value of `dspacePublished` to the new status code ($status)
+     * Parameter(s): $docID (int) - documentID to update the new status code
+     *               $status (int) - new status code
+     * Return value(s): false if fail
+     ***********************************************/
+    function PUBLISHING_DOCUMENT_UPDATE_ALL_FB_STATUS($booktitle,$status){
+        $sth = $this->getConn()->prepare("UPDATE `document` SET `dspacePublished` = :stat WHERE `booktitle` = :booktitle");
+        $sth->bindParam(':stat',$status,PDO::PARAM_INT);
+        $sth->bindParam(':booktitle',$booktitle,PDO::PARAM_INT);
+        $ret = $sth->execute();     
+        return $ret;
+    }
+
 
 }

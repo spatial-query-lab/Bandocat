@@ -1,0 +1,52 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    height: 100%;
+    width: 100%;
+
+
+}
+
+
+@keyframes confettiFade {
+    0%{ opacity: 1;}
+    25% {opacity: .75;}
+    50%{ opacity: .5;}
+    75% {opacity: .25;}
+    100%{ opacity: 0;}
+}
+
+#confetti{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    animation-name: confettiFade;
+    animation-duration: 5s;
+    animation-iteration-count: 100;
+    animation-delay: 31s;
+}
+
+
+a.iprodev {
+    line-height: normal;
+    font-family: Varela Round, sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 13px;
+    color: #A7AAAE;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    border: 1px solid #A7AAAE;
+    padding: 12px 20px 10px;
+    border-radius: 50px;
+    transition: all .1s ease-in-out;
+    text-transform: uppercase;
+}
+a.iprodev:hover {
+    background: #A7AAAE;
+    color: white;
+}

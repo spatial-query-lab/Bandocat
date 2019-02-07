@@ -11,15 +11,15 @@ class MapDBHelper extends DBHelper
     use GeoRectificationTrait;
     /**********************MAP FUNCTIONS************************/
 
-    /**********************************************
-     * Function: SP_TEMPLATE_MAP_DOCUMENT_SELECT
-     * Description: GIVEN collection name & document ID, RETURN INFORMATION ABOUT Document
-     * Parameter(s):
-     * collection (in string) - name of the collection
-     * $iDocID (in Integer) - document ID
-     * Return value(s):
-     * $result (assoc array) - return a document info in an associative array, or FALSE if failed
-     ***********************************************/
+     /**********************************************
+ * Function: SP_TEMPLATE_MAP_DOCUMENT_SELECT
+ * Description: GIVEN collection name & document ID, RETURN INFORMATION ABOUT Document
+ * Parameter(s):
+ * collection (in string) - name of the collection
+ * $iDocID (in Integer) - document ID
+ * Return value(s):
+ * $result (assoc array) - return a document info in an associative array, or FALSE if failed
+ ***********************************************/
     function SP_TEMPLATE_MAP_DOCUMENT_SELECT($collection, $iDocID)
     {
         //get appropriate DB name
@@ -39,6 +39,39 @@ class MapDBHelper extends DBHelper
             /* RETURN RESULT */
             //select statement
             $select = $this->getConn()->query('SELECT @oLibraryIndex AS LibraryIndex,@oTitle AS Title,@oSubtitle AS Subtitle,@oIsMap AS IsMap,@oMapScale AS MapScale,@oHasNorthArrow AS HasNorthArrow,@oHasStreets AS HasStreets,@oHasPOI AS HasPOI,@oHasCoordinates AS HasCoordinates,@oHasCoast AS HasCoast,@oFileName AS FileName,@oFileNameBack AS FileNameBack,@oNeedsReview AS NeedsReview,@oComments AS Comments,@oCustomerName AS CustomerName,@oStartDate AS StartDate,@oEndDate AS EndDate,@oFieldBookNumber AS FieldBookNumber,@oFieldBookPage AS FieldBookPage,@oReadability AS Readability,@oRectifiability AS Rectifiability,@oCompanyName AS CompanyName,@oType AS Type,@oMedium AS Medium,@oAuthorName AS AuthorName,@oFileNamePath AS FileNamePath,@oFileNameBackPath AS FileNameBackPath, @oTDLAuthorName AS TDLAuthorName');
+            //return selected information
+            $result = $select->fetch(PDO::FETCH_ASSOC);
+            return $result;
+        } else return false;
+    }
+    /**********************************************
+     * Function: SP_TEMPLATE_MAP_DOCUMENT_SELECT
+     * Description: GIVEN collection name & document ID, RETURN INFORMATION ABOUT Document
+     * Parameter(s):
+     * collection (in string) - name of the collection
+     * $iDocID (in Integer) - document ID
+     * Return value(s):
+     * $result (assoc array) - return a document info in an associative array, or FALSE if failed
+     ***********************************************/
+    function SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_SELECT($collection, $iDocID)
+    {
+        //get appropriate DB name
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        if ($dbname != null && $dbname != "") {
+            $this->getConn()->exec('USE ' . $dbname);
+            /* PREPARE STATEMENT */
+            /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
+            // sql statement CALL calls the function pointed to in the db
+            $call = $this->getConn()->prepare("CALL SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_SELECT(?,@oLibraryIndex,@oTitle,@oSubtitle,@oIsMap,@oMapScale,@oHasNorthArrow,@oHasStreets,@oHasPOI,@oHasCoordinates,@oHasCoast,@oFileName,@oFileNameBack,@oNeedsReview,@oComments,@oCustomerName,@oStartDate,@oEndDate,@oJobNumber,@oFieldBookNumber,@oFieldBookPage,@oReadability,@oRectifiability,@oCompanyName,@oType,@oMedium,@oAuthorName,@oFileNamePath,@oFileNameBackPath,@oTDLAuthorName)");
+            if (!$call)
+                trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+            // bind $iDocID to the above call statement
+            $call->bindParam(1, $iDocID, PDO::PARAM_INT, 11);
+            /* EXECUTE STATEMENT */
+            $call->execute();
+            /* RETURN RESULT */
+            //select statement
+            $select = $this->getConn()->query('SELECT @oLibraryIndex AS LibraryIndex,@oTitle AS Title,@oSubtitle AS Subtitle,@oIsMap AS IsMap,@oMapScale AS MapScale,@oHasNorthArrow AS HasNorthArrow,@oHasStreets AS HasStreets,@oHasPOI AS HasPOI,@oHasCoordinates AS HasCoordinates,@oHasCoast AS HasCoast,@oFileName AS FileName,@oFileNameBack AS FileNameBack,@oNeedsReview AS NeedsReview,@oComments AS Comments,@oCustomerName AS CustomerName,@oStartDate AS StartDate,@oEndDate AS EndDate,@oJobNumber AS JobNumber,@oFieldBookNumber AS FieldBookNumber,@oFieldBookPage AS FieldBookPage,@oReadability AS Readability,@oRectifiability AS Rectifiability,@oCompanyName AS CompanyName,@oType AS Type,@oMedium AS Medium,@oAuthorName AS AuthorName,@oFileNamePath AS FileNamePath,@oFileNameBackPath AS FileNameBackPath, @oTDLAuthorName AS TDLAuthorName');
             //return selected information
             $result = $select->fetch(PDO::FETCH_ASSOC);
             return $result;
@@ -124,7 +157,88 @@ class MapDBHelper extends DBHelper
             return $call->execute();
         } else return false;
     }
-    /**********************************************
+	/**********************************************
+     * Function: SP_TEMPLATE_MAP_DOCUMENT_UPDATE
+     * Description: Updates a specified map template document
+     * Parameter(s):
+     * collection (in string) - name of the collection
+     * $iDocID (in Integer) - document ID
+     * $iLibraryIndex (in string) -
+     * $iTitle (in string) - title of the document
+     * $iSubtitle (in string) - subtitle of the document
+     * $iIsMap (in Integer) - flag if document is a map
+     * $iMapScale (in string) - identifies the map scale
+     * $iHasNorthArrow (in Integer) - flag if document has a north arrow
+     * $iHasStreets (in Integer) - flag if document has streets
+     * $iHasPOI (in Integer) -
+     * $iHasCoordinates (in Integer) - flag if document has coordinates
+     * $iHasCoast (in Integer) - flag if document has a coastline
+     * $iNeedsReview (in Integer) - flag if document needs to be reviewed
+     * $iComments (in string) -
+     * $iCustomerID (in Integer) - identifies the customer's ID number
+     * $iStartDate (in string) - date when the document
+     * $iEndDate (in string) - date when the document
+     * $iFieldBookNumber (in Integer) - identifies the fieldbooknumber
+     * $iFieldBookPage (in Integer) - identifies the fieldbookpage
+     * $iReadability (in string) - string specifies how readable the document is
+     * $iRectifiability (in string) -
+     * $iCompanyID (in Integer) - identifies the companysID
+     * $iType (in string) -
+     * $iMedium (in Integer) -
+     * $iAuthorID (in Integer) - identifies the author of the document
+     * Return value(s):
+     * $result (assoc array) - return a document info in an associative array, or FALSE if failed
+     ***********************************************/
+    function SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_UPDATE($collection,
+                                             $iDocID, $iLibraryIndex, $iTitle, $iSubtitle, $iIsMap, $iMapScale,
+                                             $iHasNorthArrow, $iHasStreets, $iHasPOI, $iHasCoordinates, $iHasCoast,
+                                             $iNeedsReview, $iComments, $iCustomerID, $iStartDate,
+                                             $iEndDate,$iJobNumber, $iFieldBookNumber, $iFieldBookPage, $iReadability, $iRectifiability,
+                                             $iCompanyID, $iType, $iMedium, $iAuthorID)
+    {
+        //get appropriate db
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        if ($dbname != null && $dbname != "") {
+            $this->getConn()->exec('USE ' . $dbname);
+            /* PREPARE STATEMENT */
+            /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
+            // sql statement CALL calls the function pointed to in the db
+            $call = $this->getConn()->prepare("CALL SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_UPDATE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            if (!$call)
+                trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+            //Binds all parameters to the prepared SQL statement
+            $call->bindParam(1, $iDocID, PDO::PARAM_INT);
+            $call->bindParam(2, $iLibraryIndex, PDO::PARAM_STR);
+            $call->bindParam(3, $iTitle, PDO::PARAM_STR);
+            $call->bindParam(4, $iSubtitle, PDO::PARAM_STR);
+            $call->bindParam(5, $iIsMap, PDO::PARAM_INT);
+            $call->bindParam(6, $iMapScale, PDO::PARAM_STR);
+            $call->bindParam(7, $iHasNorthArrow, PDO::PARAM_INT);
+            $call->bindParam(8, $iHasStreets, PDO::PARAM_INT);
+            $call->bindParam(9, $iHasPOI, PDO::PARAM_INT);
+            $call->bindParam(10, $iHasCoordinates, PDO::PARAM_INT);
+            $call->bindParam(11, $iHasCoast, PDO::PARAM_INT);
+            $call->bindParam(12, $iNeedsReview, PDO::PARAM_INT);
+            $call->bindParam(13, $iComments, PDO::PARAM_STR);
+            $call->bindParam(14, $iCustomerID, PDO::PARAM_INT);
+            $call->bindParam(15, $iStartDate, PDO::PARAM_STR);
+            $call->bindParam(16, $iEndDate, PDO::PARAM_STR);
+            $call->bindParam(17, $iJobNumber, PDO::PARAM_STR);
+            $call->bindParam(18, $iFieldBookNumber, PDO::PARAM_STR);
+            $call->bindParam(19, $iFieldBookPage, PDO::PARAM_STR);
+            $call->bindParam(20, $iReadability, PDO::PARAM_STR);
+            $call->bindParam(21, $iRectifiability, PDO::PARAM_STR);
+            $call->bindParam(22, $iCompanyID, PDO::PARAM_INT);
+            $call->bindParam(23, $iType, PDO::PARAM_STR);
+            $call->bindParam(24, $iMedium, PDO::PARAM_INT);
+            $call->bindParam(25, $iAuthorID, PDO::PARAM_INT);
+
+            /* EXECUTE STATEMENT */
+            //execute sql statement
+            return $call->execute();
+        } else return false;
+    }
+     /**********************************************
      * Function: SP_TEMPLATE_MAP_DOCUMENT_INSERT
      * Description: inserts a specified map template document
      * Parameter(s):
@@ -205,6 +319,104 @@ class MapDBHelper extends DBHelper
             $call->bindParam(25, $iAuthorID, PDO::PARAM_INT);
             $call->bindParam(26, $iFileNamePath, PDO::PARAM_STR);
             $call->bindParam(27, $iFileNameBackPath, PDO::PARAM_STR);
+
+            /* EXECUTE STATEMENT */
+            $ret = $call->execute();
+            if($ret)
+            {
+                //select the LAST_INSERT_ID
+                $select = $this->getConn()->query('SELECT LAST_INSERT_ID()');
+                //return LAST_INSERT_ID
+                $ret = $select->fetch(PDO::FETCH_COLUMN);
+                return $ret;
+            }
+            print_r($call->errorInfo());
+            return 0;
+        } else return false;
+    }
+
+    /**********************************************
+     * Function: SP_TEMPLATE_MAP_DOCUMENT_INSERT
+     * Description: inserts a specified map template document
+     * Parameter(s):
+     * $collection (in string) - name of the collection
+     * $iLibraryIndex (in string) -
+     * $iTitle (in string) - title of the document
+     * $iSubtitle (in string) - subtitle of the document
+     * $iIsMap (in Integer) - flag if document is a map
+     * $iMapScale (in string) - identifies the map scale
+     * $iHasNorthArrow (in Integer) - flag if document has a north arrow
+     * $iHasStreets (in Integer) - flag if document has streets
+     * $iHasPOI (in Integer) -
+     * $iHasCoordinates (in Integer) - flag if document has coordinates
+     * $iHasCoast (in Integer) - flag if document has a coastline
+     * $iFileName (in string) -
+     * $iFileNameBack (in string) -
+     * $iNeedsReview (in Integer) - flag if document needs to be reviewed
+     * $iComments (in string) -
+     * $iCustomerID (in Integer) - identifies the customer's ID number
+     * $iStartDate (in string) - date when the document
+     * $iEndDate (in string) - date when the document
+     * $iFieldBookNumber (in Integer) - identifies the fieldbooknumber
+     * $iFieldBookPage (in Integer) - identifies the fieldbookpage
+     * $iReadability (in string) - string specifies how readable the document is
+     * $iRectifiability (in string) -
+     * $iCompanyID (in Integer) - identifies the companysID
+     * $iType (in string) -
+     * $iMedium (in Integer) -
+     * $iAuthorID (in Integer) - identifies the author of the document
+     * $iFileNamePath (in string) -
+     * $iFileNameBackPath (in string) -
+     * Return value(s):
+     * $result (assoc array) - return a document info in an associative array, or FALSE if failed
+     ***********************************************/
+    function SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_INSERT($collection,
+                                             $iLibraryIndex, $iTitle, $iSubtitle, $iIsMap,
+                                             $iMapScale, $iHasNorthArrow, $iHasStreets, $iHasPOI,
+                                             $iHasCoordinates, $iHasCoast,$iFileName, $iFileNameBack,
+                                             $iNeedsReview, $iComments, $iCustomerID, $iStartDate,
+                                             $iEndDate,$iJobNumber, $iFieldBookNumber, $iFieldBookPage, $iReadability,
+                                             $iRectifiability, $iCompanyID,$iType, $iMedium,
+                                             $iAuthorID,$iFileNamePath,$iFileNameBackPath)
+    {
+        $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
+        if ($dbname != null && $dbname != "") {
+            $this->getConn()->exec('USE ' . $dbname);
+            /* PREPARE STATEMENT */
+            /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
+            // sql statement CALL calls the function pointed to in the db
+            $call = $this->getConn()->prepare("CALL SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_INSERT(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            if (!$call)
+                trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
+            //Binds all parameters to the prepared SQL statement
+            $call->bindParam(1, $iLibraryIndex, PDO::PARAM_STR);
+            $call->bindParam(2, $iTitle, PDO::PARAM_STR);
+            $call->bindParam(3, $iSubtitle, PDO::PARAM_STR);
+            $call->bindParam(4, $iIsMap, PDO::PARAM_INT);
+            $call->bindParam(5, $iMapScale, PDO::PARAM_STR);
+            $call->bindParam(6, $iHasNorthArrow, PDO::PARAM_INT);
+            $call->bindParam(7, $iHasStreets, PDO::PARAM_INT);
+            $call->bindParam(8, $iHasPOI, PDO::PARAM_INT);
+            $call->bindParam(9, $iHasCoordinates, PDO::PARAM_INT);
+            $call->bindParam(10, $iHasCoast, PDO::PARAM_INT);
+            $call->bindParam(11, $iFileName, PDO::PARAM_STR);
+            $call->bindParam(12, $iFileNameBack, PDO::PARAM_STR);
+            $call->bindParam(13, $iNeedsReview, PDO::PARAM_INT);
+            $call->bindParam(14, $iComments, PDO::PARAM_STR);
+            $call->bindParam(15, $iCustomerID, PDO::PARAM_INT);
+            $call->bindParam(16, $iStartDate, PDO::PARAM_STR);
+            $call->bindParam(17, $iEndDate, PDO::PARAM_STR);
+            $call->bindParam(18, $iJobNumber, PDO::PARAM_STR);
+            $call->bindParam(19, $iFieldBookNumber, PDO::PARAM_STR);
+            $call->bindParam(20, $iFieldBookPage, PDO::PARAM_STR);
+            $call->bindParam(21, $iReadability, PDO::PARAM_STR);
+            $call->bindParam(22, $iRectifiability, PDO::PARAM_STR);
+            $call->bindParam(23, $iCompanyID, PDO::PARAM_INT);
+            $call->bindParam(24, $iType, PDO::PARAM_STR);
+            $call->bindParam(25, $iMedium, PDO::PARAM_INT);
+            $call->bindParam(26, $iAuthorID, PDO::PARAM_INT);
+            $call->bindParam(27, $iFileNamePath, PDO::PARAM_STR);
+            $call->bindParam(28, $iFileNameBackPath, PDO::PARAM_STR);
 
             /* EXECUTE STATEMENT */
             $ret = $call->execute();

@@ -46,21 +46,12 @@ else header('Location: ../../');
                         "targets": 0
                     },
                     { "searchable": false, "targets": 0 }, //disable searching by documentID
-                    //column Title
+                    //Library Index
                     {
                         "render": function ( data, type, row ) {
                             return data;
                         },
-                        "targets": 2
-                    },
-                    //column Subtitle
-                    {
-                        "render": function ( data, type, row ) {
-                            if(data.length > 38)
-                                return data.substr(0,38) + "...";
-                            return data;
-                        },
-                        "targets": 3
+                        "targets": 1
                     },
                     //{ "searchable": false, "targets": 3 }, //disable searching by subtitle
                     //column : Date
@@ -70,43 +61,26 @@ else header('Location: ../../');
                                 return "";
                             return data;
                         },
-                        "targets": 5
+                        "targets": 3
                     },
-                    //column : HasCoast
-                    {
-                        "render": function ( data, type, row ) {
-                            if(data == 1)
-                                return "Yes";
-                            return "No";
-                        },
-                        "targets": 6
-                    },
-                   // { "searchable": false, "targets": 6 },
+                    // { "searchable": false, "targets": 6 },
                     //column : Filename of Front Scan (hidden)
                     {
                         "render": function ( data, type, row ) {
                             return data;
                         },
-                        "targets": 7
+                        "targets": 4
                     },
                     //column : Filename of Back Scan (hidden)
                     {
                         "render": function ( data, type, row ) {
                             return data;
                         },
-                        "targets": 8
+                        "targets": 5
                     },
-                    { "searchable": false, "targets": 7 }, //disable search for file name
-                    { "searchable": false, "targets": 8 }, //disable search for file name back
-                    //column : HasPOI
-                    {
-                        "render": function ( data, type, row ) {
-                            if(data == 1)
-                                return "Yes";
-                            return "No";
-                        },
-                        "targets": 9
-                    },
+//                    { "searchable": false, "targets": 7 }, //disable search for file name
+//                    { "searchable": false, "targets": 8 }, //disable search for file name back
+
                     //column : Rectifiability
                     {
                         "render": function ( data, type, row ) {
@@ -121,7 +95,7 @@ else header('Location: ../../');
                                 default: return data;
                             }
                         },
-                        "targets": 10
+                        "targets": 6
                     },
                     //column georec status
                     //This column translates the GeoRec Front Status from int value to string value
@@ -137,12 +111,12 @@ else header('Location: ../../');
                                 default: return "<span>Unknown</span>";
                             }
                         },
-                        "targets": 11
+                        "targets": 7
                     },
                     //This column translates the GeoRec Back Status from int value to string value
                     {
                         "render": function ( data, type, row ) {
-                            if(row[8] == "")
+                            if(row[5] == "")
                                 return "";
                             switch(data)
                             {
@@ -154,24 +128,24 @@ else header('Location: ../../');
                                 default: return "<span>Unknown</span>";
                             }
                         },
-                        "targets": 12
+                        "targets": 8
                     },
                     //columnn georectify
                     {
                         "render": function ( data, type, row ) {
-                            switch(row[8]) //based on Georec Status column (column 8)
+                            switch(row[5]) //based on Georec Status column (column 8)
                             {
                                 default:
                                     var type1 = "front";
                                     var type2 = "back";
                                     return "<a href='' id='aRecFront' onclick='makeTiles(" + '"' + collection_config['Name'] + '"' + "," + row[0] + "," + '"' + type1 + '"' + ");event.preventDefault();'>Front</a>" +
-                                      " | "  + "<a href='' id='aRecFront' onclick='makeTiles(" + '"' + collection_config['Name'] + '"' + "," + row[0] + "," + '"' + type2 + '"' + ");event.preventDefault();'>Back</a>";
+                                        " | "  + "<a href='' id='aRecFront' onclick='makeTiles(" + '"' + collection_config['Name'] + '"' + "," + row[0] + "," + '"' + type2 + '"' + ");event.preventDefault();'>Back</a>";
                                 case "": //no back
                                     var type1 = "front";
                                     return "<a href='' id='aRecFront' onclick='makeTiles(" + '"' + collection_config['Name'] + '"' + "," + row[0] + "," + '"' + type1 + '"' + ");event.preventDefault();'>Front</a>";
                             }
                         },
-                        "targets": 13
+                        "targets": 9
                     }
 
 
@@ -183,23 +157,22 @@ else header('Location: ../../');
                         switch(column[0][0]) //column number
                         {
                             //case: use dropdown filtering for column that has boolean value (Yes/No or 1/0)
-                            case 6: //column hascoast
-                            case 9: //column POI
-                                var select = $('<select style="width:100%"><option value="">Filter...</option><option value="1">Yes</option><option value="0">No</option></select>')
-                                    .appendTo( $(column.footer()).empty() )
-                                    .on( 'change', function () {
-                                        var val = $.fn.dataTable.util.escapeRegex(
-                                            $(this).val()
-                                        );
-
-                                        column
-                                            .search(val)
-                                            .draw();
-                                    } );
-                                break;
+//                            case 9: //column POI
+//                                var select = $('<select style="width:100%"><option value="">Filter...</option><option value="1">Yes</option><option value="0">No</option></select>')
+//                                    .appendTo( $(column.footer()).empty() )
+//                                    .on( 'change', function () {
+//                                        var val = $.fn.dataTable.util.escapeRegex(
+//                                            $(this).val()
+//                                        );
+//
+//                                        column
+//                                            .search(val)
+//                                            .draw();
+//                                    } );
+//                                break;
                             //case: GeoRec Front/Back status columns
-                            case 11: //column GeoRec Front Status
-                            case 12: //column GeoRec Back Status
+                            case 7: //column GeoRec Front Status
+                            case 8: //column GeoRec Back Status
                                 var select = $('<select style="width:100%"><option value="">Filter...</option><option value="0">Not Rectified</option><option value="1">Rectified</option><option value="2">Not Rectifiable</option><option value="3">Needs Review</option><option value="4">Research Required</option></select>')
                                     .appendTo( $(column.footer()).empty() )
                                     .on( 'change', function () {
@@ -213,7 +186,7 @@ else header('Location: ../../');
                                     } );
                                 break;
                             //case: columns have limited unique values
-                            case 10:
+                            case 6:
                                 var select = $('<select style="width:100%"><option value="">Filter...</option></select>')
                                     .appendTo( $(column.footer()).empty() )
                                     .on( 'change', function () {
@@ -254,18 +227,18 @@ else header('Location: ../../');
 
             //hide first column (DocID)
             table.column(0).visible(true);
-            table.column(7).visible(false); //hide file name col
-            table.column(8).visible(false); // hide file name back col
-            <?php if($session->hasWritePermission()){ ?> table.column(10).visible(true); <?php }//geo rectify only visible for writer ?>
+            table.column(4).visible(false); //hide file name col
+            table.column(5).visible(false); // hide file name back col
+            <?php if($session->hasWritePermission()){ ?> table.column(8).visible(true); <?php }//geo rectify only visible for writer ?>
             // show or hide subtitle
-            table.column(3).visible(false);
-            $('#checkbox_subtitle').change(function (e) {
-                e.preventDefault();
-                // Get the column API object
-                var column = table.column(3);
-                // Toggle the visibility
-                column.visible( ! column.visible() );
-            } );
+//            table.column(3).visible(false);
+//            $('#checkbox_subtitle').change(function (e) {
+//                e.preventDefault();
+//                // Get the column API object
+//                var column = table.column(3);
+//                // Toggle the visibility
+//                column.visible( ! column.visible() );
+//            } );
 
             // select row on single click
             $('#dtable tbody').on( 'click', 'tr', function () {
@@ -308,13 +281,9 @@ else header('Location: ../../');
                         <th></th>
                         <th width="100px">Library Index</th>
                         <th>Document Title</th>
-                        <th width="280px">Document Subtitle</th>
-                        <th width="150px">Customer</th>
                         <th width="70px">End Date</th>
-                        <th width="40px">Has Coast</th>
                         <th>Front Map</th>
                         <th>Back Map</th>
-                        <th width="40px">Has POI</th>
                         <th>Rectifiability</th>
                         <th width="120px">GeoRec Front Status</th>
                         <th width="120px">GeoRec Back Status</th>
@@ -326,13 +295,9 @@ else header('Location: ../../');
                         <th></th>
                         <th width="100px">Library Index</th>
                         <th>Document Title</th>
-                        <th width="280px">Document Subtitle</th>
-                        <th width="150px">Customer</th>
                         <th width="70px">End Date</th>
-                        <th width="40px">Has Coast</th>
                         <th>Front Map</th>
                         <th>Back Map</th>
-                        <th>Has POI</th>
                         <th>Rectifiability</th>
                         <th width="120x">GeoRec Front Status</th>
                         <th width="120px">GeoRec Back Status</th>
@@ -361,7 +326,7 @@ else header('Location: ../../');
             url: "php/tileCreator.php",
             data: {"collection": collection,"docID": docID,"type": type},
             success:function(data) {
-           window.localStorage.setItem("imageInfo", JSON.stringify(data));
+                window.localStorage.setItem("imageInfo", JSON.stringify(data));
                 closeModal(3);
                 window.open("georec.php?col="+collection+"&docID="+docID+"&type="+type);
                 //alert(data);

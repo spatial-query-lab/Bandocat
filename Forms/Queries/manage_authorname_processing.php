@@ -19,7 +19,7 @@ if(isset($_GET['action']))
             echo json_encode($DB->GET_AUTHOR_INFO($_GET['col'],$_GET['id'],"nextID"));
             return;
         case "update": //update tdlname
-            echo json_encode($DB->UPDATE_AUTHOR_INFO($_GET['col'],$_POST['authorID'],$_POST['authorname'],$_POST['oldname']));
+            echo json_encode($DB->UPDATE_AUTHOR_INFO($_GET['col'],$_POST['authorID'],$_POST['authorname'],$_POST['TDLname']));
             return;
         default: break;
     }
