@@ -61,7 +61,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label" for="txtLibraryIndex">Library Index:</label>
                                         <div class="col-sm-8" id="libraryIndex">
-                                            <input type = "text" class="form-control" name = "txtLibraryIndex" id = "txtLibraryIndex" value="" required readonly />
+                                            <input title="REQUIRED: Please enter a front scan to fill this text box." type = "text" class="form-control" name = "txtLibraryIndex" id = "txtLibraryIndex" value="" required readonly />
                                         </div>
                                     </div>
                                     <!-- Document Title -->
@@ -124,18 +124,18 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                         <label class="col-sm-4 col-form-label" for="txtSubtitle">Map Scale:</label>
                                         <div class="col-sm-8">
                                             <div class="d-flex">
-                                                <input type="number" min="1" class="form-control">
-                                                <select class="form-control" id="unitLeft">
-                                                    <option value="inches">in</option>
-                                                    <option value="feet">ft</option>
-                                                    <option value="varas">vrs</option>
+                                                <input type="number" min="1" class="form-control" id="numberLeft" name="numberLeft">
+                                                <select class="form-control" id="unitLeft" name="unitLeft">
+                                                    <option value="in">in</option>
+                                                    <option value="ft">ft</option>
+                                                    <option value="vrs">vrs</option>
                                                 </select>
                                                 <input type="text" value="=" class="form-control" disabled style="background-color: #FFFFFF; text-align: center; border: none;">
-                                                <input type="number" min="1" class="form-control">
-                                                <select class="form-control" id="unitRight">
-                                                    <option value="feet">ft</option>
-                                                    <option value="varas">vrs</option>
-                                                    <option value="inches">in</option>
+                                                <input type="number" min="1" class="form-control" id="numberRight" name="numberRight">
+                                                <select class="form-control" id="unitRight" name="unitRight">
+                                                    <option value="ft">ft</option>
+                                                    <option value="vrs">vrs</option>
+                                                    <option value="in">in</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -357,7 +357,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                     <!-- Scan front -->
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label" for="fileUpload">Front Scan:</label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-8" id="frontScan">
                                             <div class="custom-file">
                                                 <input type="file" class="custom-file-input" name="fileUpload" id="fileUpload" accept=".tif" required />
                                                 <label class="custom-file-label" for="fileUpload">Choose file</label>
@@ -367,7 +367,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                     <!-- Scan Back -->
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label" for="fileUploadBack">Back Scan:</label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-8" id="backScan">
                                             <div class="custom-file">
                                                 <input type="file" class="custom-file-input" name="fileUploadBack" id="fileUploadBack" accept=".tif" />
                                                 <label class="custom-file-label" for="fileUploadBack">Choose file</label>
@@ -378,7 +378,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                     <div class="form-row">
                                         <div class="form-group col">
                                             <label for="txtComments" class="col-form-label">Comments:</label>
-                                            <textarea class="form-control" cols="35" rows="5" name="txtComments" id="txtComments" placeholder="Example: Tract located in Corpus Christi, Nueces Co., Texas."></textarea>
+                                            <textarea class="form-control" cols="35" rows="5" name="txtComments" id="txtComments" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -453,7 +453,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
         /* attach a submit handler to the form */
         $('#theform').submit(function (event) {
             /* stop form from submitting normally */
-            //var formData = new FormData($('#theform'));
+            var formData = new FormData($(this)[0]);
             /*jquery that displays the three points loader*/
 
             /*var error = errorHandling($('#txtLibraryIndex'), '<//?php echo $collection ?>');
@@ -481,40 +481,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
             $("#loader").show();*/
             //event.disabled;
             /* Send the data using post */
-            /*$.ajax({
-                type: 'post',
-                url: 'form_processing.php',
-                data:  formData,
-                processData: false,
-                contentType: false,
-                success:function(data){
-                    var json = JSON.parse(data);
-                    var msg = "";
-                    var result = 0;
-                    for(var i = 0; i < json.length; i++)
-                    {
-                        msg += json[i] + "\n";
-                    }
-                    for (var i = 0; i < json.length; i++){
-                        if (json[i].includes("Success")) {
-                            result = 1;
-                        }
-                        else if(json[i].includes("Fail") || json[i].includes("EXISTED"))
-                        {
-                            $('#btnSubmit').css("display", "inherit");
-                            //$('#loader').css("display", "none");
-                            $('#overlay').removeAttr("style").hide();
-                            $('#loader').removeAttr("style").hide();
-                        }
-                    }
-                    alert(msg);
-                    if (result == 1){
-                        window.location.href = "./catalog.php?col=< ?php //echo $_GET['col']; ?>";
-                    }
 
-                }
-            });*/
-            ///////////////////////////////////////////////////////// RUBEN'S ////////////////////////////////////////////////////
             // Name and values of content on form taken and stored
             var data = $('#theform').serializeArray();
             // Manually adding front and back scan values due to Serialize function
@@ -525,23 +492,63 @@ $readrec = array("POOR","GOOD","EXCELLENT");
             data.push({name: 'fileUploadBack', value: backValue});
 
             // Display data of form on console for development purposes
-            for(var i = 0; i < data.length; i++)
+            /*for(var i = 0; i < data.length; i++)
             {
                 console.log("****** ", i, " ******");
                 console.log("Name ", data[i].name);
                 console.log("Value ", data[i].value);
+            }*/
+
+            $(".alert").remove(); // Clears old alerts for new ones
+
+            if(handleError(data) == false)
+            {
+                // Will go into this segment if there are no errors
+                console.log("All good big dog");
+                $.ajax({
+                    type: 'post',
+                    url: 'form_processing.php',
+                    data:  formData,
+                    processData: false,
+                    contentType: false,
+                    success:function(data){
+                        /*var json = JSON.parse(data);
+                        var msg = "";
+                        var result = 0;
+                        for(var i = 0; i < json.length; i++)
+                        {
+                            msg += json[i] + "\n";
+                        }
+                        for (var i = 0; i < json.length; i++){
+                            if (json[i].includes("Success")) {
+                                result = 1;
+                            }
+                            else if(json[i].includes("Fail") || json[i].includes("EXISTED"))
+                            {
+                                $('#btnSubmit').css("display", "inherit");
+                                //$('#loader').css("display", "none");
+                                $('#overlay').removeAttr("style").hide();
+                                $('#loader').removeAttr("style").hide();
+                            }
+                        }
+                        alert(msg);
+                        if (result == 1){
+                            window.location.href = "./catalog.php?col=< ?php //echo $_GET['col']; ?>";
+                        }*/
+                        console.log(data);
+                    }
+                });
+            }
+            else
+            {
+                // Will go here if there are errors
+                console.log("Something wrong big dog");
             }
 
-            handleError(data);
-
             event.preventDefault();
-            ///////////////////////////////////////////////// MOVE TO OWN DOC? ///////////////////////////////////////////////////
         });
     });
 
-    ///////////////////////////////////////////////////////// RUBEN'S ////////////////////////////////////////////////////
-
-    // Front scan check
     $('#fileUpload').change(function() {
         // Name of file and placeholder
         var file = this.files[0].name;
@@ -571,7 +578,6 @@ $readrec = array("POOR","GOOD","EXCELLENT");
         }
     });
 
-
     //Back scan check
     $('#fileUploadBack').change(function() {
         // Name of file and placeholder
@@ -593,7 +599,6 @@ $readrec = array("POOR","GOOD","EXCELLENT");
             console.log('Valid back file');
         }
     });
-    ///////////////////////////////////////////////// MOVE TO OWN DOC? //////////////////////////////////////////////////
 </script>
 
 <script>

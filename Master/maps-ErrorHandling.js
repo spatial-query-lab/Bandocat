@@ -46,13 +46,16 @@ function handleError(data)
     var backCheck = /back|Back/g;
     var copyCheck = /copy|Copy/g;
 
+    // Flag to hold error status
+    var flag = false; //false = no errors / true = errors
+
     /*************************************** Library Index ***************************************/
     /*if(libIndexValue == "") // if value is empty
     {
         var message = '<strong>ERROR:</strong> Required text field\n'
         errorReport("libraryIndex", message, "danger");
-    }*/
-     /*if(dashUnderScoreCheck.test(libIndexValue) == false) // if value doesn't contain -_ pattern
+    }
+    else if(dashUnderScoreCheck.test(libIndexValue) == false) // if value doesn't contain -_ pattern
     {
         var message = '<strong>ERROR:</strong> File doesn\'t have -_ pattern\n'
         errorReport("libraryIndex", message, "danger");
@@ -63,6 +66,7 @@ function handleError(data)
     {
         var message = '<strong>ERROR:</strong> Required text field\n'
         errorReport("docTitle", message, "danger");
+        flag = true;
     }
 
     /*************************************** Front Scan ***************************************/
@@ -81,39 +85,49 @@ function handleError(data)
 
     if(fileUploadValue == "") // if value is empty
     {
-        var message = '<strong>ERROR:</strong> Required text field\n'
+        var message = '<strong>ERROR:</strong> File must be uploaded\n'
         errorReport("frontScan", message, "danger");
+        flag = true;
     }
     else if(frontDashUnderCheck == false)
     {
         var message = '<strong>ERROR:</strong> File doesn\'t have -_ pattern\n'
         errorReport("frontScan", message, "danger");
+        $('#txtLibraryIndex').val(null);
+        flag = true;
     }
     else if(frontCopyCheck == true)
     {
         var message = '<strong>ERROR:</strong> File is a copy?\n'
         errorReport("frontScan", message, "danger");
+        $('#txtLibraryIndex').val(null);
+        flag = true;
     }
     else if(frontDashCount(fileUploadValue) > 1)
     {
-        var message = '<strong>ERROR:</strong> File contains more than 1 dash\n'
+        var message = '<strong>ERROR:</strong> File contains more than 1 hyphen\n'
         errorReport("frontScan", message, "danger");
+        $('#txtLibraryIndex').val(null);
+        flag = true;
     }
     else if(frontBackCheck == true) // if value does have "back"
     {
         var message = '<strong>ERROR:</strong> Wrong File. Possibly Back Scan?\n'
         errorReport("frontScan", message, "danger");
+        $('#txtLibraryIndex').val(null);
+        flag = true;
     }
 
-
-
-
     /*************************************** Back Scan ***************************************/
-    // Back scan has to check for "back" and "-_" so I set them to variables here for easier
-    // testing with if statements.
+    // Re-initializing variables for further testing
+    dashUnderScoreCheck = /-_/g;
+    backCheck = /back|Back/g;
+    copyCheck = /copy|Copy/g;
+
     var backDashUnderCheck = dashUnderScoreCheck.test(fileUploadBackValue);
     var backBackCheck = backCheck.test(fileUploadBackValue);
     var backCopyCheck = copyCheck.test(fileUploadBackValue);
+
 
     // Function counts the amount of dashes in the given value
     function backDashCount (fileUploadBackValue) {
@@ -125,33 +139,37 @@ function handleError(data)
 
     if(fileUploadBackValue == "") // if value is empty
     {
-        var message = '<strong>ERROR:</strong> Required text field\n'
-        errorReport("backScan", message, "danger");
+        console.log("No back scan...");
     }
     else if(backDashUnderCheck == false && backBackCheck == false) // if value doesn't have either
     {
         var message = '<strong>ERROR:</strong> File doesn\'t have -_ pattern or contain back\n'
         errorReport("backScan", message, "danger");
+        flag = true;
     }
     else if(backCopyCheck == true)
     {
         var message = '<strong>ERROR:</strong> File is a copy?\n'
         errorReport("backScan", message, "danger");
+        flag = true;
     }
     else if(backDashCount(fileUploadBackValue) > 1)
     {
         var message = '<strong>ERROR:</strong> File contains more than 1 dash\n'
         errorReport("backScan", message, "danger");
+        flag = true;
     }
     else if(backDashUnderCheck == false) // if value doesn't contain -_ pattern
     {
         var message = '<strong>ERROR:</strong> File doesn\'t have -_ pattern\n'
         errorReport("backScan", message, "danger");
+        flag = true;
     }
     else if(backBackCheck == false) // if value doesn't contain "back"
     {
         var message = '<strong>ERROR:</strong> File doesn\'t contain back\n'
         errorReport("backScan", message, "danger");
+        flag = true;
     }
 
     /*************************************** Doc Medium ***************************************/
@@ -159,6 +177,9 @@ function handleError(data)
     {
         var message = '<strong>ERROR:</strong> Required text field\n'
         errorReport("docMedium", message, "danger");
+        flag = true;
     }
     ///////////////////////////////// Error Displaying Ends Here ///////////////////////////////////////
+
+    return flag;
 }

@@ -15,6 +15,7 @@ require '../../Library/DateHelper.php';
 require '../../Library/ControlsRender.php';
 $Render = new ControlsRender();
 $DB = new FieldBookDBHelper();
+$theDB = new DBHelper();
 //get appropriate DB
 $config = $DB->SP_GET_COLLECTION_CONFIG($collection);
 //select fieldbook documents
@@ -75,18 +76,21 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
                                     <input type = "text" rel="txtToolTip" data-toggle="tooltip" data-placement="left" title="If you want to edit this index, use the Edit/View operation in the menu" class="form-control-plaintext" name = "txtLibraryIndex" id = "txtLibraryIndex" value="<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>" readonly />
                                 </div>
                             </div>
-                            <!-- Collection -->
-                            <div class="form-group row">
-                                <label for="txtFBCollection" class="col-sm-3 col-form-label">Collection:</label>
-                                <div class="col-sm-9">
-                                    <input type = "text" class="form-control" name = "txtFBCollection" id = "txtFBCollection" value="<?php echo htmlspecialchars($document['Collection'],ENT_QUOTES);?>" required list="lstCollection"/>
-                                </div>
-                            </div>
                             <!-- Book Title -->
                             <div class="form-group row">
                                 <label for="txtBookTitle" class="col-sm-3 col-form-label">Book Title:</label>
                                 <div class="col-sm-9">
-                                    <input type = "text" class="form-control" name = "txtBookTitle" id = "txtBookTitle" value="<?php echo htmlspecialchars($document['BookTitle'],ENT_QUOTES);?>" required />
+                                    <input type = "text" class="form-control-plaintext" name = "txtBookTitle" id = "txtBookTitle" readonly />
+                                </div>
+                            </div>
+                            <!-- Collection -->
+                            <div class="form-group row">
+                                <label for="txtFBCollection" class="col-sm-3 col-form-label">Collection:</label>
+                                <div class="col-sm-9">
+                                    <select id="txtFBCollection" name="txtFBCollection" class="form-control" required>
+                                        <!-- GET MAP MEDIUM FOR DDL-->
+                                        <?php $Render->GET_DDL_COLLECTION($theDB->GET_COLLECTION_FOR_DROPDOWN(),null);?>
+                                    </select>
                                 </div>
                             </div>
                             <!-- Job Number -->
@@ -292,6 +296,11 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
 
         if (footerTop < docHeight)
             $('#footer').css('margin-top', 0 + (docHeight - footerTop) + 'px');
+
+        var n1 = document.getElementById('txtLibraryIndex').value;
+        var newN1 = n1.substr(1);
+        newN1 = newN1.substr(0, 3);
+        document.getElementById('txtBookTitle').value = newN1;
     });
 </script>
 <script>
@@ -323,6 +332,7 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
             } ?>" autocomplete="off" list="lstCrew" />\n' +
             '                                </div>\n' +
             '                            </div>';
+
         $("#crewcell").append(div);
     }
 </script>
@@ -351,7 +361,7 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
             formData.append("crews",JSON.stringify(array_crews));
 
             // Use jquery to show the overlay and the loading circle
-            $("#overlay").show();
+            //$("#overlay").show();
 
             /* Send the data using post */
             $.ajax({

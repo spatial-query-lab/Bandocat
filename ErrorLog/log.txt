@@ -1677,3 +1677,4 @@
 2019-01-23 02:55:51pmhreeves @blucherfieldbook - documentID:21407: Failed to Submit!,
 2019-01-23 02:55:53pmhreeves @blucherfieldbook - documentID:21407: Failed to Submit!,
 2019-01-24 12:36:51pmhreeves @bluchermaps - documentID:9760: Success!,
+2019-05-01 02:18:41pmrortiz18 @bluchermaps - documentID:1-_922.tif: Database Check: EXISTED,Failed to Submit!,

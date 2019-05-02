@@ -47,21 +47,6 @@ require '../../Library/AnnouncementDBHelper.php';
 </head>
 <!-- HTML BODY -->
 <body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- TABLE FOR LAYOUT OF PAGE -->
 <table id="thetable">
     <tr id="trTop">
@@ -81,16 +66,15 @@ require '../../Library/AnnouncementDBHelper.php';
             <div id="indicatorcontainer"></div>
 
             <div id="game-container">
-            <canvas id="canvas" width="1050" height="640"></canvas>
-            <div id="left-controls">
-                <div id="up" class='button'>THRUST</div>
-                <div id="left" class='button'>LEFT</div>
-                <div id="right" class='button'>RIGHT</div>
-            </div>
-            <div id="right-controls">
-                <div id="space" class='button'>FIRE</div>
-            </div>
-            </div>
+                <canvas id="canvas" width="1050" height="640"></canvas>
+                <div id="left-controls">
+                    <div id="up" class='button'>THRUST</div>
+                    <div id="left" class='button'>LEFT</div>
+                    <div id="right" class='button'>RIGHT</div>
+                </div>
+                <div id="right-controls">
+                    <div id="space" class='button'>FIRE</div>
+                </div>
             </div>
 
             <div id="divscroller" style="text-align: center">
