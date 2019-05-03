@@ -98,6 +98,47 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                                     </datalist>
                                                 </div>
                                             </div>
+                                            <!-- Document Start Date -->
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label" for="txtSubtitle">Document Start Date:</label>
+                                                <div class="col-sm-8">
+                                                    <div class="d-flex">
+                                                        <select class="form-control" name="ddlStartMonth" id="ddlStartMonth">
+                                                            <!-- POPULATES THE DDL WITH START MONTHS -->
+                                                            <?php $Render->GET_DDL_MONTH(null); ?>
+                                                        </select>
+                                                        <select class="form-control" name="ddlStartDay" id="ddlStartDay">
+                                                            <!-- POPULATES THE DDL WITH START DAYS -->
+                                                            <?php $Render->GET_DDL_DAY(null); ?>
+                                                        </select>
+
+                                                        <select class="form-control" id="ddlStartYear" name="ddlStartYear">
+                                                            <!-- POPULATES THE DDL WITH START YEARS -->
+                                                            <?php $Render->GET_DDL_YEAR(null); ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Document End Date -->
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label" for="txtSubtitle">Document End Date:</label>
+                                                <div class="col-sm-8">
+                                                    <div class="d-flex">
+                                                        <select class="form-control" name="ddlEndMonth" id="ddlEndMonth">
+                                                            <!-- POPULATES THE DDL WITH END MONTHS -->
+                                                            <?php $Render->GET_DDL_MONTH(null); ?>
+                                                        </select>
+                                                        <select class="form-control" name="ddlEndDay" id="ddlEndDay">
+                                                            <!-- POPULATES THE DDL WITH END DAYS -->
+                                                            <?php $Render->GET_DDL_DAY(null); ?>
+                                                        </select>
+                                                        <select class="form-control" name="ddlEndYear" id="ddlEndYear">
+                                                            <!-- POPULATES THE DDL WITH END YEARS -->
+                                                            <?php $Render->GET_DDL_YEAR(null); ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <!-- Radio Buttons Start -->
                                             <!-- Needs Review -->
                                             <div class="form-group row" id="needsReview">
@@ -157,89 +198,49 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                         </div>
                                         <!-- The Right Side -->
                                         <div class="col-6">
-                                            <!-- Document Start Date -->
+                                            <!-- Scan of Front -->
                                             <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label" for="txtSubtitle">Document Start Date:</label>
-                                                <div class="col-sm-8">
-                                                    <div class="d-flex">
-                                                        <select class="form-control" name="ddlStartMonth" id="ddlStartMonth">
-                                                            <!-- POPULATES THE DDL WITH START MONTHS -->
-                                                            <?php $Render->GET_DDL_MONTH(null); ?>
-                                                        </select>
-                                                        <select class="form-control" name="ddlStartDay" id="ddlStartDay">
-                                                            <!-- POPULATES THE DDL WITH START DAYS -->
-                                                            <?php $Render->GET_DDL_DAY(null); ?>
-                                                        </select>
-
-                                                        <select class="form-control" id="ddlStartYear" name="ddlStartYear">
-                                                            <!-- POPULATES THE DDL WITH START YEARS -->
-                                                            <?php $Render->GET_DDL_YEAR(null); ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                <table>
+                                                    <tr>
+                                                        <td style="text-align: center;">
+                                                            <!-- Scan of Front -->
+                                                            <span class="label" style="text-align: center;"> Scan of Front:</span><br>
+                                                            <?php
+                                                            echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\"><br><img src='" .  '../../' . $config['ThumbnailDir'] . str_replace(".tif",".jpg",$document['FileName']) . " ' alt = Error /></a>";
+                                                            echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNamePath'])/1024/1024, 2) . " MB";
+                                                            echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\">(Click to download)</a>";
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </div>
-                                            <!-- Document End Date -->
+                                            <!-- Scan of Back -->
                                             <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label" for="txtSubtitle">Document End Date:</label>
-                                                <div class="col-sm-8">
-                                                    <div class="d-flex">
-                                                        <select class="form-control" name="ddlEndMonth" id="ddlEndMonth">
-                                                            <!-- POPULATES THE DDL WITH END MONTHS -->
-                                                            <?php $Render->GET_DDL_MONTH(null); ?>
-                                                        </select>
-                                                        <select class="form-control" name="ddlEndDay" id="ddlEndDay">
-                                                            <!-- POPULATES THE DDL WITH END DAYS -->
-                                                            <?php $Render->GET_DDL_DAY(null); ?>
-                                                        </select>
-                                                        <select class="form-control" name="ddlEndYear" id="ddlEndYear">
-                                                            <!-- POPULATES THE DDL WITH END YEARS -->
-                                                            <?php $Render->GET_DDL_YEAR(null); ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                <table>
+                                                    <tr>
+                                                        <td style="text-align: center;">
+                                                            <span class="label" style="text-align: center;"> Scan of Back:</span><br>
+                                                            <?php
+                                                            if($document['FileNameBack'] != '') //has Back Scan
+                                                            {
+                                                                echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\"><br><img src='" . '../../' . $config['ThumbnailDir'] . str_replace(".tif", ".jpg", $document['FileNameBack']) . " ' alt = Error /></a>";
+                                                                echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNameBackPath']) / 1024 / 1024, 2) . " MB";
+                                                                echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\">(Click to download)</a>";
+                                                            }
+                                                            else
+                                                            {
+                                                                echo '<span class="label" style="text-align: center;">No Scan of Back</span><br>';
+                                                            }
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </div>
-
-                                            <!-- Front Scan -->
-                                            <div class="form-group row">
-
-                                                <span class="label" style="text-align: center">Front Scan:</span><br>
-                                                <?php
-                                                echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\"><br><img src='" .  '../../' . $config['ThumbnailDir'] . str_replace(".tif",".jpg",$document['FileName']) . " ' alt = Error /></a>";
-                                                echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNamePath'])/1024/1024, 2) . " MB";
-                                                echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\">(Click to download)</a>";
-                                                ?>
-                                            </div>
-
-
-                                            <!-- Front Scan -->
-                                            <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label">Front Scan:</label>
-                                                <div class="col-sm-8">
-                                                    <div class="custom-file spinner-border text-dark" role="status">
-                                                        <input type="file" class="custom-file-input" name="fileUpload" id="fileUpload" accept=".tif" onchange="frontUpload()" required/>
-                                                        <label class="custom-file-label text-truncate" for="fileUpload">Choose file</label>
-                                                        <span class="sr-only">Loading...</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Scan Back -->
-                                            <div class="form-group row" >
-                                                <label class="col-sm-4 col-form-label spinner-border text-dark">Back Scan:</label>
-                                                <div class="col-sm-8">
-                                                    <div class="custom-file spinner-border text-dark" role="status">
-                                                        <input type="file" class="custom-file-input" name="fileUploadBack" id="fileUploadBack" accept=".tif" onchange="backUpload()" />
-                                                        <label class="custom-file-label" for="fileUploadBack">Choose file</label>
-                                                        <span class="sr-only">Loading...</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
                                             <!-- General Comments -->
                                             <div class="form-row">
                                                 <div class="form-group col">
                                                     <label for="txtComments" class="col-form-label">Comments:</label>
-                                                    <textarea class="form-control" cols="35" rows="5" name="txtComments" id="txtComments" placeholder="Example: Job No. 4441, Sheet No. 74, with sketch."></textarea>
+                                                    <textarea class="form-control" cols="35" rows="4" name="txtComments" id="txtComments" placeholder="Example: Job No. 4441, Sheet No. 74, with sketch."></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -366,6 +367,10 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             $(this).next().text(dflt);
         }
     });
+
+    // Text alignment properties for Library Index and Title
+    document.getElementById('txtLibraryIndex').style.textAlign = "center";
+    document.getElementById('txtTitle').style.textAlign = "center";
 
     // *****************************************************************************************************************
     // AUTO POPULATING LIBRARY INDEX FIELD WITH NAME OF UPLOADED FILE. ALSO PERFORMS UPLOADED FILES VALIDATION.
@@ -541,9 +546,6 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
         document.getElementById('descriptionText').style.textAlign = 'center';
         document.getElementById('descriptionText').style.fontSize = '13px';
     }
-
-    document.getElementById('txtLibraryIndex').style.textAlign = 'center';
-    document.getElementById('txtTitle').style.textAlign = 'center';
 
 </script>
 </body>
