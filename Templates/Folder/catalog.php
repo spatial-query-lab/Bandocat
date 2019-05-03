@@ -77,14 +77,14 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="txtLibraryIndex">Library Index:</label>
                                                 <div class="col-sm-8">
-                                                    <input type = "text" class="form-control" name="txtLibraryIndex" id="txtLibraryIndex" value="" disabled/>
+                                                    <input type = "text" class="form-control" name="txtLibraryIndex" id="txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>' required disabled/>
                                                 </div>
                                             </div>
                                             <!-- Document Title -->
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="txtTitle">Document Title:</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" name="txtTitle" id="txtTitle" value="" required />
+                                                    <input type="text" class="form-control" name="txtTitle" id="txtTitle" value='<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>' required />
                                                 </div>
                                             </div>
                                             <!-- Document Author -->
@@ -198,6 +198,19 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!-- Front Scan -->
+                                            <div class="form-group row">
+
+                                                <span class="label" style="text-align: center">Front Scan:</span><br>
+                                                <?php
+                                                echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\"><br><img src='" .  '../../' . $config['ThumbnailDir'] . str_replace(".tif",".jpg",$document['FileName']) . " ' alt = Error /></a>";
+                                                echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNamePath'])/1024/1024, 2) . " MB";
+                                                echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\">(Click to download)</a>";
+                                                ?>
+                                            </div>
+
+
                                             <!-- Front Scan -->
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label">Front Scan:</label>
@@ -220,6 +233,8 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                                     </div>
                                                 </div>
                                             </div>
+
+
                                             <!-- General Comments -->
                                             <div class="form-row">
                                                 <div class="form-group col">
@@ -526,6 +541,9 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
         document.getElementById('descriptionText').style.textAlign = 'center';
         document.getElementById('descriptionText').style.fontSize = '13px';
     }
+
+    document.getElementById('txtLibraryIndex').style.textAlign = 'center';
+    document.getElementById('txtTitle').style.textAlign = 'center';
 
 </script>
 </body>
