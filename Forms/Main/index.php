@@ -23,22 +23,46 @@ $userID = $session->getUserID();
 
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
+    <!--<style>
+        @media only screen and (min-width: 768px) {
+            /* tablets and desktop */
+            body {
+                background-color: dodgerblue;
+            }
+        }
+
+        @media only screen and (max-width: 767px) {
+            /* phones */
+            body {
+                background-color: red;
+            }
+        }
+
+        @media only screen and (max-width: 767px) and (orientation: portrait) {
+            /* portrait phones */
+            body {
+                background-color: yellow;
+            }
+        }
+    </style>-->
 </head>
 <body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 
 <!-- Container -->
-<div class="container-fluid pl-5 pr-5">
+<div class="container-fluid pl-5 pr-5" style="background-color: #f1f1f1;">
     <!-- Put Page Contents Here -->
 
     <div class="row">
+        <!-- Home Page Greeting Message -->
         <div class="col-9 text-center" style="margin-top: 1em;">
             <h4><span id="Time_Day"></span></h4>
             <h4><span id="Greetings"></span></h4>
 
-            <hr>
+            <hr style="background-color: #1E90FF">
         </div>
 
+        <!-- Logo Displayed On Home Page -->
         <div class="col-3 text-center" style="margin-top: 1.5em;">
             <img id="header_logo" width="260px" src="../../Images/Logos/bando-logo-medium.png">
         </div>
@@ -49,14 +73,14 @@ $userID = $session->getUserID();
         <div class="col">
             <!-- I-FRAME -->
             <div class="embed-responsive embed-responsive-16by9">
-                <iframe class="embed-responsive-item" src="http://spatialquerylab.com/news/" frameborder="0" style="border: 3px solid #1E90FF;" allowfullscreen></iframe>
+                <iframe class="embed-responsive-item rounded" src="http://spatialquerylab.com/news/" frameborder="0" style="border: 3px solid #1E90FF;" allowfullscreen></iframe>
             </div>
         </div>
 
         <!-- Announcements -->
-        <div class="col-3 text-center pl-5 pr-5" style="border: 3px solid #1E90FF;" id="announcement">
+        <div class="col-3 text-center pl-5 pr-5 pb-3 rounded" style="border: 3px solid #1E90FF; background-color: #FFFFFF; height: 47.4em; overflow-y: auto" id="announcement">
             <h3>Announcements</h3>
-            <hr>
+            <hr style="background-color: #1E90FF">
             <?php
             if($session->isAdmin())
             {
@@ -67,7 +91,6 @@ $userID = $session->getUserID();
 
 
         </div>
-
     </div> <!-- row -->
 </div><!-- Container -->
 
@@ -82,8 +105,9 @@ $userID = $session->getUserID();
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="updateDataBase">
+                <form id="addAnnouncementModal">
                     <div class="modal-body" id="rowModalBody">
+
                         <!-- Title -->
                         <div class="form-group row" align="center">
                             <label class="col-sm-1 col-form-label">Title:</label>
@@ -269,7 +293,8 @@ $userID = $session->getUserID();
         $('#rowModal').modal('show');
     });
 
-    $('#announcement').on('click', 'div', function() {
+    // Update/Edit an already posted announcement
+    /*$('#announcement').on('click', 'div', function() {
         // Edit announcements when clicked
         var aData = $(this).text().split("\n");
 
@@ -279,7 +304,7 @@ $userID = $session->getUserID();
         $('#rowModal').modal('show');
 
         console.log(aData);
-    });
+    });*/
 
     $('#datepicker').datepicker({
         uiLibrary: 'bootstrap4'

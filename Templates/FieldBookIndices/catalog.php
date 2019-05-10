@@ -308,7 +308,6 @@ $date = new DateHelper();
                     contentType: false,
                     success:function(data)
                     {
-                        console.log("MADE IT HERE BITCH NUGGET")
                         var json = JSON.parse(data);
                         var msg = "";
                         var result = 0;

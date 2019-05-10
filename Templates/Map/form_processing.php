@@ -187,7 +187,7 @@ else if($action == "catalog")
                 $data['rbIsMap'], $mapScale, $data['rbHasNorthArrow'], $data['rbHasStreets'],
                 $data['rbHasPOI'], $data['rbHasCoordinates'], $data['rbHasCoast'], $filename, $filenameback, $data['rbNeedsReview'],
                 $data['txtComments'], $customerID, $startdate, $enddate, $data['txtFieldBookNumber'], $data['txtFieldBookPage'], $data['ddlReadability'],
-                $data['ddlRectifiability'], $companyID, $data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath, $data['hasScalebar']);
+                $data['ddlRectifiability'], $companyID, $data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
             $data['txtDocID'] = $retval;
             $comments = "Library Index: " . $data['txtLibraryIndex'];
         }
@@ -199,7 +199,7 @@ else if($action == "catalog")
                 $data['rbIsMap'], $mapScale, $data['rbHasNorthArrow'], $data['rbHasStreets'],
                 $data['rbHasPOI'], $data['rbHasCoordinates'], $data['rbHasCoast'], $filename, $filenameback, $data['rbNeedsReview'],
                 $data['txtComments'], $customerID, $startdate, $enddate, $data['txtJobNumber'], $data['txtFieldBookNumber'], $data['txtFieldBookPage'], $data['ddlReadability'],
-                $data['ddlRectifiability'], $companyID,$data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath, $data['hasScalebar']);
+                $data['ddlRectifiability'], $companyID,$data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
             $data['txtDocID'] = $retval;
             $comments = "Library Index: " . $data['txtLibraryIndex'];
         }

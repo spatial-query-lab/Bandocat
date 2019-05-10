@@ -16,6 +16,7 @@ $collection = htmlspecialchars($data['txtCollection']);
 //get appropriate db
 $config = $DB->SP_GET_COLLECTION_CONFIG($collection);
 $comments = null;
+var_dump($_POST);
 //if the action is not delete
 if($action != "delete")
 {
@@ -25,7 +26,6 @@ if($action != "delete")
     $date = new DateHelper();
     $startdate = $date->mergeDate($data['ddlStartMonth'], $data['ddlStartDay'], $data['ddlStartYear']);
     $enddate = $date->mergeDate($data['ddlEndMonth'], $data['ddlEndDay'], $data['ddlEndYear']);
-
 }
 $valid = false;
 $msg = array();
@@ -41,7 +41,7 @@ if($action == "review" || $action == "catalog")
     if($retval != false)
     {
         //insert retval is true, update the fieldbook document
-        $retval = $DB->SP_TEMPLATE_FOLDER_DOCUMENT_UPDATE($collection, $data['txtDocID'], $data['txtLibraryIndex'], $data['txtTitle'], $data['rbInASubfolder'], $data['txtSubfolderComments'], $data['ddlClassification'], $data['txtClassificationComments'],0,$data['rbNeedsReview'],$data['txtComments'],$startdate, $enddate);
+        $retval = $DB->SP_TEMPLATE_FOLDER_DOCUMENT_UPDATE($collection, $data['txtDocID'], $data['txtLibraryIndex'], $data['txtTitle'], $data['rbInASubfolder'], $data['txtSubfolderComments'], $data['classificationMethod'], $data['txtClassificationComments'],0,$data['folderNeedsReview'],$data['txtComments'],$startdate, $enddate);
         $comments = "Library Index:" . $data['txtLibraryIndex'];
         $valid = true;
     }
