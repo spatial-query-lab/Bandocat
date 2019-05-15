@@ -43,7 +43,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body>
+<body onload="onloadChecks()">
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container-fluid">
     <div class="row">

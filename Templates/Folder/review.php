@@ -1,6 +1,7 @@
 <?php
 include '../../Library/SessionManager.php';
 $session = new SessionManager();
+$userRole = $session->getRole();
 if(isset($_GET['col']) && isset($_GET['doc']))
 {
     $collection = $_GET['col'];
@@ -38,7 +39,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body>
+<body onload="onloadChecks()">
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container pad-bottom">
     <div class="row">
@@ -47,6 +48,17 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             <h1 class="text-center"><?php echo $config['DisplayName'];?> Review Form</h1>
             <hr>
             <div class="row">
+
+                <!-- Start of description of Classification method chosen-->
+                <div class="col-1" id="classificationCard" style="display: none">
+                    <div class="card" id="card" style="width: 18rem; margin-left: 15px; margin-top: 250px;">
+                        <div class="card-body">
+                            <h5 class="card-title" id="className" style="text-align: center; font-size:18px; text-decoration: underline;"></h5>
+                            <p class="card-text" id="classDesc" style="text-align: center; font-size: 13px"></p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col"></div>
                 <?php
                 if($session->isAdmin()) //if user is Admin, render the Document History (Log Info)
@@ -85,14 +97,14 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                             <div class="form-group row">
                                 <label for="txtLibraryIndex" class="col-sm-3 col-form-label">Library Index:</label>
                                 <div class="col-sm-9">
-                                    <input type = "text" class="form-control" name = "txtLibraryIndex" id = "txtLibraryIndex" value="<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>" />
+                                    <input type = "text" class="form-control" name = "txtLibraryIndex" id = "txtLibraryIndex" style="text-align: center;" value="<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>" />
                                 </div>
                             </div>
                             <!-- Document Title -->
                             <div class="form-group row">
                                 <label for="txtTitle" class="col-sm-3 col-form-label">Document Title:</label>
                                 <div class="col-sm-9">
-                                    <input type = "text" class="form-control" name = "txtTitle" id = "txtTitle" value="<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>" required />
+                                    <input type = "text" class="form-control" name = "txtTitle" id = "txtTitle" style="text-align: center;" value="<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>" required />
                                 </div>
                             </div>
                             <!-- Radio Buttons -->
@@ -149,7 +161,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                             <div class="form-group row">
                                 <label for="ddlClassification" class="col-sm-3 col-form-label">Classification:</label>
                                 <div class="col-sm-9">
-                                    <select id="ddlClassification" class="form-control" name="ddlClassification">
+                                    <select id="ddlClassification" class="form-control" name="ddlClassification" onchange="classificationDescription()" required>
                                         <?php
                                         $Render->GET_DDL($DB->GET_FOLDER_CLASSIFICATION_LIST($collection),$document['Classification']);
                                         ?>
@@ -376,6 +388,32 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             });
         });
     });
+
+
+    // *****************************************************************************************************************
+    /************************* ONLOAD EVENTS (ADMIN CHECK AND CLASSIFICATION CARD VISIBILITY) ************************/
+    // HIDES "NEEDS REVIEW" DIV IF CURRENT USER IS NOT AN ADMIN AND HIDES CLASSIFICATION CARD UNTIL AN OPTION IS SELECTED
+    function onloadChecks(){
+        // Checks if user is admin
+        var userRole = "<?php echo $userRole ?>";
+        if ((userRole === "Admin") || (userRole === "admin")){
+            //document.getElementById('needsReview').style.display = 'yes';
+            console.log('Display. User is admin');
+        }
+        else{
+            document.getElementById('needsReview').style.display = 'none';
+            console.log("Hide. User is not admin");
+        }
+
+        if ((description === values) === true){
+            document.getElementById('classificationCard').style.visibility = "visible";
+        }
+        else{
+            console.log('no classification chosen, hide card');
+            document.getElementById('classificationCard').style.visibility = "hidden";
+        }
+    }
+
 </script>
 </body>
 </html>
