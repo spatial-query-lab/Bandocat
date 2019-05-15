@@ -24,6 +24,7 @@ $document = $DB->SP_TEMPLATE_FOLDER_DOCUMENT_SELECT($collection, $docID);
 $date = new DateHelper();
 //select authors by document
 $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
+$classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
 ?>
 
 <!doctype html>
@@ -42,7 +43,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body onload="onloadChecks()">
+<body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container-fluid">
     <div class="row">
@@ -51,14 +52,18 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             <!-- <h1 class="text-center">Blank Page</h1> -->
             <div class="row">
                 <!-- Start of description of Classification method chosen-->
-                <div class="col-1" id="classificationCard">
+                <div class="col-1" id="classificationCard" style="display: none">
                     <div class="card" id="card" style="width: 18rem; margin-left: 65px; margin-top: 250px;">
                         <div class="card-body">
-                            <h5 class="card-title" style="text-align: center; font-size:18px; text-decoration: underline;">Classification Description:</h5>
-                            <p class="card-text" id="descriptionText"></p>
+                            <h5 class="card-title" id="className" style="text-align: center; font-size:18px; text-decoration: underline;"></h5>
+                            <p class="card-text" id="classDesc" style="text-align: center; font-size: 13px"></p>
                         </div>
                     </div>
                 </div>
+                <!-- Populates the control with data -->
+                <datalist id="lstAuthor">
+                    <?php $Render->getDataList($DB->GET_AUTHOR_LIST($collection)); ?>
+                </datalist>
                 <!-- End of description of Classification method chosen-->
                 <div class="col">
                     <!-- Put Page Contents Here -->
@@ -77,7 +82,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="txtLibraryIndex">Library Index:</label>
                                                 <div class="col-sm-8">
-                                                    <input type = "text" class="form-control" name="txtLibraryIndex" id="txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>' required disabled/>
+                                                    <input type = "text" class="form-control" name="txtLibraryIndex" id="txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>' required readonly/>
                                                 </div>
                                             </div>
                                             <!-- Document Title -->
@@ -90,13 +95,15 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             <!-- Document Author -->
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="txtAuthor">Document Author:</label>
-                                                <div class="col-sm-8">
-                                                    <input type = "text" class="form-control" list="lstAuthor" name="txtAuthor" id="txtAuthor" value="" />
-                                                    <datalist id="lstAuthor">
-                                                        <!-- POPULATE AUTHOR LIST-->
-                                                        <?php $Render->getDataList($DB->GET_AUTHOR_LIST($collection)); ?>
-                                                    </datalist>
+                                                <div class="col-sm-7">
+                                                    <input class="form-control" type="text" id="txtAuthor" name="txtAuthor[]" size="26" list="lstAuthor" value="<?php if(count($authors) > 0){echo htmlspecialchars($authors[0][0],ENT_QUOTES);} ?>"/>
                                                 </div>
+                                                <div>
+                                                    <input type="button" class="btn btn-primary" onclick="add_fields(null);" id="more_fields" value="+"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row" id="authorcell">
+
                                             </div>
                                             <!-- Document Start Date -->
                                             <div class="form-group row">
@@ -159,11 +166,11 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                                 <label class="col-sm-4 col-form-label">In a Subfolder:</label>
                                                 <div class="col-sm-8">
                                                     <div class="form-check form-check-inline">
-                                                        <input type="radio" class="form-check-input" name="inSubfolder" id="inSubfolder_yes" value="1" />
+                                                        <input type="radio" class="form-check-input" name="rbInASubfolder" id="inSubfolder_yes" value="1" />
                                                         <label class="form-check-label" for="inSubfolder_yes">Yes</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input type="radio" class="form-check-input" name="inSubfolder" id="inSubfolder_no" value="0" checked />
+                                                        <input type="radio" class="form-check-input" name="rbInASubfolder" id="inSubfolder_no" value="0" checked />
                                                         <label class="form-check-label" for="inSubfolder_no">No</label>
                                                     </div>
                                                 </div>
@@ -173,7 +180,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="classificationMethod">Classification:</label>
                                                 <div class="col-sm-8">
-                                                    <select id="classificationMethod" name="classificationMethod" class="form-control" onchange="classificationDescription()" required>
+                                                    <select id="classificationMethod" name="classificationMethod" class="form-control" required>
                                                         <!-- GET FOLDER CLASSIFICATION LIST -->
                                                         <?php
                                                         $Render->GET_DDL_TOOLTIP($DB->GET_FOLDER_CLASSIFICATION_LIST($collection),$document['Classification']);
@@ -185,14 +192,14 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="txtClassificationComments">Classification Comments:</label>
                                                 <div class="col-sm-8" >
-                                                    <textarea type="text" class="form-control" name="txtClassificationComments" id="txtClassificationComments"></textarea>
+                                                    <textarea class="form-control" name="txtClassificationComments" id="txtClassificationComments"><?php echo $document["ClassificationComment"];?></textarea>
                                                 </div>
                                             </div>
                                             <!-- Subfolder Comments -->
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="txtSubfolderComments">Subfolder Comments:</label>
                                                 <div class="col-sm-8" >
-                                                    <textarea class="form-control" name="txtSubfolderComments" id="txtSubfolderComments"></textarea>
+                                                    <textarea class="form-control" name="txtSubfolderComments" id="txtSubfolderComments"><?php echo $document["SubfolderComment"]; ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -240,7 +247,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             <div class="form-row">
                                                 <div class="form-group col">
                                                     <label for="txtComments" class="col-form-label">Comments:</label>
-                                                    <textarea class="form-control" cols="35" rows="4" name="txtComments" id="txtComments" placeholder="Example: Job No. 4441, Sheet No. 74, with sketch."></textarea>
+                                                    <textarea class="form-control" cols="35" rows="4" name="txtComments" id="txtComments" placeholder="Example: Job No. 4441, Sheet No. 74, with sketch."><?php echo $document["Comments"]; ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -250,7 +257,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                         <div class="col">
                                             <div class="d-flex justify-content-between">
                                                 <input type="reset" id="btnReset" name="btnReset" value="Reset" onclick="resetPage()" class="btn btn-secondary"/>
-                                                <input type = "hidden" id="txtDocID" name = "txtDocID" value = "" />
+                                                <input type = "hidden" id="txtDocID" name = "txtDocID" value = "<?php echo $docID; ?>" />
                                                 <input type = "hidden" id="txtAction" name="txtAction" value="catalog" />  <!-- catalog or review -->
                                                 <input type = "hidden" id="txtCollection" name="txtCollection" value="<?php echo $collection; ?>" />
                                                 <span>
@@ -287,36 +294,46 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
 <!-- This Script Needs to Be added to Every Page, If the Sizing is off from dynamic content loading, then this will need to be taken away or adjusted -->
 <!-- This Script Needs to Be added to Every Page, If the Sizing is off from dynamic content loading, then this will need to be taken away or adjusted -->
 <script>
+    var max = 5;
+    var author_count = 0;
+
     $( document ).ready(function() {
+        //Parse out the authors read in to the add_fields function
+        var authors = <?php echo json_encode($authors); ?>;
+        for(var i = 1; i < authors.length; i++)
+        {
+            add_fields(authors[i][0]);
+        }
+
         /* attach a submit handler to the form */
         $('#theform').submit(function (event) {
             /* stop form from submitting normally */
             var formData = new FormData($(this)[0]);
+
+            //Append Authors data to the form
+            var authors = $('[name="txtAuthor[]');
+            var array_authors = [];
+            for(var i = 0; i < authors.length; i++)
+                array_authors.push(authors[i].value);
+            formData.append("authors",JSON.stringify(array_authors));
             /*jquery that displays the three points loader*/
 
-            var error = errorHandling($('#txtLibraryIndex'), '<?php echo $collection ?>');
+            /*var error = errorHandling($('#txtLibraryIndex'), '</?php echo $collection ?>');
             if(error.answer){
                 for(i = 0; i < error.desc.length; i++) {
                     alert(error.desc[i].message)
                 }
                 return false
             }
-            var eScale = errorHandling($('#txtMapScale'), '<?php echo $collection ?>');
+            var eScale = errorHandling($('#txtMapScale'), '</?php echo $collection ?>');
             if(eScale.answer){
                 for(i = 0; i < eScale.desc.length; i++) {
                     alert(eScale.desc[i].message)
                 }
                 return false
-            }
+            }*/
 
-            //TODO:: removed libraryindex underscore validation
-//            if(validateFormUnderscore("txtLibraryIndex") == true)
-//            {
-            $('#btnSubmit').css("display", "none");
-            //$('#loader').css("display", "inherit");
-            $("#overlay").show();
-            $("#loader").show();
-            event.disabled;
+            console.log(formData);
 
             event.preventDefault();
             /* Send the data using post */
@@ -327,7 +344,9 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                 processData: false,
                 contentType: false,
                 success:function(data){
-                    var json = JSON.parse(data);
+                    console.log("We here big dog\n");
+                    console.log(data);
+                    /*var json = JSON.parse(data);
                     var msg = "";
                     var result = 0;
                     for(var i = 0; i < json.length; i++)
@@ -348,13 +367,23 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                     }
                     alert(msg);
                     if (result == 1){
-                        window.location.href = "./catalog.php?col=<?php echo $_GET['col']; ?>";
-                    }
+                        window.location.href = "./catalog.php?col=</?php echo $_GET['col']; ?>";
+                    }*/
 
                 }
             });
         });
     });
+
+    function add_fields(val)
+    {
+        if(val == null)
+            val = "";
+        if(author_count >= max)
+            return false;
+        author_count++;
+        $('#authorcell').append('<label class="col-sm-4 col-form-label">Document Author ' + (author_count+1) + ':</label><div class="col-sm-8"><input class="form-control" type = "text" name = "txtAuthor[]" autocomplete="off" id = "txtAuthor" size="26" value="' + val + '" list="lstAuthor" /></div><br><br>');
+    }
 
     // *****************************************************************************************************************
     $("[type=file]").on("change", function(){
@@ -376,47 +405,6 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
     // AUTO POPULATING LIBRARY INDEX FIELD WITH NAME OF UPLOADED FILE. ALSO PERFORMS UPLOADED FILES VALIDATION.
     // UPLOADS THAT FAIL THE VALIDATION TEST ARE DISCARDED
 
-    // Front scan check
-    document.getElementById("fileUpload").onchange = frontUpload;
-    function frontUpload() {
-        var fileName = this.value;
-        window.fileName = fileName;
-
-        if ((fileName.includes("back") || fileName.includes("Back")) === true) {
-            alert('Make sure to upload a front scan instead of a back scan.');
-            document.getElementById('fileUpload').value = null;
-            document.getElementById('txtLibraryIndex').value = null;
-        }
-        else if ((fileName.includes(" ") || fileName.includes(" - Copy") || fileName.includes("-Copy")) === true) {
-            alert('Invalid file name. Change name to include version of copy (i.e. '+ fileName.substring(12, fileName.indexOf(' ')) + '.2)');
-            document.getElementById('fileUpload').value = null;
-            document.getElementById('txtLibraryIndex').value = null;
-        }
-        else{
-            console.log('Valid File');
-            document.getElementById('txtLibraryIndex').value = fileName.substring(12, fileName.indexOf('.tif'));
-            document.getElementById('txtLibraryIndex').style.textAlign = 'center';
-        }
-    }
-
-    // Back scan check
-    document.getElementById("fileUploadBack").onchange = backUpload;
-    function backUpload() {
-        var backFileName = this.value;
-        window.backFileName = backFileName;
-
-        if ((backFileName.includes("back") || backFileName.includes("Back")) === false) {
-            alert('Make sure to upload a back scan instead of a front scan.');
-            document.getElementById('fileUploadBack').value = null;
-        }
-        else if ((backFileName.includes(" ") || backFileName.includes(" - Copy") || backFileName.includes("-Copy")) === true) {
-            alert('Invalid file name. Change name to include version of copy (i.e. '+ backFileName.substring(12, backFileName.indexOf('(back)')) + '.2(back)');
-            document.getElementById('fileUploadBack').value = null;
-        }
-        else{
-            console.log('Valid File');
-        }
-    }
 
     // *****************************************************************************************************************
     function resetPage(){
@@ -438,10 +426,6 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             console.log("Hide. User is not admin");
         }
 
-        // Hides classification card when no viable classification method is selected
-        var description = document.getElementById("classificationMethod").value;
-        var values = ["Correspondence", "Envelope/Binding", "Field Note", "Folder Cover", "Legal Description", "Legal Document", "Legal Document Draft", "Map/Blueprint", "Note", "Separation Sheet", "Stencil", "Survey Calculation"]
-
         if ((description === values) === true){
             document.getElementById('classificationCard').style.visibility = "visible";
         }
@@ -455,97 +439,24 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
     /***************************************** CLASSIFICATION DESCRIPTION *********************************************/
 
     // Card with description of chosen classification
-    function classificationDescription() {
-        var description = document.getElementById("classificationMethod").value;
 
-        // Correspondence
-        if ((description === "Correspondence") === true){
-            document.getElementById('descriptionText').innerHTML = "Correspondence: appears to be a conversation. Often an official telegram, but can still be messages left at hotels or offices.";
-            document.getElementById('classificationCard').style.visibility = "visible";
+    $('#classificationMethod').change(function () {
+        var classList =  <?php echo json_encode($classification); ?>;
+        $('#classificationCard').show();
+        var classText = $('#classificationMethod option:selected').text();
+        if(classText == "Select")
+        {
+            $('#classificationCard').hide();
         }
 
-        // Envelope/Binding
-        else if ((description === "Envelope/Binding") === true){
-            document.getElementById('descriptionText').innerHTML = "Envelope/Binding: anything from an envelope to a taped piece of paper used to bind documents. They are blank and contain no information.";
-            document.getElementById('classificationCard').style.visibility = "visible";
+        $("#className").text(classText);
+        for(var x = 0; x < classList.length; x++) {
+            if(classList[x][0] == classText) {
+                $('#classDesc').text(classList[x][1])
+            }
         }
 
-        // Field note
-        else if ((description === "Field Note") === true){
-            document.getElementById('descriptionText').innerHTML = "Field note: actual page from a field book or a typed report of field book notes. Often titled 'Field Notes' or is a list of survey point information.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Folder cover
-        else if ((description === "Folder Cover") === true){
-            document.getElementById('descriptionText').innerHTML = "Folder cover: scanned copy of the original job folder.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        //Legal description
-        else if ((description === "Legal Description") === true){
-            document.getElementById('descriptionText').innerHTML = "Legal description: written geographical description of a property for the purpose of identifying the property for legal transactions.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Legal document
-        else if ((description === "Legal Document") === true){
-            document.getElementById('descriptionText').innerHTML = "Legal document: typed and signed documents pertaining to a survey, land tenure or sale, or work contract. Often contains an official stamp or notary.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Legal document draft
-        else if ((description === "Legal Document Draft") === true){
-            document.getElementById('descriptionText').innerHTML = "Legal document draft: legal document that has not been officiated or contains review marks.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Map/Blueprint
-        else if ((description === "Map/Blueprint") === true){
-            document.getElementById('descriptionText').innerHTML = "Map/Blueprint: large sized maps (excludes smaller map drafts because they are considered a sketch, therefore a 'Survey Calculation').";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // None
-        else if ((description === "None") === true){
-            document.getElementById('descriptionText').innerHTML = "None: No particular classification.";
-            document.getElementById('classificationCard').style.visibility = "hidden";
-        }
-
-        // Note
-        else if ((description === "Note") === true){
-            document.getElementById('descriptionText').innerHTML = "Note: contains minimal information and cannot be otherwise classified.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Separation sheet
-        else if ((description === "Separation Sheet") === true){
-            document.getElementById('descriptionText').innerHTML = "Separation sheet: index sheet provided by the Mary & Jeff Bell Library at Texas A&M University - Corpus Christi denoting a document whose physical condition is too poor to be scanned. The original map or document can only be accessed on-site, in person.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Stencil
-        else if ((description === "Stencil") === true){
-            document.getElementById('descriptionText').innerHTML = "Stencil: document used to replicate specific fonts, symbols, or texts.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Survey calculation
-        else if ((description === "Survey Calculation") === true){
-            document.getElementById('descriptionText').innerHTML = "Survey calculation: recorded arithmetic pertaining to a survey. Often on a yellow paper and contains sketches.";
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-
-        // Otherwise...
-        else {
-            console.log("Nothing was selected");
-            document.getElementById('classificationCard').style.visibility = "hidden";
-        }
-
-        // Classification description layout
-        document.getElementById('descriptionText').style.textAlign = 'center';
-        document.getElementById('descriptionText').style.fontSize = '13px';
-    }
+    });
 
 </script>
 </body>

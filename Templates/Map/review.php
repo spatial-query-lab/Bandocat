@@ -368,12 +368,12 @@ $date = new DateHelper();
                                             <label class="custom-file-label" for="fileUpload">Choose file</label>
                                         </div>-->
                                         <?php
-                                        if($document['FileNameBack'] == '' || $document['FileNameBackPath'] == '')
+                                        if($document['FileName'] == '' || $document['FileNamePath'] == '')
                                             echo "<label class='col-form-label'>No file uploaded</label>";
                                         else {
-                                            echo "<a href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\">(Click to download)</a><br>";
-                                            echo "<a id='download_back' href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\"><br><img src='" . '../../' . $config['ThumbnailDir'] . str_replace(".tif", ".jpg", $document['FileNameBack']) . " ' alt = Error /></a>";
-                                            echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNameBackPath'])/1024/1024, 2) . " MB";
+                                            echo "<a href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\">(Click to download)</a><br>";
+                                            echo "<a id='download_back' href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\"><br><img src='" . '../../' . $config['ThumbnailDir'] . str_replace(".tif", ".jpg", $document['FileName']) . " ' alt = Error /></a>";
+                                            echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNamePath'])/1024/1024, 2) . " MB";
                                         }
                                         ?>
                                     </div>
@@ -509,8 +509,8 @@ $date = new DateHelper();
 //            {
             //Library index was found having a "_" in the string
             /* stop form from submitting normally */
-            $('#overlay').show();
-            event.disabled;
+            //$('#overlay').show();
+            //event.disabled;
 
             event.preventDefault();
             /* Send the data using post */

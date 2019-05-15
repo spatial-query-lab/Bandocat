@@ -273,14 +273,14 @@ class MapDBHelper extends DBHelper
      * Return value(s):
      * $result (assoc array) - return a document info in an associative array, or FALSE if failed
      ***********************************************/
-    function SP_TEMPLATE_MAP_DOCUMENT_INSERT($collection,
+    function MAP_DOCUMENT_INSERT($collection,
                                              $iLibraryIndex, $iTitle, $iSubtitle, $iIsMap,
                                              $iMapScale, $iHasNorthArrow, $iHasStreets, $iHasPOI,
                                              $iHasCoordinates, $iHasCoast,$iFileName, $iFileNameBack,
                                              $iNeedsReview, $iComments, $iCustomerID, $iStartDate,
                                              $iEndDate, $iFieldBookNumber, $iFieldBookPage, $iReadability,
                                              $iRectifiability, $iCompanyID, $iType, $iMedium,
-                                             $iAuthorID,$iFileNamePath,$iFileNameBackPath)
+                                             $iAuthorID,$iFileNamePath,$iFileNameBackPath,$iHasScaleBar,$iPOIDescription)
     {
         $dbname = $this->SP_GET_COLLECTION_CONFIG(htmlspecialchars($collection))['DbName'];
         if ($dbname != null && $dbname != "") {
@@ -288,7 +288,7 @@ class MapDBHelper extends DBHelper
             /* PREPARE STATEMENT */
             /* Prepares the SQL query, and returns a statement handle to be used for further operations on the statement*/
             // sql statement CALL calls the function pointed to in the db
-            $call = $this->getConn()->prepare("CALL SP_TEMPLATE_MAP_DOCUMENT_INSERT(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $call = $this->getConn()->prepare("INSERT INTO `document` (`document`.`libraryindex`,`document`.`title`,`document`.`subtitle`,`document`.`ismap`,`document`.`mapscale`,`document`.`hasnortharrow`,`document`.`hasstreets`,`document`.`hasPOI`,`document`.`hascoordinates`,`document`.`hascoast`,`document`.`filename`,`document`.`filenameback`,`document`.`needsreview`,`document`.`comments`,`document`.`customerID`,`document`.`startdate`,`document`.`enddate`,`document`.`fieldbooknumber`,`document`.`fieldbookpage`,`document`.`readability`,`document`.`rectifiability`,`document`.`companyID`,`document`.`type`,`document`.`mediumID`,`document`.`authorID`,`document`.`filenamepath`,`document`.`filenamebackpath`,`document`.`hasScaleBar`,`document`.`POIDescription`) VALUES(?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
             if (!$call)
                 trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
             //Binds all parameters to the prepared SQL statement
@@ -319,6 +319,8 @@ class MapDBHelper extends DBHelper
             $call->bindParam(25, $iAuthorID, PDO::PARAM_INT);
             $call->bindParam(26, $iFileNamePath, PDO::PARAM_STR);
             $call->bindParam(27, $iFileNameBackPath, PDO::PARAM_STR);
+            $call->bindParam(28, $iHasScaleBar, PDO::PARAM_INT);
+            $call->bindParam(29, $iPOIDescription, PDO::PARAM_STR);
 
 
             /* EXECUTE STATEMENT */

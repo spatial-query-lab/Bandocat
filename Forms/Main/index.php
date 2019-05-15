@@ -105,29 +105,29 @@ $userID = $session->getUserID();
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="addAnnouncementModal">
+                <form id="addAnnouncementModal" >
                     <div class="modal-body" id="rowModalBody">
 
                         <!-- Title -->
-                        <div class="form-group row" align="center">
+                        <div class="form-group row">
                             <label class="col-sm-1 col-form-label">Title:</label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-8 pl-5">
                                 <input type = "text" class="form-control" name = "title" id = "title" required />
                             </div>
                         </div>
 
                         <!-- Message -->
-                        <div class="form-group row" align="center">
+                        <div class="form-group row">
                             <label class="col-sm-1 col-form-label">Message:</label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-8 pl-5">
                                 <textarea class="form-control" name="message" id="message" cols="40" rows="5" required></textarea>
                             </div>
                         </div>
 
                         <!-- Expiration Date -->
-                        <div class="form-group row" align="center">
-                            <label class="col-sm-1 col-form-label">Exp Date:</label>
-                            <div class="col-sm-8">
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label">ExpDate:</label>
+                            <div class="col-sm-8 pl-5">
                                 <input data-format="yyyy-mm-dd" type = "text" class="form-control" name = "datepicker" id = "datepicker" required />
                             </div>
                         </div>
@@ -336,10 +336,6 @@ $userID = $session->getUserID();
             }
         });
     }
-</script>
-
-<script>
-
 </script>
 </body>
 </html>

@@ -16,7 +16,7 @@ $collection = htmlspecialchars($data['txtCollection']);
 //get appropriate db
 $config = $DB->SP_GET_COLLECTION_CONFIG($collection);
 $comments = null;
-var_dump($_POST);
+var_dump($data);
 //if the action is not delete
 if($action != "delete")
 {

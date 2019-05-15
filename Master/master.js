@@ -20,6 +20,7 @@ $(document).ready(function() {
     $(function () {
         $("#documentHistory").draggable({helper: 'clone'});
     });
+    //$('[data-toggle="tooltip"]').tooltip();
 });
 
 //*********************************************************************/

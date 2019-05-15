@@ -2,13 +2,13 @@
 include '../../Library/SessionManager.php';
 require '../../Library/DBHelper.php';
 require '../../Library/AnnouncementDBHelper.php';
-    $session = new SessionManager();
-    $announcement = new AnnouncementDBHelper();
-    $announcementData = $announcement->GET_ANNOUNCEMENT_DATA();
-    $announcementLenght = count($announcementData);
-    $announcementJSON = json_encode($announcementData);
-    $userID = $session->getUserID();
-    $admin = $session->isAdmin();
+$session = new SessionManager();
+$announcement = new AnnouncementDBHelper();
+$announcementData = $announcement->GET_ANNOUNCEMENT_DATA();
+$announcementLenght = count($announcementData);
+$announcementJSON = json_encode($announcementData);
+$userID = $session->getUserID();
+$admin = $session->isAdmin();
 ?>
 <!doctype html>
 <html lang="en">
@@ -23,7 +23,7 @@ require '../../Library/AnnouncementDBHelper.php';
 
     <link rel = "stylesheet" type = "text/css" href = "../../Master/master.css" >
     <link rel="stylesheet" type="text/css" href="../../ExtLibrary/jQueryUI-1.11.4/jquery-ui.css">
-   <script type="text/javascript" src="../../ExtLibrary/jQuery-2.2.3/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="../../ExtLibrary/jQuery-2.2.3/jquery-2.2.3.min.js"></script>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="../../ExtLibrary/jQueryUI-1.11.4/jquery-ui.js"></script>
     <script type="text/javascript" src="Greetings.js"></script>
@@ -40,37 +40,17 @@ require '../../Library/AnnouncementDBHelper.php';
 </head>
 <!-- HTML BODY -->
 <body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <audio id="buzzer" src="0788.ogg" type="audio/ogg"></audio>
 <!-- TABLE FOR LAYOUT OF PAGE -->
 <table id="thetable">
     <tr id="trTop">
-        <th class="menu_left" id="thetable_left">
-            <?php include '../../Master/header.php'?>
-        </th>
         <th class="tg-chpy" colspan="2">
             <span id= "lblUsername" class="Username"><a href="../../Forms/AccountSettings"><?php echo $session->getUserName(); ?></a></span>,&nbsp;<span id="Time_Day"></span><span id="Greetings"></span>
         </th>
-
     </tr>
     <tr style="height: 630px">
-        <td class="menu_left" id="thetable_left">
-            <?php include '../../Master/sidemenu.php' ?>
-        </td>
-        <td class="tg-zhyu"style="position: relative"><h2>BandoCat</h2>
+        <td class="tg-zhyu"style="position: relative">
+            <h2>BandoCat</h2>
             <div id="indicatorcontainer"></div>
 
             <canvas id="board_canvas"  style="height:95%; position: absolute; left: 0px; top: 30px; z-index: 1;">
@@ -80,7 +60,6 @@ require '../../Library/AnnouncementDBHelper.php';
 
 
             <canvas id="shadow_canvas" style="height:95%; position: absolute; left: 0px; top: 30px; z-index: 2;"></canvas>
-            <!-- <div id="placeholder" style=""> </div> -->
 
             <div style="position: absolute; top: 40px; z-index: 4; font-family: sans-serif; font-size: 30px; left: 0px;"> <span id="score">0</span></div>
 
@@ -116,20 +95,20 @@ require '../../Library/AnnouncementDBHelper.php';
                         To score more points, drop pieces as fast
                         as you can!</p>
 
+                    <a href="../../Forms/Main/index.php">Home</a>
                 </div>
             </div>
 
-          
+
         </td>
 
-        <td class="tg-0za1" style="position: relative"><h2>Announcements</h2>
-		  <div id="divscroller" style="text-align: center">
+        <!--<td class="tg-0za1" style="position: relative"><h2>Announcements</h2>
+            <div id="divscroller" style="text-align: center">
                 <div id="post"></div>
             </div>
 
-        </td>
+        </td>-->
     </tr>
-
 </table>
 
 <?php include '../../Master/footer.php'; ?>
@@ -139,7 +118,7 @@ require '../../Library/AnnouncementDBHelper.php';
 <script>
     $( document ).ready(function() {
 
-            $('#buzzer').get(0).play();
+        $('#buzzer').get(0).play();
 
     });
     $( function() {
@@ -159,36 +138,36 @@ require '../../Library/AnnouncementDBHelper.php';
 <script>
     /*Program that will get the time in hours from the Date function. Then, a conditional statement will determine what
     time of the day it is; morning or afternoon*/
-        var d = new Date();
-        var n = d.getHours();
-        if(n >= 12)
-        {
-            document.getElementById("Time_Day").innerHTML = "Good Afternoon! ";
-        }
+    var d = new Date();
+    var n = d.getHours();
+    if(n >= 12)
+    {
+        document.getElementById("Time_Day").innerHTML = "Good Afternoon! ";
+    }
 
-        else{
-            document.getElementById("Time_Day").innerHTML= "Good Morning! ";
-        }
+    else{
+        document.getElementById("Time_Day").innerHTML= "Good Morning! ";
+    }
     /*Program that will obtain a random number from the random function. Then, it will multiply it by the length of the
     Greetings javascript array, which is saved in an external document. Finally the integer number retrieved is used to
     select an index with a greeting that will be displayed at the top of the page.*/
-        var Random = Math.random();
-        var Generic_Number = Random * (Greetings.length);
-        var Integer = parseInt(Generic_Number);
-        document.getElementById("Greetings").innerHTML = Greetings[Integer];
+    var Random = Math.random();
+    var Generic_Number = Random * (Greetings.length);
+    var Integer = parseInt(Generic_Number);
+    document.getElementById("Greetings").innerHTML = Greetings[Integer];
 
 
 
-        //Prepends an announcement button to the scrolling div if the user has admin privileges
-        var admin = '<?php echo $admin; ?>';
-        if(admin == 1) {
-            $('#divscroller').prepend('<input class="bluebtn" id="announcer" type="button" onclick="createAnnouncement()" value="CREATE ANNOUNCEMENT" style="font-size: 0.775vw;">')
-        }
+    //Prepends an announcement button to the scrolling div if the user has admin privileges
+    var admin = '<?php echo $admin; ?>';
+    if(admin == 1) {
+        $('#divscroller').prepend('<input class="bluebtn" id="announcer" type="button" onclick="createAnnouncement()" value="CREATE ANNOUNCEMENT" style="font-size: 0.775vw;">')
+    }
 
     /***************************************************
      * <A    N   N   O   U   N   C   E   M   E   N   T>
      ***************************************************/
-    //Announcement information for post in a JSON object
+        //Announcement information for post in a JSON object
     var announcementPost = '<?php echo $announcementJSON ?>';
 
     //Replaces HTML Special characters
@@ -212,7 +191,7 @@ require '../../Library/AnnouncementDBHelper.php';
     /***********************
      * Constant Elements
      ***********************/
-    //Announcement text element
+        //Announcement text element
     var annoText = $("<textarea id='annoText' style='height: 85px; width: 85%' required></textarea>");
     //Announcement title element
     var annoTitle = $("<input type='text' id='annoTitle' required>");
@@ -248,7 +227,7 @@ require '../../Library/AnnouncementDBHelper.php';
                 $("#message-" + i).html(post[i].message);
             }
         }
-        
+
 
 
     }
@@ -304,10 +283,10 @@ require '../../Library/AnnouncementDBHelper.php';
      * Parameter(s): NONE
      * Return value(s): NONE
      ***********************************************/
-        function closeAnno() {
-            $('#annoCreate').remove();
-            $(".closeAnno").remove();
-        }
+    function closeAnno() {
+        $('#annoCreate').remove();
+        $(".closeAnno").remove();
+    }
 
     /**********************************************
      * Function: postAnno
@@ -323,19 +302,19 @@ require '../../Library/AnnouncementDBHelper.php';
         var date = $('#deleteDate').val();
         var user = '<?php echo $userID ?>';
         //The create announcement container and closing image are removed
-           $('#annoCreate').remove();
-           $(".closeAnno").remove();
+        $('#annoCreate').remove();
+        $(".closeAnno").remove();
 
-           //Data stored in a JSON format for post
-          var announcementData = {
-              "title": title,
-              "message": message,
-              "endDate": date,
-              "user": user,
-              "action": 1
-          };
+        //Data stored in a JSON format for post
+        var announcementData = {
+            "title": title,
+            "message": message,
+            "endDate": date,
+            "user": user,
+            "action": 1
+        };
 
-          //Data posted to announcement_processing.php to be inserted to the database
+        //Data posted to announcement_processing.php to be inserted to the database
         $.ajax({
             type: 'post',
             url: "announcement_processing.php",
@@ -392,15 +371,15 @@ require '../../Library/AnnouncementDBHelper.php';
             $('#editTitle-'+postIndex).val(title);
         }
 
-            var editLength = $("#updateAnnouncement-"+postIndex).length;
-            if(editLength <= 0) {
-                $('#'+elemParent).append("<p id = 'textEdit-"+ postIndex +"' style='margin: 3% 2% -4% 2%;'>Expiration Date: <input id='editDeleteDate-"+ postIndex +"' style='width: 40%; text-align: center' value=" + date + "></p>" + "<br>" +
-                    "<input id = 'updateAnnouncement-"+ postIndex +"' class='bluebtn' type ='submit' onclick='updateAnnouncement("+ postIndex +")' value='Edit' style='margin-top: 5%'>" +
+        var editLength = $("#updateAnnouncement-"+postIndex).length;
+        if(editLength <= 0) {
+            $('#'+elemParent).append("<p id = 'textEdit-"+ postIndex +"' style='margin: 3% 2% -4% 2%;'>Expiration Date: <input id='editDeleteDate-"+ postIndex +"' style='width: 40%; text-align: center' value=" + date + "></p>" + "<br>" +
+                "<input id = 'updateAnnouncement-"+ postIndex +"' class='bluebtn' type ='submit' onclick='updateAnnouncement("+ postIndex +")' value='Edit' style='margin-top: 5%'>" +
                 "<input id = 'cancelEdit-" + postIndex + "' class='bluebtn' type='button' onclick='dismissEdit(event.target, post[" + postIndex + "].title, post[" + postIndex + "].message)' value='Cancel'>");
-                $(function () {
-                    $("#editDeleteDate-"+postIndex).datepicker();
-                });
-            }
+            $(function () {
+                $("#editDeleteDate-"+postIndex).datepicker();
+            });
+        }
     }
 
     /**********************************************
@@ -494,10 +473,10 @@ require '../../Library/AnnouncementDBHelper.php';
         $('#title-' + postIndex).remove();
         $('#message-' + postIndex).remove();
 
-            //A div is appended to a div id = post with a title header and message
-                $("#post-"+postIndex).prepend("<h2 id ='title-" + postIndex + "' ondblclick='editAnnouncement(" + 0 + ")'></h2><p id='message-" + postIndex + "' ondblclick='editAnnouncement(" + 1 + ")' style='padding: 5%;'></p></div> ");
-                $("#title-" + postIndex).html(title);
-                $("#message-" + postIndex).html(message);
+        //A div is appended to a div id = post with a title header and message
+        $("#post-"+postIndex).prepend("<h2 id ='title-" + postIndex + "' ondblclick='editAnnouncement(" + 0 + ")'></h2><p id='message-" + postIndex + "' ondblclick='editAnnouncement(" + 1 + ")' style='padding: 5%;'></p></div> ");
+        $("#title-" + postIndex).html(title);
+        $("#message-" + postIndex).html(message);
     }
 
     /***************************************************
@@ -547,15 +526,15 @@ require '../../Library/AnnouncementDBHelper.php';
     a:hover {color: white !important; decoration: underline}
 
     .anno {
-         text-align: center;
-         background-color: white;
-         width: 80% !important;
-         height: 200px !important;
-         margin-top: 5%;
-         margin-left: 10%;
-         border-radius: 5%;
-         box-shadow: 0px 0px 8px 1px;
-     }
+        text-align: center;
+        background-color: white;
+        width: 80% !important;
+        height: 200px !important;
+        margin-top: 5%;
+        margin-left: 10%;
+        border-radius: 5%;
+        box-shadow: 0px 0px 8px 1px;
+    }
 
     .meet {
         text-align: center;

@@ -183,11 +183,11 @@ else if($action == "catalog")
         {
             // Building map scale string
             $mapScale = $data['numberLeft'] . " " . $data['unitLeft'] . " = " . $data['numberRight'] . " " . $data['unitRight'];
-            $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_INSERT($collection, $data['txtLibraryIndex'], $data['txtTitle'], $data['txtSubtitle'],
+            $retval = $DB->MAP_DOCUMENT_INSERT($collection, $data['txtLibraryIndex'], $data['txtTitle'], $data['txtSubtitle'],
                 $data['rbIsMap'], $mapScale, $data['rbHasNorthArrow'], $data['rbHasStreets'],
                 $data['rbHasPOI'], $data['rbHasCoordinates'], $data['rbHasCoast'], $filename, $filenameback, $data['rbNeedsReview'],
                 $data['txtComments'], $customerID, $startdate, $enddate, $data['txtFieldBookNumber'], $data['txtFieldBookPage'], $data['ddlReadability'],
-                $data['ddlRectifiability'], $companyID, $data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
+                $data['ddlRectifiability'], $companyID, $data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath,$data['hasScaleBar'],$data['POIDescription']);
             $data['txtDocID'] = $retval;
             $comments = "Library Index: " . $data['txtLibraryIndex'];
         }
@@ -199,7 +199,7 @@ else if($action == "catalog")
                 $data['rbIsMap'], $mapScale, $data['rbHasNorthArrow'], $data['rbHasStreets'],
                 $data['rbHasPOI'], $data['rbHasCoordinates'], $data['rbHasCoast'], $filename, $filenameback, $data['rbNeedsReview'],
                 $data['txtComments'], $customerID, $startdate, $enddate, $data['txtJobNumber'], $data['txtFieldBookNumber'], $data['txtFieldBookPage'], $data['ddlReadability'],
-                $data['ddlRectifiability'], $companyID,$data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath);
+                $data['ddlRectifiability'], $companyID,$data['txtType'], $mediumID, $authorID, str_replace($config['StorageDir'],"",$filenamepath) . "/" . $filename,$backpath,$data['hasScaleBar'],$data['POIDescription']);
             $data['txtDocID'] = $retval;
             $comments = "Library Index: " . $data['txtLibraryIndex'];
         }

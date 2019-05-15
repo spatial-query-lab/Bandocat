@@ -131,17 +131,35 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                         </div>
                                     </div>
                                     <!-- Radio Buttons -->
-                                    <!-- Has Scalebar -->
+                                    <!-- Has Scale -->
                                     <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label">Has Scalebar:</label>
+                                        <label class="col-sm-4 col-form-label">Has Scale:</label>
                                         <div class="col-sm-8 mt-2">
                                             <div class="form-check form-check-inline">
-                                                <input type = "radio" class="form-check-input" name = "hasScalebar" id = "hasScalebar_yes" value="1"/>
-                                                <label class="form-check-label" for="hasScalebar_yes">Yes</label>
+                                                <input type = "radio" class="form-check-input" name ="hasScale" id ="hasScale_yes"
+                                                       value="1"/>
+                                                <label class="form-check-label" for="hasScale_yes">Yes</label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input type = "radio" class="form-check-input" name = "hasScalebar" id = "hasScalebar_no" value="0" checked />
-                                                <label class="form-check-label" for="hasScalebar_no">No</label>
+                                                <input type = "radio" class="form-check-input" name = "hasScale" id ="hasScale_no"
+                                                       value="0" checked />
+                                                <label class="form-check-label" for="hasScale_no">No</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Has Scale Bar-->
+                                    <div class="form-group row" id="ScaleBar" hidden>
+                                        <label class="col-sm-4 col-form-label">Has Scale Bar:</label>
+                                        <div class="col-sm-8 mt-2">
+                                            <div class="form-check form-check-inline">
+                                                <input type = "radio" class="form-check-input" name ="hasScaleBar" id ="hasScaleBar_yes"
+                                                       value="1"/>
+                                                <label class="form-check-label" for="hasScaleBar_yes">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type = "radio" class="form-check-input" name = "hasScaleBar" id ="hasScaleBar_no"
+                                                       value="0" checked />
+                                                <label class="form-check-label" for="hasScaleBar_no">No</label>
                                             </div>
                                         </div>
                                     </div>
@@ -150,15 +168,15 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                         <label class="col-sm-4 col-form-label" for="txtSubtitle">Map Scale:</label>
                                         <div class="col-sm-8">
                                             <div class="d-flex">
-                                                <input type="number" min="1" class="form-control" id="numberLeft" name="numberLeft" disabled>
-                                                <select class="form-control" id="unitLeft" name="unitLeft" disabled>
+                                                <input type="number" min="1" class="form-control" id="numberLeft" name="numberLeft">
+                                                <select class="form-control" id="unitLeft" name="unitLeft">
                                                     <option value="in">in</option>
                                                     <option value="ft">ft</option>
                                                     <option value="vrs">vrs</option>
                                                 </select>
                                                 <input type="text" value="=" class="form-control" disabled style="background-color: #FFFFFF; text-align: center; border: none;">
-                                                <input type="number" min="1" class="form-control" id="numberRight" name="numberRight" disabled>
-                                                <select class="form-control" id="unitRight" name="unitRight" disabled>
+                                                <input type="number" min="1" class="form-control" id="numberRight" name="numberRight">
+                                                <select class="form-control" id="unitRight" name="unitRight">
                                                     <option value="ft">ft</option>
                                                     <option value="vrs">vrs</option>
                                                     <option value="in">in</option>
@@ -234,6 +252,13 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                                 <input type = "radio" class="form-check-input" name = "rbHasPOI" id = "rbHasPOI_no" value="0"  checked/>
                                                 <label class="form-check-label" for="rbHasPOI_no">No</label>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <!-- POI Description -->
+                                    <div class="form-group row" id="POI" hidden>
+                                        <label for="POIDescription" class="col-sm-4 col-form-label">POI Description:</label>
+                                        <div class="col-sm-8">
+                                            <textarea class="form-control" cols="35" rows="1" name="POIDescription" id="POIDescription" ></textarea>
                                         </div>
                                     </div>
                                     <!-- Has Coordinates -->
@@ -598,27 +623,61 @@ $readrec = array("POOR","GOOD","EXCELLENT");
         }
     });
 
-    $('#hasScalebar_yes, #hasScalebar_no').change(function() {
-        var hasMapScale = $('#hasScalebar_yes').prop('checked');
+    // Enabled and disables the hidden Map Scale row
+    $('#hasScale_yes, #hasScale_no').change(function() {
+        var hasMapScale = $('#hasScale_yes').prop('checked');
         if(hasMapScale)
         {
-            console.log("Map has scale bar...");
-            $('#numberLeft').prop('disabled', false);
-            $('#unitLeft').prop('disabled', false);
-            $('#numberRight').prop('disabled', false);
-            $('#unitRight').prop('disabled', false);
+            console.log("Map has scale...");
             $('#mapScale').prop('hidden', false);
+            $('#ScaleBar').prop('hidden', false);
+
+        }
+        else
+        {
+            console.log("Map doesn't have scale ...");
+            $('#numberLeft').val("");
+            $('#numberRight').val("");
+            $('#mapScale').prop('hidden', true);
+            $('#ScaleBar').prop('hidden', true);
+        }
+    });
+
+    // Enabled and disables the map scale
+    $('#hasScaleBar_yes, #hasScaleBar_no').change(function() {
+        var hasScaleBar = $('#hasScaleBar_yes').prop('checked');
+        if(hasScaleBar)
+        {
+            console.log("Map has scale bar...");
+            $('#numberLeft').prop('disabled', true);
+            $('#unitLeft').prop('disabled', true);
+            $('#numberRight').prop('disabled', true);
+            $('#unitRight').prop('disabled', true);
         }
         else
         {
             $('#numberLeft').val("");
             $('#numberRight').val("");
+            $('#numberLeft').prop('disabled', false);
+            $('#unitLeft').prop('disabled', false);
+            $('#numberRight').prop('disabled', false);
+            $('#unitRight').prop('disabled', false);
+        }
+    });
+
+    // Enables and disables the hidden POI Description row
+    $('#rbHasPOI_yes, #rbHasPOI_no').change(function() {
+        var hasPOI = $('#rbHasPOI_yes').prop('checked');
+        if(hasPOI)
+        {
+            console.log("Map has POI...");
+            $('#POI').prop('hidden', false);
+        }
+        else
+        {
+            $('#POIDescription').val("");
             console.log("Map doesn't have scale bar...");
-            $('#numberLeft').prop('disabled', true);
-            $('#unitLeft').prop('disabled', true);
-            $('#numberRight').prop('disabled', true);
-            $('#unitRight').prop('disabled', true);
-            $('#mapScale').prop('hidden', true);
+            $('#POI').prop('hidden', true);
         }
     });
 </script>
