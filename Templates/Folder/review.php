@@ -432,31 +432,5 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
 
 
 </script>
-
-<script>
-    // *****************************************************************************************************************
-    /***************************************** CLASSIFICATION DESCRIPTION *********************************************/
-
-    // Card with description of chosen classification
-
-    $('#classificationMethod').change(function () {
-        var classList =  <?php echo json_encode($classification); ?>;
-        $('#classificationCard').show();
-        var classText = $('#classificationMethod option:selected').text();
-        if(classText == "Select")
-        {
-            $('#classificationCard').hide();
-        }
-
-        $("#className").text(classText);
-        for(var x = 0; x < classList.length; x++) {
-            if(classList[x][0] == classText) {
-                $('#classDesc').text(classList[x][1])
-            }
-        }
-
-    });
-
-</script>
 </body>
 </html>
