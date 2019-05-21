@@ -41,17 +41,15 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
 </head>
 <body onload="onloadChecks()">
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
-<div class="container pad-bottom">
+<div class="container-fluid">
     <div class="row">
         <div class="col">
             <!-- Put Page Contents Here -->
-            <h1 class="text-center"><?php echo $config['DisplayName'];?> Review Form</h1>
-            <hr>
+            <!-- <h1 class="text-center">Blank Page</h1> -->
             <div class="row">
-
                 <!-- Start of description of Classification method chosen-->
                 <div class="col-1" id="classificationCard" style="display: none">
-                    <div class="card" id="card" style="width: 18rem; margin-left: 15px; margin-top: 250px;">
+                    <div class="card" id="card" style="width: 18rem; margin-left: 65px; margin-top: 250px;">
                         <div class="card-body">
                             <h5 class="card-title" id="className" style="text-align: center; font-size:18px; text-decoration: underline;"></h5>
                             <p class="card-text" id="classDesc" style="text-align: center; font-size: 13px"></p>
@@ -59,6 +57,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                     </div>
                 </div>
 
+                <!-- Render Document Catalog History for Admins-->
                 <div class="col"></div>
                 <?php
                 if($session->isAdmin()) //if user is Admin, render the Document History (Log Info)
@@ -81,203 +80,217 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                 <div class="col"></div>
             </div>
 
-            <div class="d-flex justify-content-center">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Document Meta Data</h3>
-                    </div>
-                    <div class="card-body" style="width: 50em;">
-                        <form id="theform" name="theform" method="post" enctype="multipart/form-data">
-                            <!-- Populates the control with data -->
-                            <datalist id="lstAuthor">
-                                <!-- Populates the control with data -->
-                                <?php $Render->getDataList($DB->GET_AUTHOR_LIST($collection)); ?>
-                            </datalist>
-                            <!-- Library Index -->
-                            <div class="form-group row">
-                                <label for="txtLibraryIndex" class="col-sm-3 col-form-label">Library Index:</label>
-                                <div class="col-sm-9">
-                                    <input type = "text" class="form-control" name = "txtLibraryIndex" id = "txtLibraryIndex" style="text-align: center;" value="<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>" />
-                                </div>
+                <!-- Populates the control with data -->
+                <datalist id="lstAuthor">
+                    <?php $Render->getDataList($DB->GET_AUTHOR_LIST($collection)); ?>
+                </datalist>
+                <!-- End of description of Classification method chosen-->
+                <div class="col">
+                    <!-- Put Page Contents Here -->
+                    <h1 class="text-center"><?php echo $config["DisplayName"]; ?> Review Form</h1>
+                    <hr>
+                    <div class="d-flex justify-content-center">
+                        <!-- Card -->
+                        <div class="card" style="width: 75em;">
+                            <div class="card-header">
+                                <h3 class="text-center">Document Meta Data</h3>
                             </div>
-                            <!-- Document Title -->
-                            <div class="form-group row">
-                                <label for="txtTitle" class="col-sm-3 col-form-label">Document Title:</label>
-                                <div class="col-sm-9">
-                                    <input type = "text" class="form-control" name = "txtTitle" id = "txtTitle" style="text-align: center;" value="<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>" required />
-                                </div>
-                            </div>
-                            <!-- Radio Buttons -->
-                            <div class="form-group row">
-                                <!-- Loose Document -->
-                                <div class="col">
-                                    <label class="col col-form-label">In a Subfolder:</label>
-                                    <div class="form-check col-sm-10">
-                                        <div class="form-check form-check">
-                                            <input type = "radio" class="form-control-input" name = "rbInASubfolder" id = "rbInASubfolder_yes" size="26" value="1" <?php if($document['InSubfolder'] == 1) echo "checked"; ?> />
-                                            <label class="form-check-label" for="rbInASubfolder_yes">Yes</label>
+                            <div class="card-body">
+                                <form id="theform" name="theform" method="post" enctype="multipart/form-data" >
+                                    <div class="row">
+                                        <!-- These are used the most often -->
+                                        <!-- The Left side -->
+                                        <div class="col-6">
+                                            <!-- Library Index -->
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label" for="txtLibraryIndex">Library Index:</label>
+                                                <div class="col-sm-8">
+                                                    <input type = "text" class="form-control" name = "txtLibraryIndex" id = "txtLibraryIndex" style="text-align: center;" value="<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>" />
+                                                </div>
+                                            </div>
+                                            <!-- Document Title -->
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label" for="txtTitle">Document Title:</label>
+                                                <div class="col-sm-8">
+                                                    <input type = "text" class="form-control" name = "txtTitle" id = "txtTitle" style="text-align: center;" value="<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>" required />
+                                                </div>
+                                            </div>
+                                            <div id="authorcell">
+                                                <!-- Document Author(s) -->
+                                                <div class="form-group row">
+                                                    <label for="txtAuthor[]" class="col-sm-4 col-form-label">Document Author:</label>
+                                                    <div class="col-sm-7">
+                                                        <input type = "text" class="form-control" name = "txtAuthor[]" id = "txtAuthor[]" value="<?php if(count($authors) > 0){echo htmlspecialchars($authors[0][0],ENT_QUOTES);} ?>" autocomplete="off" list="lstAuthor" />
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <input type="button" class="btn btn-primary" id="more_fields" onclick="add_fields(null);" value="+"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Document Start Date -->
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">Document Start Date:</label>
+                                                <div class="col-sm-8">
+                                                    <div class="d-flex">
+                                                        <select name="ddlStartMonth" id="ddlStartMonth" class="form-control">
+                                                            <?php $Render->GET_DDL_MONTH($date->splitDate($document['StartDate'])['Month']); ?>
+                                                        </select>
+                                                        <select name="ddlStartDay" id="ddlStartDay" class="form-control">
+                                                            <?php $Render->GET_DDL_DAY($date->splitDate($document['StartDate'])['Day']); ?>
+                                                        </select>
+                                                        <select id="ddlStartYear" name="ddlStartYear" class="form-control">
+                                                            <?php $Render->GET_DDL_YEAR($date->splitDate($document['StartDate'])['Year']); ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Document End Date -->
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">Document End Date:</label>
+                                                <div class="col-sm-8">
+                                                    <div class="d-flex">
+                                                        <select name="ddlEndMonth" id="ddlEndMonth" class="form-control">
+                                                            <?php $Render->GET_DDL_MONTH($date->splitDate($document['EndDate'])['Month']); ?>
+                                                        </select>
+                                                        <select name="ddlEndDay" id="ddlEndDay" class="form-control">
+                                                            <?php $Render->GET_DDL_DAY($date->splitDate($document['EndDate'])['Day']); ?>
+                                                        </select>
+                                                        <select name="ddlEndYear" id="ddlEndYear" class="form-control">
+                                                            <?php $Render->GET_DDL_YEAR($date->splitDate($document['EndDate'])['Year']); ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Radio Buttons Start -->
+                                            <!-- Needs Review -->
+                                            <div class="form-group row" id="needsReview">
+                                                <label class="col-sm-4 col-form-label">Needs Review:</label>
+                                                <div class="col-sm-8">
+                                                    <div class="form-check form-check-inline">
+                                                        <input type = "radio" class="form-control-input" name = "rbNeedsReview" id = "rbNeedsReview_yes" size="26" <?php if($document['NeedsReview'] == 1) echo "checked"; ?> />
+                                                        <label class="form-check-label" for="rbNeedsReview_yes">Yes</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type = "radio" class="form-control-input" name = "rbNeedsReview" id = "rbNeedsReview_no" value="0" <?php if($document['NeedsReview'] == 0) echo "checked"; ?> />
+                                                        <label class="form-check-label" for="rbNeedsReview_no">No</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- In a Subfolder -->
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">In a Subfolder:</label>
+                                                <div class="col-sm-8">
+                                                    <div class="form-check form-check-inline">
+                                                        <input type = "radio" class="form-control-input" name = "rbInASubfolder" id = "rbInASubfolder_yes" size="26" value="1" <?php if($document['InSubfolder'] == 1) echo "checked"; ?> />
+                                                        <label class="form-check-label" for="rbInASubfolder_yes">Yes</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type = "radio" class="form-control-input" name = "rbInASubfolder" id = "rbInASubfolder_no" size="26" value="0" <?php if($document['InSubfolder'] == 0) echo "checked"; ?> />
+                                                        <label class="form-check-label" for="rbInASubfolder_no">No</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Radio Buttons End -->
+                                            <!-- Classification -->
+                                            <div class="form-group row">
+                                                <label for="ddlClassification" class="col-sm-4 col-form-label">Classification:</label>
+                                                <div class="col-sm-8">
+                                                    <select id="ddlClassification" class="form-control" name="ddlClassification" required>
+                                                        <?php
+                                                        $Render->GET_DDL($DB->GET_FOLDER_CLASSIFICATION_LIST($collection),$document['Classification']);
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- Classification Comments -->
+                                            <div class="form-group row">
+                                                <label for="txtClassificationComments" class="col-sm-4 col-form-label">Classification Comments:</label>
+                                                <div class="col-sm-8">
+                                                    <textarea class="form-control" rows = "2" cols = "35" id="txtClassificationComments" name="txtClassificationComments"/><?php echo $document['ClassificationComment']; ?></textarea>
+                                                </div>
+                                            </div>
+                                            <!-- Subfolder Comments -->
+                                            <div class="form-group row">
+                                                <label for="txtSubfolderComments" class="col-sm-4 col-form-label">Subfolder Comments:</label>
+                                                <div class="col-sm-8">
+                                                    <textarea class="form-control" cols = "35" name="txtSubfolderComments" id="txtSubfolderComments"/><?php echo $document['SubfolderComment']; ?></textarea>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="form-check form-check">
-                                            <input type = "radio" class="form-control-input" name = "rbInASubfolder" id = "rbInASubfolder_no" size="26" value="0" <?php if($document['InSubfolder'] == 0) echo "checked"; ?> />
-                                            <label class="form-check-label" for="rbInASubfolder_no">No</label>
+                                        <!-- The Right Side -->
+                                        <div class="col-6">
+                                            <!-- Scan of Front -->
+                                            <div class="form-group row">
+                                                <table>
+                                                    <tr>
+                                                        <td style="text-align: center;">
+                                                            <span class="label" style="text-align: center;"> Scan of Front: </span><br>
+                                                                <?php
+                                                                echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\"><br><img src='" .  '../../' . $config['ThumbnailDir'] . str_replace(".tif",".jpg",$document['FileName']) . " ' alt = Error /></a>";
+                                                                echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNamePath'])/1024/1024, 2) . " MB";
+                                                                echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\">(Click to download)</a>";
+                                                                ?>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <!-- Scan of Back -->
+                                            <div class="form-grou-row">
+                                                <table>
+                                                    <tr>
+                                                        <td style="text-align: center;">
+                                                            <span class="label" style="text-align: center;"> Scan of Back: </span><br>
+                                                            <?php
+                                                            if($document['FileNameBack'] != '') //has Back Scan
+                                                            {
+                                                                echo '<span class="label" style="text-align: center">Scan of Back</span><br>';
+                                                                echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\"><br><img src='" . '../../' . $config['ThumbnailDir'] . str_replace(".tif", ".jpg", $document['FileNameBack']) . " ' alt = Error /></a>";
+                                                                echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNameBackPath']) / 1024 / 1024, 2) . " MB";
+                                                                echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\">(Click to download)</a>";
+                                                            }
+                                                            else
+                                                            {
+                                                                echo "<label class='col-form-label'>No file uploaded</label>";
+                                                            }
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <!-- General Comments -->
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label for="txtComments" class="col-form-label">Comments:</label>
+                                                    <textarea class="form-control" cols="35" rows="4" name="txtComments" id="txtComments" ><?php echo $document['Comments']?></textarea>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Needs Review -->
-                                <div class="col">
-                                    <label class="col col-form-label">Needs Review:</label>
-                                    <div class="form-check col-sm-10 bg-white">
-                                        <div class="form-check form-check">
-                                            <input type = "radio" class="form-control-input" name = "rbNeedsReview" id = "rbNeedsReview_yes" size="26" <?php if($document['NeedsReview'] == 1) echo "checked"; ?> />
-                                            <label class="form-check-label" for="rbNeedsReview_yes">Yes</label>
-                                        </div>
-                                        <div class="form-check form-check">
-                                            <input type = "radio" class="form-control-input" name = "rbNeedsReview" id = "rbNeedsReview_no" value="0" <?php if($document['NeedsReview'] == 0) echo "checked"; ?> />
-                                            <label class="form-check-label" for="rbNeedsReview_no">No</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="authorcell">
-                                <!-- Document Author(s) -->
-                                <div class="form-group row">
-                                    <label for="txtAuthor[]" class="col-sm-3 col-form-label">Document Author:</label>
-                                    <div class="col-sm-8">
-                                        <input type = "text" class="form-control" name = "txtAuthor[]" id = "txtAuthor[]" value="<?php if(count($authors) > 0){echo htmlspecialchars($authors[0][0],ENT_QUOTES);} ?>" autocomplete="off" list="lstAuthor" />
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <input type="button" class="btn btn-primary" id="more_fields" onclick="add_fields(null);" value="+"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Subfolder Comments -->
-                            <div class="form-group row">
-                                <label for="txtSubfolderComments" class="col-sm-3 col-form-label">Subfolder Comments:</label>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" cols = "35" name="txtSubfolderComments" id="txtSubfolderComments"/><?php echo $document['SubfolderComment']; ?></textarea>
-                                </div>
-                            </div>
-                            <!-- Classification -->
-                            <div class="form-group row">
-                                <label for="ddlClassification" class="col-sm-3 col-form-label">Classification:</label>
-                                <div class="col-sm-9">
-                                    <select id="ddlClassification" class="form-control" name="ddlClassification" onchange="classificationDescription()" required>
-                                        <?php
-                                        $Render->GET_DDL($DB->GET_FOLDER_CLASSIFICATION_LIST($collection),$document['Classification']);
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- Classification Comments -->
-                            <div class="form-group row">
-                                <label for="txtClassificationComments" class="col-sm-3 col-form-label">Classification Comments:</label>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" rows = "2" cols = "35" id="txtClassificationComments" name="txtClassificationComments"/><?php echo $document['ClassificationComment']; ?></textarea>
-                                </div>
-                            </div>
-                            <!-- Document Start Date -->
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Document Start Date:</label>
-                                <!-- Month -->
-                                <div class="col">
-                                    <select name="ddlStartMonth" id="ddlStartMonth" class="form-control">
-                                        <?php $Render->GET_DDL_MONTH($date->splitDate($document['StartDate'])['Month']); ?>
-                                    </select>
-                                </div>
-                                <!-- Day -->
-                                <div class="col">
-                                    <select name="ddlStartDay" id="ddlStartDay" class="form-control">
-                                        <?php $Render->GET_DDL_DAY($date->splitDate($document['StartDate'])['Day']); ?>
-                                    </select>
-                                </div>
-                                <!-- Year -->
-                                <div class="col">
-                                    <select id="ddlStartYear" name="ddlStartYear" class="form-control">
-                                        <?php $Render->GET_DDL_YEAR($date->splitDate($document['StartDate'])['Year']); ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- Document End Date -->
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Document End Date:</label>
-                                <!-- Month -->
-                                <div class="col">
-                                    <select name="ddlEndMonth" id="ddlEndMonth" class="form-control">
-                                        <?php $Render->GET_DDL_MONTH($date->splitDate($document['EndDate'])['Month']); ?>
-                                    </select>
-                                </div>
-                                <!-- Day -->
-                                <div class="col">
-                                    <select name="ddlEndDay" id="ddlEndDay" class="form-control">
-                                        <?php $Render->GET_DDL_DAY($date->splitDate($document['EndDate'])['Day']); ?>
-                                    </select>
-                                </div>
-                                <!-- Year -->
-                                <div class="col">
-                                    <select name="ddlEndYear" id="ddlEndYear" class="form-control">
-                                        <?php $Render->GET_DDL_YEAR($date->splitDate($document['EndDate'])['Year']); ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- Comments -->
-                            <div class="form-group row">
-                                <label for="txtComments" class="col-sm-3 col-form-label">Comments:</label>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" cols="35" rows="5" name="txtComments" id="txtComments" ><?php echo $document['Comments']?></textarea>
-                                </div>
-                            </div>
-                            <!-- Thumbnail Front -->
-                            <div class="form-group row">
-                                <div class="col-sm-3 col-form-label">Scan of Front:</div>
-                                <div class="col-sm-9">
-                                    <?php
-                                    echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\"><br><img src='" .  '../../' . $config['ThumbnailDir'] . str_replace(".tif",".jpg",$document['FileName']) . " ' alt = Error /></a>";
-                                    echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNamePath'])/1024/1024, 2) . " MB";
-                                    echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\">(Click to download)</a>";
-                                    ?>
-                                </div>
-                            </div>
-                            <!-- Thumbnail Back -->
-                            <div class="form-group row">
-                                <div class="col-sm-3 col-form-label">Scan of Back:</div>
-                                <div class="col-sm-9">
-                                    <?php
-                                    if($document['FileNameBack'] != '') //has Back Scan
-                                    {
-                                        echo '<span class="label" style="text-align: center">Scan of Back</span><br>';
-                                        echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\"><br><img src='" . '../../' . $config['ThumbnailDir'] . str_replace(".tif", ".jpg", $document['FileNameBack']) . " ' alt = Error /></a>";
-                                        echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNameBackPath']) / 1024 / 1024, 2) . " MB";
-                                        echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\">(Click to download)</a>";
-                                    }
-                                    else
-                                    {
-                                        echo "<label class='col-form-label'>No file uploaded</label>";
-                                    }
-                                    ?>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col">
-                                    <div class="d-flex justify-content-between">
-                                        <div><input type="reset" id="btnReset" name="btnReset" value="Reset" class="btn btn-secondary"/></div>
-                                        <div><?php if($session->hasWritePermission())
-                                            {echo "<input type='submit' id='btnSubmit' name='btnSubmit' value='Update' class='btn btn-primary'/>";}
-                                            ?></div>
+                                    <!-- Buttons -->
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <div class="d-flex justify-content-between">
+                                                <div><input type="reset" id="btnReset" name="btnReset" value="Reset" class="btn btn-secondary"/></div>
+                                                <div><?php if($session->hasWritePermission())
+                                                    {echo "<input type='submit' id='btnSubmit' name='btnSubmit' value='Update' class='btn btn-primary'/>";}
+                                                    ?></div>
 
-                                        <input type = "hidden" id="txtDocID" name = "txtDocID" value = "<?php echo $docID;?>" />
-                                        <input type = "hidden" id="txtAction" name="txtAction" value="review" />  <!-- catalog or review -->
-                                        <input type = "hidden" id="txtCollection" name="txtCollection" value="<?php echo $collection; ?>" />
+                                                <input type = "hidden" id="txtDocID" name = "txtDocID" value = "<?php echo $docID;?>" />
+                                                <input type = "hidden" id="txtAction" name="txtAction" value="review" />  <!-- catalog or review -->
+                                                <input type = "hidden" id="txtCollection" name="txtCollection" value="<?php echo $collection; ?>" />
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
-                        </form>
+                        </div> <!-- Card -->
                     </div>
-                </div> <!-- Card -->
-            </div>
-        </div> <!-- Col -->
+                </div> <!-- col -->
+            </div> <!-- row -->
+        </div> <!-- col -->
     </div> <!-- row -->
 </div><!-- Container -->
-<!-- Doesn't matter where these go, this is for overlay effect and loader -->
+
 <div id="overlay"></div>
 <?php include "../../Master/bandocat_footer.php" ?>
 
@@ -286,6 +299,9 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- JQuery UI cdn -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
 
 <script type="text/javascript" src="../../Master/errorHandling.js"></script>
 
@@ -322,8 +338,8 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
         var objTo = document.getElementById('authorcell');
         var divtest = document.createElement("div");
         divtest.innerHTML = '<div class="form-group row">\n' +
-            '                                <label for="txtAuthor[]" class="col-sm-3 col-form-label">Document Author ' + author_count + ':</label>\n' +
-            '                                <div class="col-sm-9">\n' +
+            '                                <label for="txtAuthor[]" class="col-sm-4 col-form-label">Document Author ' + author_count + ':</label>\n' +
+            '                                <div class="col-sm-8">\n' +
             '                                    <input type = "text" class="form-control" name = "txtAuthor[]" id = "txtAuthor" value="' + val + '" autocomplete="off" list="lstAuthor" />\n' +
             '                                </div>\n' +
             '                            </div>';
