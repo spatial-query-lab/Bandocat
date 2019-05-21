@@ -122,7 +122,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                                     <div class="col-sm-7">
                                                         <input type = "text" class="form-control" name = "txtAuthor[]" id = "txtAuthor[]" value="<?php if(count($authors) > 0){echo htmlspecialchars($authors[0][0],ENT_QUOTES);} ?>" autocomplete="off" list="lstAuthor" />
                                                     </div>
-                                                    <div class="col-sm-1">
+                                                    <div>
                                                         <input type="button" class="btn btn-primary" id="more_fields" onclick="add_fields(null);" value="+"/>
                                                     </div>
                                                 </div>
@@ -429,6 +429,33 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             document.getElementById('classificationCard').style.visibility = "hidden";
         }
     }
+
+
+</script>
+
+<script>
+    // *****************************************************************************************************************
+    /***************************************** CLASSIFICATION DESCRIPTION *********************************************/
+
+    // Card with description of chosen classification
+
+    $('#classificationMethod').change(function () {
+        var classList =  <?php echo json_encode($classification); ?>;
+        $('#classificationCard').show();
+        var classText = $('#classificationMethod option:selected').text();
+        if(classText == "Select")
+        {
+            $('#classificationCard').hide();
+        }
+
+        $("#className").text(classText);
+        for(var x = 0; x < classList.length; x++) {
+            if(classList[x][0] == classText) {
+                $('#classDesc').text(classList[x][1])
+            }
+        }
+
+    });
 
 </script>
 </body>
