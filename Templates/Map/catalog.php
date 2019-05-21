@@ -39,7 +39,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body onload="showNeedsReview()">
+<body onload="onloadChecks()">
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 
 <div class="container pad-bottom">
@@ -686,10 +686,9 @@ $readrec = array("POOR","GOOD","EXCELLENT");
 <script>
 
     // Shows needs review block to admins only
-    function showNeedsReview(){
+    function onloadChecks(){
         var userRole = "<?php echo $userRole ?>";
         if ((userRole === "Admin") || (userRole === "admin") === true){
-            //document.getElementById('needsReview').style.display = 'none';
             console.log('Display. User is admin');
         }
         else{

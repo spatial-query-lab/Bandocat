@@ -50,7 +50,7 @@ $date = new DateHelper();
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body>
+<body onload="onloadChecks()">
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container">
     <!-- Put Page Contents Here -->
