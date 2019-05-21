@@ -680,26 +680,6 @@ $readrec = array("POOR","GOOD","EXCELLENT");
             $('#POI').prop('hidden', true);
         }
     });
-</script>
-
-<script>
-
-    // Shows needs review block to admins only
-    function showNeedsReview(){
-        var userRole = "<?php echo $userRole ?>";
-        if ((userRole === "Admin") || (userRole === "admin") === true){
-            //document.getElementById('needsReview').style.display = 'none';
-            console.log('Display. User is admin');
-        }
-        else{
-            document.getElementById('needsReview').style.display = 'none';
-            console.log("Hide. User is not admin");
-        }
-    }
-
-    function resetPage(){
-        window.location.reload();
-    }
 
 </script>
 
@@ -723,6 +703,5 @@ $readrec = array("POOR","GOOD","EXCELLENT");
     }
 
 </script>
-
 </body>
 </html>
