@@ -444,14 +444,14 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
         var classList =  <?php echo json_encode($classification); ?>;
         $('#classificationCard').show();
         var classText = $('#classificationMethod option:selected').text();
-        if(classText == "Select")
+        if((classText === "Select") || (classText === "None") )
         {
             $('#classificationCard').hide();
         }
 
         $("#className").text(classText);
         for(var x = 0; x < classList.length; x++) {
-            if(classList[x][0] == classText) {
+            if(classList[x][0] === classText) {
                 $('#classDesc').text(classList[x][1])
             }
         }

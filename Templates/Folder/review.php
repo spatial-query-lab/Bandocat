@@ -195,7 +195,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             <div class="form-group row">
                                                 <label for="ddlClassification" class="col-sm-4 col-form-label">Classification:</label>
                                                 <div class="col-sm-8">
-                                                    <select id="ddlClassification" class="form-control" name="ddlClassification" required>
+                                                    <select id="ddlClassification" name="ddlClassification" class="form-control" required>
                                                         <?php
                                                         $Render->GET_DDL($DB->GET_FOLDER_CLASSIFICATION_LIST($collection),$document['Classification']);
                                                         ?>
@@ -243,7 +243,6 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                                             <?php
                                                             if($document['FileNameBack'] != '') //has Back Scan
                                                             {
-                                                                echo '<span class="label" style="text-align: center">Scan of Back</span><br>';
                                                                 echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\"><br><img src='" . '../../' . $config['ThumbnailDir'] . str_replace(".tif", ".jpg", $document['FileNameBack']) . " ' alt = Error /></a>";
                                                                 echo "<br>Size: " . round(filesize($config['StorageDir'] . $document['FileNameBackPath']) / 1024 / 1024, 2) . " MB";
                                                                 echo "<br><a href=\"download.php?file=$config[StorageDir]$document[FileNameBackPath]\">(Click to download)</a>";
@@ -405,7 +404,6 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
         });
     });
 
-
     // *****************************************************************************************************************
     /************************* ONLOAD EVENTS (ADMIN CHECK AND CLASSIFICATION CARD VISIBILITY) ************************/
     // HIDES "NEEDS REVIEW" DIV IF CURRENT USER IS NOT AN ADMIN AND HIDES CLASSIFICATION CARD UNTIL AN OPTION IS SELECTED
@@ -429,7 +427,6 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             document.getElementById('classificationCard').style.visibility = "hidden";
         }
     }
-
 
 </script>
 </body>

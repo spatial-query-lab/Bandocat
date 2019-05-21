@@ -95,7 +95,7 @@ $date = new DateHelper();
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="txtLibraryIndex">Library Index:</label>
                                     <div class="col-sm-8">
-                                        <input type = "text" class="form-control" name = "txtLibraryIndex" id = "txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES); ?>' required />
+                                        <input type = "text" class="form-control" style = "text-align: center;" name = "txtLibraryIndex" id = "txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES); ?>' required />
                                     </div>
                                 </div>
                                 <!-- Document Title -->
@@ -112,7 +112,7 @@ $date = new DateHelper();
                                         <input type = "text" class="form-control" name = "txtSubtitle" id = "txtSubtitle"  value='<?php echo htmlspecialchars($document['Subtitle'],ENT_QUOTES); ?>' />
                                     </div>
                                 </div>
-                                <!-- Document start -->
+                                <!-- Document start date -->
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Document Start Date:</label>
                                     <div class="col-sm-8">
@@ -133,7 +133,7 @@ $date = new DateHelper();
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Document end -->
+                                <!-- Document end date -->
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Document End Date:</label>
                                     <div class="col-sm-8">
@@ -153,13 +153,6 @@ $date = new DateHelper();
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Map Scale -->
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label" for="txtMapScale">Map Scale:</label>
-                                    <div class="col-sm-8">
-                                        <input type = "text" class="form-control" name = "txtMapScale" id = "txtMapScale" value="<?php echo htmlspecialchars($document['MapScale'],ENT_QUOTES); ?>"  />
-                                    </div>
-                                </div>
                                 <!-- Document Author -->
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="txtAuthor">Document Author:</label>
@@ -169,6 +162,13 @@ $date = new DateHelper();
                                             <!-- POPULATE AUTHOR LIST-->
                                             <?php $Render->getDataList($DB->GET_AUTHOR_LIST($collection)); ?>
                                         </datalist>
+                                    </div>
+                                </div>
+                                <!-- Map Scale OLD-->
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label" for="txtMapScale">Map Scale:</label>
+                                    <div class="col-sm-8">
+                                        <input type = "text" class="form-control" name = "txtMapScale" id = "txtMapScale" value="<?php echo htmlspecialchars($document['MapScale'],ENT_QUOTES); ?>"  />
                                     </div>
                                 </div>
                                 <!-- Radio Buttons -->
@@ -240,6 +240,13 @@ $date = new DateHelper();
                                             <input type = "radio" class="form-check-input" name = "rbHasPOI" id = "rbHasPOI_no" value="0"  <?php if($document['HasPOI'] == 0) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasPOI_no">No</label>
                                         </div>
+                                    </div>
+                                </div>
+                                <!-- POI Description -->
+                                <div class="form-group row" id="POI" hidden>
+                                    <label for="POIDescription" class="col-sm-4 col-form-label">POI Description:</label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control" cols="35" rows="1" name="POIDescription" id="POIDescription" value='<?php echo htmlspecialchars($document['POI'],ENT_QUOTES); ?>'></textarea>
                                     </div>
                                 </div>
                                 <!-- Has Coordinates -->
@@ -548,6 +555,21 @@ $date = new DateHelper();
         });
     });
 
+    // Enables and disables the hidden POI Description row
+    $('#rbHasPOI_yes, #rbHasPOI_no').change(function() {
+        var hasPOI = $('#rbHasPOI_yes').prop('checked');
+        if(hasPOI)
+        {
+            console.log("Map has POI...");
+            $('#POI').prop('hidden', false);
+        }
+        else
+        {
+            $('#POIDescription').val("");
+            console.log("Map doesn't have scale bar...");
+            $('#POI').prop('hidden', true);
+        }
+    });
 
 </script>
 </body>
