@@ -43,7 +43,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body onload="onloadChecks()">
+<body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container-fluid">
     <div class="row">
@@ -148,7 +148,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                             </div>
                                             <!-- Radio Buttons Start -->
                                             <!-- Needs Review -->
-                                            <div class="form-group row" id="needsReview">
+                                            <div class="form-group row" id="needsReview" hidden>
                                                 <label class="col-sm-4 col-form-label">Needs Review:</label>
                                                 <div class="col-sm-8">
                                                     <div class="form-check form-check-inline">
@@ -413,27 +413,18 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
 
     // *****************************************************************************************************************
     /************************* ONLOAD EVENTS (ADMIN CHECK AND CLASSIFICATION CARD VISIBILITY) ************************/
-    // HIDES "NEEDS REVIEW" DIV IF CURRENT USER IS NOT AN ADMIN AND HIDES CLASSIFICATION CARD UNTIL AN OPTION IS SELECTED
-    function onloadChecks(){
-        // Checks if user is admin
+    // Hides/Shows "needs review" option to non-admins
+    $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
-        if ((userRole === "Admin") || (userRole === "admin")){
-            //document.getElementById('needsReview').style.display = 'yes';
-            console.log('Display. User is admin');
+        console.log(userRole);
+        if ((userRole === "Admin") || (userRole === "admin") === false){
+            console.log ('Display. User is admin!');
+            $('#needsReview').prop('hidden', false);
         }
         else{
-            document.getElementById('needsReview').style.display = 'none';
-            console.log("Hide. User is not admin");
+            console.log('Hide. User is not admin!');
         }
-
-        if ((description === values) === true){
-            document.getElementById('classificationCard').style.visibility = "visible";
-        }
-        else{
-            console.log('no classification chosen, hide card');
-            document.getElementById('classificationCard').style.visibility = "hidden";
-        }
-    }
+    });
 
     // *****************************************************************************************************************
     /***************************************** CLASSIFICATION DESCRIPTION *********************************************/

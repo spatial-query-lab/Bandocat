@@ -39,7 +39,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body onload="onloadChecks()">
+<body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 
 <div class="container pad-bottom">
@@ -199,7 +199,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                         </div>
                                     </div>
                                     <!-- Needs Review -->
-                                    <div class="form-group row">
+                                    <div class="form-group row" id="needsReview" hidden>
                                         <label class="col-sm-4 col-form-label">Needs Review:</label>
                                         <div class="col-sm-8">
                                             <div class="form-check form-check-inline">
@@ -412,7 +412,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                             <div class="form row">
                                 <div class="col">
                                     <div class="d-flex justify-content-between">
-                                        <input type="reset" id="btnReset" name="btnReset" value="Reset" onclick="resetPage()" class="btn btn-secondary"/>
+                                        <input type="reset" id="btnReset" name="btnReset" value="Reset" onclick="history.go(0);" class="btn btn-secondary"/>
                                         <input type = "hidden" id="txtDocID" name = "txtDocID" value = "" />
                                         <input type = "hidden" id="txtAction" name="txtAction" value="catalog" />  <!-- catalog or review -->
                                         <input type = "hidden" id="txtCollection" name="txtCollection" value="<?php echo $collection; ?>" />
@@ -681,25 +681,18 @@ $readrec = array("POOR","GOOD","EXCELLENT");
         }
     });
 
-</script>
-
-<script>
-
-    // Shows needs review block to admins only
-    function onloadChecks(){
+    // Hides and shows "needs review" option depending on user role
+    $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
-        if ((userRole === "Admin") || (userRole === "admin") === true){
-            console.log('Display. User is admin');
+      console.log(userRole);
+      if ((userRole === "Admin") || (userRole === "admin") === false){
+          console.log ('Display. User is admin!');
+          $('#needsReview').prop('hidden', false);
+      }
+       else{
+            console.log('Hide. User is not admin!');
         }
-        else{
-            document.getElementById('needsReview').style.display = 'none';
-            console.log("Hide. User is not admin");
-        }
-    }
-
-    function resetPage(){
-        window.location.reload();
-    }
+    });
 
 </script>
 </body>

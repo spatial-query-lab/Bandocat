@@ -22,6 +22,7 @@ $document = $DB->SP_TEMPLATE_FOLDER_DOCUMENT_SELECT($collection, $docID);
 $date = new DateHelper();
 //get the authors by document id
 $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
+$classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
 ?>
 <!doctype html>
 <html lang="en">
@@ -39,7 +40,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body onload="onloadChecks()">
+<body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container-fluid">
     <div class="row">
@@ -47,17 +48,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
             <!-- Put Page Contents Here -->
             <!-- <h1 class="text-center">Blank Page</h1> -->
             <div class="row">
-                <!-- Start of description of Classification method chosen-->
-                <div class="col-1" id="classificationCard" style="display: none">
-                    <div class="card" id="card" style="width: 18rem; margin-left: 65px; margin-top: 250px;">
-                        <div class="card-body">
-                            <h5 class="card-title" id="className" style="text-align: center; font-size:18px; text-decoration: underline;"></h5>
-                            <p class="card-text" id="classDesc" style="text-align: center; font-size: 13px"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Render Document Catalog History for Admins-->
+               <!-- Render Document Catalog History for Admins-->
                 <div class="col"></div>
                 <?php
                 if($session->isAdmin()) //if user is Admin, render the Document History (Log Info)
@@ -79,12 +70,10 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                 ?>
                 <div class="col"></div>
             </div>
-
                 <!-- Populates the control with data -->
                 <datalist id="lstAuthor">
                     <?php $Render->getDataList($DB->GET_AUTHOR_LIST($collection)); ?>
                 </datalist>
-                <!-- End of description of Classification method chosen-->
                 <div class="col">
                     <!-- Put Page Contents Here -->
                     <h1 class="text-center"><?php echo $config["DisplayName"]; ?> Review Form</h1>
@@ -95,6 +84,16 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                             <div class="card-header">
                                 <h3 class="text-center">Document Meta Data</h3>
                             </div>
+                            <!-- Start of description of Classification method chosen-->
+                            <div class="col" id="classificationCard" style="display: none">
+                                <div class="card" id="card" style="width: 15rem; margin-left: -300px; margin-top: 180px;">
+                                    <div class="card-body">
+                                        <h5 class="card-title" id="className" style="text-align: center; font-size:18px; text-decoration: underline;"></h5>
+                                        <p class="card-text" id="classDesc" style="text-align: center; font-size: 13px"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End of description of Classification method chosen-->
                             <div class="card-body">
                                 <form id="theform" name="theform" method="post" enctype="multipart/form-data" >
                                     <div class="row">
@@ -163,7 +162,7 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
                                             </div>
                                             <!-- Radio Buttons Start -->
                                             <!-- Needs Review -->
-                                            <div class="form-group row" id="needsReview">
+                                            <div class="form-group row" id="needsReview" hidden>
                                                 <label class="col-sm-4 col-form-label">Needs Review:</label>
                                                 <div class="col-sm-8">
                                                     <div class="form-check form-check-inline">
@@ -406,27 +405,44 @@ $authors = $DB->GET_FOLDER_AUTHORS_BY_DOCUMENT_ID($collection,$docID);
 
     // *****************************************************************************************************************
     /************************* ONLOAD EVENTS (ADMIN CHECK AND CLASSIFICATION CARD VISIBILITY) ************************/
-    // HIDES "NEEDS REVIEW" DIV IF CURRENT USER IS NOT AN ADMIN AND HIDES CLASSIFICATION CARD UNTIL AN OPTION IS SELECTED
-    function onloadChecks(){
-        // Checks if user is admin
+    // Hides/Shows "needs review" option to non-admins
+    $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
-        if ((userRole === "Admin") || (userRole === "admin")){
-            //document.getElementById('needsReview').style.display = 'yes';
-            console.log('Display. User is admin');
+        if ((userRole === "Admin") || (userRole === "admin") === false){
+            //console.log ('Display. User is admin!');
+            $('#needsReview').prop('hidden', false);
         }
         else{
-            document.getElementById('needsReview').style.display = 'none';
-            console.log("Hide. User is not admin");
+            //console.log('Hide. User is not admin!');
         }
+    });
 
-        if ((description === values) === true){
-            document.getElementById('classificationCard').style.visibility = "visible";
+    // *****************************************************************************************************************
+    /***************************************** CLASSIFICATION DESCRIPTION *********************************************/
+
+    // Card with description of chosen classification
+    $('#ddlClassification').ready(function () {
+        var classList =  <?php echo json_encode($classification,$docID); ?>;
+        var classText = $('#ddlClassification option:selected').text();
+
+        // Show card only when option is neither 'Select' nor 'None'
+        if ((classText !== 'Select') || (classText !== 'None') ){
+            console.log('Description card shown');
+            $('#classificationCard').show();
+
+            $("#className").text(classText);
+            for(var x = 0; x < classList.length; x++) {
+                if(classList[x][0] === classText) {
+                    $('#classDesc').text(classList[x][1])
+                }
+            }
         }
-        else{
-            console.log('no classification chosen, hide card');
-            document.getElementById('classificationCard').style.visibility = "hidden";
+        // Hide card when option is either 'Select' or 'None'
+        else {
+            console.log('Description card hidden');
+            $('#classificationCard').hide();
         }
-    }
+    });
 
 </script>
 </body>

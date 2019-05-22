@@ -1,6 +1,7 @@
 <?php
 include '../../Library/SessionManager.php';
 $session = new SessionManager();
+$userRole = $session->getRole();
 if(isset($_GET['col']) && isset($_GET['doc']))
 {
     $collection = $_GET['col'];
@@ -50,7 +51,7 @@ $date = new DateHelper();
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body onload="onloadChecks()">
+<body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container">
     <!-- Put Page Contents Here -->
@@ -187,7 +188,7 @@ $date = new DateHelper();
                                     </div>
                                 </div>
                                 <!-- Needs Review -->
-                                <div class="form-group row">
+                                <div class="form-group row" id="needsReview" hidden>
                                     <label class="col-sm-4 col-form-label">Needs Review:</label>
                                     <div class="col-sm-8">
                                         <div class="form-check form-check-inline">
@@ -455,7 +456,6 @@ $date = new DateHelper();
                                 </div>
                             </div>
                         </div>
-
                         <!-- Buttons -->
                         <div class="form row">
                             <div class="col">
@@ -568,6 +568,19 @@ $date = new DateHelper();
             $('#POIDescription').val("");
             console.log("Map doesn't have scale bar...");
             $('#POI').prop('hidden', true);
+        }
+    });
+
+    // Hides and displays "needs review" option depending on user role
+    $('#needsReview').ready(function(){
+        var userRole = "<?php echo $userRole ?>";
+        console.log(userRole);
+        if ((userRole === "Admin") || (userRole === "admin") === false){
+            console.log ('Display. User is admin!');
+            $('#needsReview').prop('hidden', false);
+        }
+        else{
+            console.log('Hide. User is not admin!');
         }
     });
 
