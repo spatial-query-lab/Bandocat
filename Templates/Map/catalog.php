@@ -402,7 +402,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                     <div class="form-row">
                                         <div class="form-group col">
                                             <label for="txtComments" class="col-form-label">Comments:</label>
-                                            <textarea class="form-control" cols="35" rows="5" name="txtComments" id="txtComments" placeholder="Example: Tract located in Nueces County" ></textarea>
+                                            <textarea class="form-control" cols="35" rows="5" name="txtComments" id="txtComments" placeholder="Example: Tract located in Corpus Christi, Nueces County" ></textarea>
                                         </div>
                                     </div>
                                 </div>

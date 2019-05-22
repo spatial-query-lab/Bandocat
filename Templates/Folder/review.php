@@ -427,7 +427,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
 
         // Show card only when option is neither 'Select' nor 'None'
         if ((classText !== 'Select') || (classText !== 'None') ){
-            console.log('Description card shown');
+            console.log('Classification acceptable. Show card.');
             $('#classificationCard').show();
 
             $("#className").text(classText);
