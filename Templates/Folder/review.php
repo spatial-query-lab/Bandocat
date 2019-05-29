@@ -408,7 +408,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
     // Hides/Shows "needs review" option to non-admins
     $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
-        if ((userRole === "Admin") || (userRole === "admin") === false){
+        if ((userRole === "Admin") || (userRole === "Super Admin") === false){
             //console.log ('Display. User is admin!');
             $('#needsReview').prop('hidden', false);
         }

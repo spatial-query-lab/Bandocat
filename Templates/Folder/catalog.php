@@ -417,7 +417,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
     $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
         console.log(userRole);
-        if ((userRole === "Admin") || (userRole === "admin") === false){
+        if ((userRole === "Admin") || (userRole === "Super Admin") === false){
             console.log ('Display. User is admin!');
             $('#needsReview').prop('hidden', false);
         }
