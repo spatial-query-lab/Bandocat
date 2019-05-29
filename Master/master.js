@@ -90,3 +90,5 @@ $('#bugReport').submit(function(event) {
     // Preventing default actions of a form
     event.preventDefault();
 });
+
+

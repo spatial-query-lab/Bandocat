@@ -15,8 +15,6 @@ if($session->isSuperAdmin()) {
 }
 else
 {
-    $message = "ACCESS DENIED: SuperAdmin privileges required!";
-    echo "<script type='text/javascript'>alert('$message');</script>";
     header('Location: ../../Forms/Main');
 }
 ?>
@@ -43,10 +41,11 @@ else
 
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
+    <!-- Custom CSS for loading gif -->
 </head>
 <body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
-<div class="container">
+<div class="container-fluid pl-5 pr-5">
     <div class="row">
         <div class="col">
             <!-- Put Page Contents Here -->
@@ -54,7 +53,7 @@ else
             <hr>
 
 
-            <div class="form-group row">
+            <div class="form-group row" align="center">
                 <!-- DDL for Database Selection -->
                 <label class="col-sm-1 col-form-label" for="ddlDatabases">DataBase:</label>
                 <div class="col-sm-4">
@@ -80,6 +79,8 @@ else
 
             <hr>
 
+            <?php include "../../Master/load.php"; ?>
+
             <div id="divTable">
                 <!-- Data-Table -->
                 <table id="dtable" class="table table-bordered table-hover" width="100%" cellspacing="0" data-page-length='20'>
@@ -96,20 +97,38 @@ else
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="rowModalTitle">Modal title</h5>
+                    <h5 class="modal-title" id="rowModalTitle">Row Content</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <form id="updateDataBase">
                     <div class="modal-body" id="rowModalBody">
-
+                        <!-- CONTENT APPENDED HERE -->
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" value="Save Changes" class="btn btn-primary" id="submit">
+                        <!--<input type="submit" value="Save Changes" class="btn btn-primary" id="submit">-->
                         <input type="button" value="Delete" class="btn btn-danger" id="delete">
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Response Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-labelledby="responseModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="responseModalTitle">Instant Feedback Report</h5>
+                <input type="text" hidden value="" id="status">
+                <button type="button" id="close" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="responseModalBody">
+
             </div>
         </div>
     </div>
@@ -141,26 +160,36 @@ else
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script src="https:////cdn.datatables.net/plug-ins/1.10.19/api/processing().js"></script>
 
 <!-- Our custom javascript file -->
 <script type="text/javascript" src="../../Master/master.js"></script>
 
 <script>
+    var count = 0;
     $(document).ready(function() {
+        // Function gets DDL values to populate our datatable
         getTableList();
-        //getUserInput();
-        var test = <?php
-            $myObj = array("test" => 1, "whatup" => false);
-            echo json_encode($myObj); ?>;
-        //console.log(test);
+
+        // Adding modal attributes
+        $('#loaderModalContent').append('<div class="modal-body" id="loaderModalBody"></div>');
+        $('#loaderModalBody').append('<div class="d-flex justify-content-center"><img src="../../Images/loading2.gif"></div><h5 class="text-center">Processing Table...</h5>');
     });
 
+    // When database DDL is changed
     $('#ddlDatabases').change(function() {
         getTableList();
     });
 
+    // When tables DDL is changed
     $('#ddlTables').change(function() {
         getUserInput();
+    });
+
+    // Reloads page when response modal is exited out of or hidden
+    $('#responseModal').on('hidden.bs.modal', function () {
+        location.reload();
     });
 
     /***************************************************************
@@ -170,6 +199,10 @@ else
      ***************************************************************/
     function removeTable()
     {
+        // Delaying the loading gif
+        count = 0;
+        setTimeout(loading, 50);
+        // Remove old table and append new one for dynamic content to be added
         $('#dtable').remove();
         $('#dtable_wrapper').remove();
         $('#divTable').append('<table id="dtable" class="table table-bordered table-hover" width="100%" cellspacing="0" data-page-length=\'20\'>\n' +
@@ -178,15 +211,28 @@ else
     }
 
     /***************************************************************
+     Function: loading
+     Description: Function displays a loading gif if the desired
+                  datatable takes too long to load.
+     ***************************************************************/
+    function loading()
+    {
+        console.log(count);
+        if(count == 0)
+        {
+            // Showing loader modal
+            $("#loaderModal").modal("show");
+        }
+    }
+
+    /***************************************************************
      Function: getTableList
      Description: Appends html of selected data-table to DDL
      ***************************************************************/
     function getTableList()
     {
-        // Get selected value
+        // Get desired database
         var dbname = $('#ddlDatabases').val();
-
-        // Check if it exists first
 
         $.ajax({
             url: "./show_tables.php",
@@ -194,7 +240,6 @@ else
             data: {dbname: dbname},
             success:function(response)
             {
-                //console.log(response);
                 $('#ddlTables').empty();
                 $('#ddlTables').append(response);
                 getUserInput();
@@ -214,15 +259,15 @@ else
         var tblname = $('#ddlTables').val();
         removeTable();
 
-        // Check if it exists first
-
         $.ajax({
             url: "./table_processing.php",
             method: "POST",
-            data: {dbname: dbname, tblname: tblname},
+            data: {dbname: dbname, tblname: tblname},/*
+            beforeSend: function() {
+
+            },*/
             success:function(response)
             {
-                //console.log(response);
                 showTable(JSON.parse(response));
             }
         });
@@ -237,9 +282,6 @@ else
     {
         var data = response["data"];
         var columns = response["columns"];
-        //var lastColumn = columns.length - 1;
-
-        //console.log(columns);
 
         // Example dtable using this method: https://datatables.net/examples/ajax/objects.html
         var table = $('#dtable').DataTable({
@@ -254,54 +296,123 @@ else
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
+            initComplete: function( settings, json ) {
+                //console.log("complete bruh");
+                //$('#loadingContainer').hide();
+                // Showing loader modal
+                $("#loaderModal").modal("hide");
+                count = count + 1;
+            },
 
             // Dynamically making table
             data:data,
             columns: columns,
-            /*columnDefs:
-                [
-                    {
-                        render: function ()
-                        {
-                            return "<a href='#'>Delete</a>";
-                        },
-                        targets: lastColumn,
-                    }
-                ],*/
         });
 
+        modals(table, columns);
+    }
+
+    /*******************************************************************
+     Function: modals
+     Description: Mother of Modals function. Allows modals to appear
+                  when a row is clicked on.
+                  - Calls functions that
+                  destroys/creates modal templates.
+                  - Calls function that
+                  fills modal with dynamic content from rows.
+                  - Handles deleting row content with modals
+                  - Destroys/recreates response modals for instant
+                  feedback reports.
+     *******************************************************************/
+    function modals(table, columns)
+    {
         // When the user clicks on a row on the data table
         $('#dtable tbody').on('click', 'tr', function () {
             var rowData = table.row( this ).data();
 
-            $('#rowModal').remove();
-            $('#Modal').append('<div class="modal fade" id="rowModal" tabindex="-1" role="dialog" aria-labelledby="rowModal" aria-hidden="true">\n' +
-                '        <div class="modal-dialog modal-lg" role="document">\n' +
-                '            <div class="modal-content">\n' +
-                '                <div class="modal-header">\n' +
-                '                    <h5 class="modal-title" id="rowModalTitle">Modal title</h5>\n' +
-                '                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
-                '                        <span aria-hidden="true">&times;</span>\n' +
-                '                    </button>\n' +
-                '                </div>\n' +
-                '                <form id="updateDataBase">\n' +
-                '                    <div class="modal-body" id="rowModalBody">\n' +
-                '                        \n' +
-                '                    </div>\n' +
-                '                    <div class="modal-footer">\n' +
-                '                        <input type="submit" value="Save Changes" class="btn btn-primary" id="submit">\n' +
-                '                        <input type="button" value="Delete" class="btn btn-danger" id="delete">\n' +
-                '                    </div>\n' +
-                '                </form>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '    </div>');
-
-            // Clear counter for the text area
+            // Shows modals
+            appendModal();
             $('#rowModal').modal('show');
             fillModal(rowData);
-            console.log(rowData);
+
+            // Getting ID name to dynamically delete any row the admin wishes
+            // (EX: authorID = author || documentID = document) for dynamic SQL delete statement
+            var idLength = columns[0]["data"].length;
+            var columnID = columns[0]["data"].substr(0,idLength-2);
+            //console.log(columnID);
+            var idNumber = rowData[columnID+"ID"];
+
+            $('#delete').click(function() {
+                var answer = confirm("Are you sure you want to delete this ticket?");
+
+                if(answer)
+                {
+                    // INPUT AJAX HERE
+                    console.log("true bruh");
+                    var dbname = $('#ddlDatabases').val();
+                    var tblname = $('#ddlTables').val();
+
+                    $.ajax({
+                        url: "./modal_processing.php",
+                        method: "POST",
+                        data: {delete: true, columnID: columnID, dbname: dbname, tblname: tblname, idNumber: idNumber},
+                        success:function(response)
+                        {
+                            $('#status').val(true);
+
+                            // Adding text to response modal
+                            $('#responseModalBody').empty();
+                            $('#responseModalBody').append('<p>Database: '+ dbname +'</p>');
+                            $('#responseModalBody').append('<p>Table: '+ tblname +'</p>');
+                            $('#responseModalBody').append('<p>'+ columnID +'ID:  '+ idNumber +'</p>');
+                            $('#responseModalBody').append('<p>Row deleted successful! Thank you!</p>');
+                            $("#rowModal").modal('hide');
+                            $('#responseModal').modal('show');
+                            console.log(response);
+                        }
+                    });
+
+                }
+                else
+                {
+                    $('#responseModalBody').empty();
+                    $('#responseModalBody').append('<p>The content could not be deleted! The server is not responding properly, please report this bug.</p>');
+                    $("#rowModal").modal('hide');
+                    $('#responseModal').modal('show');
+                }
+            });
         } );
+    }
+    /***************************************************************
+     Function: appendModal
+     Description: Removes any past modals and appends a new template
+                  for dynamic content to be placed.
+     ***************************************************************/
+    function appendModal()
+    {
+        // Appending modal
+        $('#rowModal').remove();
+        $('#Modal').append('<div class="modal fade" id="rowModal" tabindex="-1" role="dialog" aria-labelledby="rowModal" aria-hidden="true">\n' +
+            '        <div class="modal-dialog modal-lg" role="document">\n' +
+            '            <div class="modal-content">\n' +
+            '                <div class="modal-header">\n' +
+            '                    <h5 class="modal-title" id="rowModalTitle">Row Content</h5>\n' +
+            '                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+            '                        <span aria-hidden="true">&times;</span>\n' +
+            '                    </button>\n' +
+            '                </div>\n' +
+            '                <form id="updateDataBase">\n' +
+            '                    <div class="modal-body" id="rowModalBody">\n' +
+            '                        \n' +
+            '                    </div>\n' +
+            '                    <div class="modal-footer">\n' +
+            //'                        <input type="submit" value="Save Changes" class="btn btn-primary" id="submit">\n' +
+            '                        <input type="button" value="Delete" class="btn btn-danger" id="delete">\n' +
+            '                    </div>\n' +
+            '                </form>\n' +
+            '            </div>\n' +
+            '        </div>\n' +
+            '    </div>');
     }
 
     /***************************************************************
@@ -311,20 +422,49 @@ else
      ***************************************************************/
     function fillModal(rowData)
     {
+        var dbname = $('#ddlDatabases').val();
+        var tblname = $('#ddlTables').val();
+        //console.log(rowData);
+
+        // iterates for every column and fills modal
         for(var property in rowData)
         {
-            html = ' <div class="form-group row">\n' +
-                '                        <label style="" class="col-sm-3 col-form-label" for="txtSubject1">' + property + '</label>\n' +
-                '                        <div class="col-sm-8">\n' +
-                '                            <input type="text" name="txtSubject" id="txtSubject1" size="32" class="form-control" value="' + rowData[property] + '" required/>\n' +
-                '                        </div>\n' +
-                '                    </div>'
+            // Apply a link here
+            if(tblname == "document" && property == "libraryindex")
+            {
+                var response = $.ajax({
+                    url: "./link_processing.php",
+                    method: "POST",
+                    async: false,
+                    data: {dbname: dbname},
+                    success:function(response)
+                    {
+                        return response;
+                    }
+                });
+                //console.log(response);
+
+                html = ' <div class="form-group row">\n' +
+                    '                        <label style="" class="col-sm-3 col-form-label" for="txtSubject1">' + property + '</label>\n' +
+                    '                        <div class="col-sm-8">\n' +
+                    '                            <a target="_blank" rel="noopener noreferrer" href="../../Templates/Map/review.php?doc=' + rowData["documentID"] + '&col=' + response["responseText"] + '">' + rowData["libraryindex"] + '</a>\n' +
+                    '                        </div>\n' +
+                    '                    </div>'
+            }
+            else // Else normal text field
+            {
+                html = ' <div class="form-group row">\n' +
+                    '                        <label style="" class="col-sm-3 col-form-label" for="txtSubject1">' + property + '</label>\n' +
+                    '                        <div class="col-sm-8">\n' +
+                    '                            <input type="text" name="txtSubject" id="txtSubject1" size="32" class="form-control" value="' + rowData[property] + '" required readonly/>\n' +
+                    '                        </div>\n' +
+                    '                    </div>'
+            }
 
             $("#rowModalBody").append(html);
-            console.log(property);
+            //console.log(property);
         }
     }
-
 </script>
 </body>
 </html>

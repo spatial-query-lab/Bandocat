@@ -37,7 +37,7 @@ class AnnouncementDBHelper extends DBHelper
         //The ? in the functions parameter list is a variable that we bind a few lines down.
         //CALL is sql for calling the function built into the db at localhost/phpmyadmin
         $call = $this->getConn()->prepare("CALL SP_ANNOUNCEMENT_INSERT(?,?,?,?)");
-        //Error handleing
+        //Error handling
         if (!$call)
             trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
         //bind parameters to the sql statement
@@ -53,39 +53,50 @@ class AnnouncementDBHelper extends DBHelper
 
     }
 
-    function SP_ANNOUNCEMENT_UPDATE($iTitle, $iMessage, $iEndtime, $iUser, $iAnnouncementID)
+    function SP_ANNOUNCEMENT_UPDATE($iTitle, $iMessage, $iEndtime, $iAnnouncementID)
     {
-        $call = $this->getConn()->prepare("CALL SP_ANNOUNCEMENT_UPDATE(?,?,?,?,?)");
-
-        if (!$call)
-            trigger_error("SQL failed: " . $this->getConn()->errorCode() . " - " . $this->conn->errorInfo()[0]);
-
-        $call->bindParam(1, $iTitle, PDO::PARAM_STR, strlen($iTitle));
-        $call->bindParam(2, $iMessage, PDO::PARAM_STR, strlen($iMessage));
-        $call->bindParam(3, $iEndtime, PDO::PARAM_STR, strlen($iEndtime));
-        $call->bindParam(4, $iUser, PDO::PARAM_INT, 11);
-        $call->bindParam(5, $iAnnouncementID, PDO::PARAM_INT, 11);
-
-        $call->execute();
-        if ($call){
-            $sth = $this->getConn()->prepare("SELECT `announcementID`,`title`,`message`, `endtime`, `posttime`, `posterID` FROM `announcement` WHERE `announcementID` = $iAnnouncementID");
-            //Execute SQL statement
-            $sth->execute();
-            //Retrieve results from executed statement
-            $result = $sth->fetch(PDO::FETCH_ASSOC);
-            return $result;
-        }
-        return false;
+        $this->getConn()->exec('USE' . $this->maindb);
+        var_dump("THETITLE: ", $iTitle, "  THEMESSAGE: ", $iMessage);
+        $sth = $this->getConn()->prepare("UPDATE `announcement` SET `title` = :title,`message` = :message, `endtime` = :endtime WHERE `announcementID` = :AID");
+        $sth->bindParam(':title',$iTitle,PDO::PARAM_STR);
+        $sth->bindParam(':message',$iMessage,PDO::PARAM_STR);
+        $sth->bindParam(':endtime',$iEndtime,PDO::PARAM_STR);
+        $sth->bindParam(':AID',$iAnnouncementID,PDO::PARAM_INT);
+        $ret=$sth->execute();
+        if($ret)
+            $ret = $sth->rowCount(); //return number of rows affected (must be 1 or 0)
+        return $ret;
     }
 
     function GET_ANNOUNCEMENT_DATA()
     {
-        //Select all relevant data where the expiration date is greater than the current date
-        $sth = $this->getConn()->prepare("SELECT `announcementID`,`title`,`message`, `endtime`, `posttime`, `posterID` FROM `announcement` WHERE `endtime` >= CURRENT_DATE");
-        //Execute SQL statement
-        $sth->execute();
-        //Retrieve results from executed statement
-        $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
+        $data = array();
+
+        // Getting connection
+        $mysqli = new mysqli($this->getHost(), $this->getUser(), $this->getPwd(), "bandocatdb");
+
+        // Checking to see if the connection failed
+        if($mysqli->connect_errno)
+        {
+            echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+            return false;
+        }
+        $sql = "SELECT `announcementID`,`title`,`message`, `endtime`, `posttime`, `posterID` FROM `announcement` WHERE `endtime` >= CURRENT_DATE";
+        $response = $mysqli->query($sql);
+
+        if ($response)
+        {
+            while($row = mysqli_fetch_assoc($response))
+            {
+                $data[] = $row;
+            }
+        }
+        else
+        {
+            echo "Error: " . $sql . "<br>" . $mysqli->error;
+        }
+
+        $mysqli->close();
+        return $data;
     }
 }

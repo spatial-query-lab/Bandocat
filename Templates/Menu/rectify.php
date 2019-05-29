@@ -6,9 +6,9 @@
  * Time: 2:20 PM
  */?>
 <div class="card" style="width: 18rem;">
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item"><a href="../../GeoRec/Map/index.php?col=bluchermaps">Blucher Maps</a></li>
-        <li class="list-group-item"><a href="../../GeoRec/Map/index.php?col=greenmaps">Green Maps</a></li>
-        <li class="list-group-item"><a href="../../GeoRec/Map/index.php?col=pennyfenner">Pennyfenner Maps</a></li>
-    </ul>
+    <div class="list-group list-group-flush">
+        <a href="../../GeoRec/Map/index.php?col=bluchermaps" class="list-group-item list-group-item-action">Blucher</a>
+        <a href="../../GeoRec/Map/index.php?col=greenmaps" class="list-group-item list-group-item-action">Green</a>
+        <a href="../../GeoRec/Map/index.php?col=pennyfenner" class="list-group-item list-group-item-action">Pennyfenner</a>
+    </div>
 </div>

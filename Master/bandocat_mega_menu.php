@@ -89,7 +89,7 @@ $errorTickets .= $tempt;
                 </a>
                 <a href="../../Forms/ManageUser/" class="dropdown-item">Manage User</a>
                 <a href="../../Forms/NewUser/" class="dropdown-item">Create New User</a>
-                <a href="../../Training/admin/admin.php" class="dropdown-item">Training</a>
+                <!--<a href="../../Training/admin/admin.php" class="dropdown-item">Training</a>-->
                 <a href="../../Forms/ManageDatabase/" class="dropdown-item" data-toggle="tooltip" title="SuperAdmin Access Required">Database Manager</a>';
                     if($session->isSuperAdmin())
                     {
@@ -120,14 +120,14 @@ $errorTickets .= $tempt;
                     <div class="container-fluid">
                         <div class="row">
                             <!-- Training -->
-                            <div class="col">
+                            <!--<div class="col">
                                 <h5>Training</h5>
                                 <div class="d-flex flex-column">
                                     <a href="../../Training/jobfolder/Forms/list.php?col=jobfolder&action=training&type=none" class="dropdown-item text-dark p-1">Job Folder Training</a>
                                     <a href="../../Training/maps/Forms/list.php?col=maps&action=training&type=none" class="dropdown-item text-dark p-1">Maps Training</a>
                                     <a href="../../Training/fieldbook/Forms/list.php?col=fieldbook&action=training&type=none" class="dropdown-item text-dark p-1">Field Book Training</a>
                                 </div>
-                            </div>
+                            </div>-->
                             <!-- Indices Transition -->
                             <div class="col">
                                 <h5>Indices Transition</h5>
@@ -149,9 +149,9 @@ $errorTickets .= $tempt;
                             <div class="col">
                                 <h5>Queries</h5>
                                 <div class="d-flex flex-column">
-                                    <a href="../../Forms/Queries/hascoast.php" class="dropdown-item text-dark p-1">Coastal Maps</a>
+                                    <!--<a href="../../Forms/Queries/hascoast.php" class="dropdown-item text-dark p-1">Coastal Maps</a>-->
                                     <a href="../../Forms/Queries/exportcollection.php" class="dropdown-item text-dark p-1">Export Document Index</a>
-                                    <a href="../../Forms/Queries/mapswithouttitle.php" class="dropdown-item text-dark p-1">Maps Without Titles</a>
+                                    <!--<a href="../../Forms/Queries/mapswithouttitle.php" class="dropdown-item text-dark p-1">Maps Without Titles</a>-->
                                     <a href="../../Forms/Queries/manage_authorname.php" class="dropdown-item text-dark p-1">Manage TDL Author</a>
                                     <?php if($session->isAdmin()){echo '<a href="../../Forms/Queries/convert_and_compress.php" class="dropdown-item text-dark p-1">PDF System</a> '; } ?>
                                     <a href="#" class="dropdown-item text-dark p-1">Supplied Title Procedure</a>

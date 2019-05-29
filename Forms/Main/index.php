@@ -2,6 +2,7 @@
 include '../../Library/SessionManager.php';
 $session = new SessionManager();
 $userID = $session->getUserID();
+$userRole = $session->getRole();
 ?>
 <!doctype html>
 <html lang="en">
@@ -100,7 +101,7 @@ $userID = $session->getUserID();
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="rowModalTitle">Add Announcement</h5>
+                    <h5 class="modal-title" id="rowModalTitle">Add/Update Announcement</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -162,6 +163,7 @@ $userID = $session->getUserID();
 <script type="text/javascript" src="../../Master/master.js"></script>
 <script>
     $(document).ready(function(){
+        // action 3 = select
         $.ajax({
             url: "./announcement_processing.php",
             method: "POST",
@@ -175,6 +177,7 @@ $userID = $session->getUserID();
                     {
                         var html = '<div class="card mx-auto text-center" style="margin-top: 1.5em">\n' +
                             '                <header class="card-header" style="background-color: #3CB371;">\n' +
+                            '                    <font color="white" hidden>'+ JSON.parse(response)[x]["announcementID"] +'</font>\n' +
                             '                    <font color="white">'+ JSON.parse(response)[x]["title"] +'</font>\n' +
                             '                </header>\n' +
                             '\n' +
@@ -187,6 +190,7 @@ $userID = $session->getUserID();
             }
         });
 
+        // Greetings and jokes
         var d = new Date();
         var n = d.getHours();
         if(n >= 12)
@@ -289,23 +293,6 @@ $userID = $session->getUserID();
 
     });
 
-    $('#addAnnouncement').click(function() {
-        $('#rowModal').modal('show');
-    });
-
-    // Update/Edit an already posted announcement
-    /*$('#announcement').on('click', 'div', function() {
-        // Edit announcements when clicked
-        var aData = $(this).text().split("\n");
-
-        // Syntax saved at spots 2 and 5 due to html make up
-        $('#title').val(aData[2]);
-        $('#message').val(aData[5]);
-        $('#rowModal').modal('show');
-
-        console.log(aData);
-    });*/
-
     $('#datepicker').datepicker({
         uiLibrary: 'bootstrap4'
     });
@@ -315,8 +302,43 @@ $userID = $session->getUserID();
         location.reload();
     });
 
+    $('#addAnnouncement').click(function() {
+        $('#rowModal').modal('show');
+    });
+
+    var announcementID;
+    var titleUpdate;
+    var messageUpdate;
+
+    // Update/Edit an already posted announcement
+    $('#announcement').on('click', 'div', function() {
+        // Splits data by line
+        var aData = $(this).text().split('\n');
+
+        // Syntax saved at spots 3 and 6 due to html make up
+        announcementID = aData[2];
+        $('#title').val(aData[3].trim());
+        $('#message').val(aData[6].trim());
+
+        // Only Admins are allowed to edit announcements
+        var userRole = "<?php echo $userRole ?>";
+        if ((userRole === "Admin"))
+        {
+            $('#rowModal').modal('show');
+        }
+    });
+
     $('#submit').click(function(){
-        announcements();
+        if(announcementID == null)
+        {
+            console.log("announcements");
+            announcements();
+        }
+        else
+        {
+            console.log("update dem");
+            updateAnnouncement()
+        }
     });
 
     function announcements()
@@ -326,10 +348,29 @@ $userID = $session->getUserID();
         var date = $('#datepicker').val();
         var userID = <?php echo $userID ?>;
 
+        // action 1 = insert
         $.ajax({
             url: "./announcement_processing.php",
             method: "POST",
             data: {title: title, message: message, date: date, userID: userID, action: 1},
+            success:function(response)
+            {
+                console.log(response);
+            }
+        });
+    }
+
+    function updateAnnouncement()
+    {
+        titleUpdate = $('#title').val();
+        messageUpdate = $('#message').val();
+        var dateUpdate = $('#datepicker').val();
+
+        // action 2 = update
+        $.ajax({
+            url: "./announcement_processing.php",
+            method: "POST",
+            data: {announcementID: announcementID,title: titleUpdate, message: messageUpdate, date: dateUpdate, action: 2},
             success:function(response)
             {
                 console.log(response);

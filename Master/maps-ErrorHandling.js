@@ -6,38 +6,27 @@
  ***********************************************/
 function handleError(data)
 {
-    ///////////// Checking to see if form provided has values we want to check for errors ////////////////
+    ///////////////////////////// Initializing variables from serialized array /////////////////////////////
     /*************************************** Library Index ***************************************/
-    if(data.filter(data => (data.name === 'txtLibraryIndex')).length > 0)
-    {
-        var libIndexObj = data.filter(data => (data.name === 'txtLibraryIndex'))
-        var libIndexValue = libIndexObj[0].value;
-    }
-    /*************************************** Doc Title ***************************************/
-    if(data.filter(data => (data.name === 'txtTitle')).length > 0)
-    {
-        var docTitleObj = data.filter(data => (data.name === 'txtTitle'))
-        var docTitleValue = docTitleObj[0].value;
-    }
-    /*************************************** Front Scan ***************************************/
-    if(data.filter(data => (data.name === 'fileUpload')).length > 0)
-    {
-        var fileUploadObj = data.filter(data => (data.name === 'fileUpload'))
-        var fileUploadValue = fileUploadObj[0].value;
-    }
-    /*************************************** Back Scan ***************************************/
-    if(data.filter(data => (data.name === 'fileUploadBack')).length > 0)
-    {
-        var fileUploadBackObj = data.filter(data => (data.name === 'fileUploadBack'))
-        var fileUploadBackValue = fileUploadBackObj[0].value;
-    }
-    /*************************************** Doc Medium ***************************************/
-    if(data.filter(data => (data.name === 'ddlMedium')).length > 0)
-    {
-        var docMediumObj = data.filter(data => (data.name === 'ddlMedium'))
-        var docMediumValue = docMediumObj[0].value;
-    }
-    ///////////////////////////////// Value Checking Ends Here //////////////////////////////////////////
+    var libIndexObj = data.filter(data => (data.name === 'txtLibraryIndex'));
+    var libIndexValue = libIndexObj[0].value;
+
+    /**************************************** Doc Title ****************************************/
+    var docTitleObj = data.filter(data => (data.name === 'txtTitle'));
+    var docTitleValue = docTitleObj[0].value;
+
+    /**************************************** Front Scan ****************************************/
+    var fileUploadObj = data.filter(data => (data.name === 'fileUpload'));
+    var fileUploadValue = fileUploadObj[0].value;
+
+    /**************************************** Back Scan ****************************************/
+    var fileUploadBackObj = data.filter(data => (data.name === 'fileUploadBack'));
+    var fileUploadBackValue = fileUploadBackObj[0].value;
+
+    /**************************************** Doc Medium ****************************************/
+    var docMediumObj = data.filter(data => (data.name === 'ddlMedium'));
+    var docMediumValue = docMediumObj[0].value;
+    ///////////////////////////// Variable Initialization Ends Here //////////////////////////////////////
 
     ////////////////////// Displaying dismissible error messages if needed //////////////////////////////
 

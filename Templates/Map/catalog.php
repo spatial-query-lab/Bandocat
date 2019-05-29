@@ -17,7 +17,6 @@ $DB = new MapDBHelper();
 $config = $DB->SP_GET_COLLECTION_CONFIG($collection);
 $date = new DateHelper();
 $readrec = array("POOR","GOOD","EXCELLENT");
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -535,37 +534,15 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                     processData: false,
                     contentType: false,
                     success:function(data){
-                        /*var json = JSON.parse(data);
-                        var msg = "";
-                        var result = 0;
-                        for(var i = 0; i < json.length; i++)
-                        {
-                            msg += json[i] + "\n";
-                        }
-                        for (var i = 0; i < json.length; i++){
-                            if (json[i].includes("Success")) {
-                                result = 1;
-                            }
-                            else if(json[i].includes("Fail") || json[i].includes("EXISTED"))
-                            {
-                                $('#btnSubmit').css("display", "inherit");
-                                //$('#loader').css("display", "none");
-                                $('#overlay').removeAttr("style").hide();
-                                $('#loader').removeAttr("style").hide();
-                            }
-                        }
-                        alert(msg);
-                        if (result == 1){
-                            window.location.href = "./catalog.php?col=< ?php //echo $_GET['col']; ?>";
-                        }*/
                         console.log(data);
+                        alert("Catalog Successful!");
                     }
                 });
             }
             else
             {
                 // Will go here if there are errors
-                console.log("Something wrong big dog");
+                console.log("Errors were found");
             }
 
             event.preventDefault();
@@ -583,22 +560,7 @@ $readrec = array("POOR","GOOD","EXCELLENT");
 
         var filename = $('#fileUpload').val().replace(/C:\\fakepath\\/i, '');
         filename = filename.replace(/\.tif/, '');
-
-        if ((filename.includes ('back') || filename.includes('Back')) === true){
-            alert("Invalid file. Front scan cannot have the word 'back'");
-            $('#txtLibraryIndex').val(null);
-            $('#fileUpload').val(null);
-        }
-        else if ((filename.includes(" ") || filename.includes(" - Copy") || filename.includes("-Copy")) === true) {
-            alert('Invalid file name. Change name to include version of copy (i.e. 370-_4.2)');
-            $('#txtLibraryIndex').val(null);
-            $('#fileUpload').val(null);
-        }
-        else{
-            console.log('Valid file');
-            $('#txtLibraryIndex').val(filename);
-            document.getElementById('txtLibraryIndex').style.textAlign = 'center';
-        }
+        $('#txtLibraryIndex').val(filename);
     });
 
     //Back scan check
@@ -607,19 +569,6 @@ $readrec = array("POOR","GOOD","EXCELLENT");
         var file = this.files[0].name;
         if($(this).val()!=""){
             $(this).next().text(file);
-        }
-
-        var backFilename = $('#fileUploadBack').val().replace(/C:\\fakepath\\/i, '');
-        backFilename = backFilename.replace(/\.tif/, '');
-
-        if ((backFilename.includes ('back') || backFilename.includes('Back')) === false){
-            alert("Invalid file. Back scan needs to have the word 'back'");
-        }
-        else if ((backFilename.includes(" ") || backFilename.includes(" - Copy") || backFilename.includes("-Copy")) === true) {
-            alert('Invalid file name. Change name to include version of copy (i.e. ' + backFilename.substring(12, backFilename.indexOf(' ')) + '.2)');
-        }
-        else{
-            console.log('Valid back file');
         }
     });
 
@@ -694,6 +643,9 @@ $readrec = array("POOR","GOOD","EXCELLENT");
         }
     });
 
+    $('#btnReset').click(function() {
+        location.reload();
+    });
 </script>
 </body>
 </html>

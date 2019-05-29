@@ -59,7 +59,6 @@ $collections = $DB->GET_COLLECTION_TABLE();
                         </div>
                 </div>
 
-
                 <div class="row">
                     <div class="col">
                         <nav>
@@ -196,13 +195,13 @@ $collections = $DB->GET_COLLECTION_TABLE();
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col">
-                        <!-- Total Mpas Main Content -->
-                        <h3>Collection Distribution</h3>
-                        <hr>
+               <!-- <div class="row">
+                    <div class="col">-->
+                        <!-- Total Maps Main Content -->
+                        <!--<h3>Collection Distribution</h3>
+                        <hr>-->
                         <!-- The Datatable -->
-                        <table id="collectionDistributionTable" class="table table-striped table-bordered" width="100%" cellspacing="0" data-page-length='20'>
+                        <!--<table id="collectionDistributionTable" class="table table-striped table-bordered" width="100%" cellspacing="0" data-page-length='20'>
                             <thead>
                             <tr>
                                 <th>Container</th>
@@ -212,12 +211,9 @@ $collections = $DB->GET_COLLECTION_TABLE();
                             </thead>
                         </table>
                     </div>
-                </div>
+                </div>-->
             </div>
-
-    <div class="full-width-div border">
-        <?php include "../../Master/bandocat_footer.php"; ?>
-    </div>
+    <?php include "../../Master/bandocat_footer.php"; ?>
 </div><!-- Container-fluid -->
 
 <!-- Complete JavaScript Bundle -->
