@@ -26,6 +26,13 @@ function handleError(data)
     /**************************************** Doc Medium ****************************************/
     var docMediumObj = data.filter(data => (data.name === 'ddlMedium'));
     var docMediumValue = docMediumObj[0].value;
+
+    /**************************************** Scale Units ****************************************/
+    var unitLeftObj =  data.filter(data => (data.name === 'unitLeft'));
+    var unitRightObj =  data.filter(data => (data.name === 'unitRight'));
+    var unitLeftValue = unitLeftObj[0].value;
+    var unitRightValue = unitRightObj[0].value;
+
     ///////////////////////////// Variable Initialization Ends Here //////////////////////////////////////
 
     ////////////////////// Displaying dismissible error messages if needed //////////////////////////////
@@ -168,6 +175,16 @@ function handleError(data)
         errorReport("docMedium", message, "danger");
         flag = true;
     }
+
+    /************************************ Map Scale Units ************************************/
+
+    if (unitLeftValue == unitRightValue)
+    {
+        var message = '<strong>ERROR:</strong> Units cannot be the same\n';
+        errorReport("mainScaleDiv", message, "danger");
+        flag = true;
+    }
+
     ///////////////////////////////// Error Displaying Ends Here ///////////////////////////////////////
 
     return flag;

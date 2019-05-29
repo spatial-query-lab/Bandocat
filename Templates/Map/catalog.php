@@ -1,7 +1,7 @@
 <?php
 include '../../Library/SessionManager.php';
 $session = new SessionManager();
-$userRole = $session->getRole();
+
 //get collection name from passed variable col
 if(isset($_GET['col']))
 {
@@ -17,6 +17,7 @@ $DB = new MapDBHelper();
 $config = $DB->SP_GET_COLLECTION_CONFIG($collection);
 $date = new DateHelper();
 $readrec = array("POOR","GOOD","EXCELLENT");
+$userRole = $session->getRole();
 ?>
 <!doctype html>
 <html lang="en">
@@ -164,8 +165,8 @@ $readrec = array("POOR","GOOD","EXCELLENT");
                                     </div>
                                     <!-- Map Scale -->
                                     <div class="form-group row" id="mapScale" hidden>
-                                        <label class="col-sm-4 col-form-label" for="txtSubtitle">Map Scale:</label>
-                                        <div class="col-sm-8">
+                                        <label class="col-sm-4 col-form-label" for="mapScale">Map Scale:</label>
+                                        <div class="col-sm-8" id="mainScaleDiv">
                                             <div class="d-flex">
                                                 <input type="number" min="1" class="form-control" id="numberLeft" name="numberLeft">
                                                 <select class="form-control" id="unitLeft" name="unitLeft">
@@ -633,16 +634,17 @@ $readrec = array("POOR","GOOD","EXCELLENT");
     // Hides and shows "needs review" option depending on user role
     $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
-      console.log(userRole);
-      if ((userRole === "Admin") || (userRole === "Super Admin") === false){
-          console.log ('Display. User is admin!');
-          $('#needsReview').prop('hidden', false);
-      }
-       else{
+        console.log(userRole);
+        if ((userRole === "Admin") || (userRole === "Super Admin") === false){
+            console.log ('Display. User is admin!');
+            $('#needsReview').prop('hidden', false);
+        }
+        else{
             console.log('Hide. User is not admin!');
         }
     });
 
+    // Reset page
     $('#btnReset').click(function() {
         location.reload();
     });
