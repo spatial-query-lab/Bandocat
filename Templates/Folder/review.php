@@ -347,6 +347,23 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
 
     $( document ).ready(function()
     {
+            // Shows initial classification method (on page load)
+            var classList =  <?php echo json_encode($classification); ?>;
+            $('#classificationCard').show();
+            var classText = $('#ddlClassification option:selected').text();
+            if ((classText === "Select") || (classText === "None")) {
+                $('#classificationCard').hide();
+            }
+
+            $("#className").text(classText);
+            for (var x = 0; x < classList.length; x++) {
+                if (classList[x][0] === classText) {
+                    $('#classDesc').text(classList[x][1])
+                }
+            }
+
+        //});
+
         var authors = <?php echo json_encode($authors); ?>;
         for(var i = 1; i < authors.length; i++)
         {
@@ -420,27 +437,20 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
     // *****************************************************************************************************************
     /***************************************** CLASSIFICATION DESCRIPTION *********************************************/
 
-    // Card with description of chosen classification
-    $('#ddlClassification').ready(function () {
-        var classList =  <?php echo json_encode($classification,$docID); ?>;
+     // Card with description of chosen classification
+    $('#ddlClassification').change(function () {
+        var classList =  <?php echo json_encode($classification); ?>;
+        $('#classificationCard').show();
         var classText = $('#ddlClassification option:selected').text();
-
-        // Show card only when option is neither 'Select' nor 'None'
-        if ((classText !== 'Select') || (classText !== 'None') ){
-            console.log('Classification acceptable. Show card.');
-            $('#classificationCard').show();
-
-            $("#className").text(classText);
-            for(var x = 0; x < classList.length; x++) {
-                if(classList[x][0] === classText) {
-                    $('#classDesc').text(classList[x][1])
-                }
-            }
-        }
-        // Hide card when option is either 'Select' or 'None'
-        else {
-            console.log('Description card hidden');
+        if ((classText === "Select") || (classText === "None")) {
             $('#classificationCard').hide();
+        }
+
+        $("#className").text(classText);
+        for (var x = 0; x < classList.length; x++) {
+            if (classList[x][0] === classText) {
+                $('#classDesc').text(classList[x][1])
+            }
         }
     });
 
