@@ -433,6 +433,24 @@ $userRole = $session->getRole();
 <!-- Doesn't matter where these go, this is for overlay effect and loader -->
 <div id="loader"></div>
 <div id="overlay"></div>
+
+<!-- Response Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-labelledby="responseModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="responseModalTitle">Instant Feedback Report</h5>
+                <input type="text" hidden value="" id="status">
+                <button type="button" id="close" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="responseModalBody">
+
+            </div>
+        </div>
+    </div>
+</div>
 <?php include "../../Master/bandocat_footer.php" ?>
 
 
@@ -536,7 +554,15 @@ $userRole = $session->getRole();
                     contentType: false,
                     success:function(data){
                         console.log(data);
-                        alert("Catalog Successful!");
+                        //alert("Catalog Successful!");
+                        $('#responseModalBody').empty();
+                        $('#responseModalBody').append('<p><font style="color: green">Catalog Successful!! ...Loading blank form</font></p>');
+                        $('#responseModal').modal('show');
+                    },
+                    fail: function() {
+                        $('#responseModalBody').empty();
+                        $('#responseModalBody').append('<p><font style="color: red">ERROR: Catalog Unsuccessful. Please report error!!</font></p>');
+                        $('#responseModal').modal('show');
                     }
                 });
             }
@@ -648,6 +674,12 @@ $userRole = $session->getRole();
     $('#btnReset').click(function() {
         location.reload();
     });
+
+    // Reloads page when response modal is exited out of or hidden
+    $('#responseModal').on('hidden.bs.modal', function () {
+        location.reload();
+    });
+
 </script>
 </body>
 </html>

@@ -262,10 +262,7 @@ else
         $.ajax({
             url: "./table_processing.php",
             method: "POST",
-            data: {dbname: dbname, tblname: tblname},/*
-            beforeSend: function() {
-
-            },*/
+            data: {dbname: dbname, tblname: tblname},
             success:function(response)
             {
                 showTable(JSON.parse(response));

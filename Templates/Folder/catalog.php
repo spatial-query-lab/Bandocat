@@ -80,14 +80,14 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                         <div class="col-6">
                                             <!-- Library Index -->
                                             <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label" for="txtLibraryIndex">Library Index:</label>
+                                                <label class="col-sm-4 col-form-label" for="txtLibraryIndex"><font style="color: red">* </font>Library Index:</label>
                                                 <div class="col-sm-8">
                                                     <input type = "text" class="form-control" name="txtLibraryIndex" id="txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES);?>' required readonly/>
                                                 </div>
                                             </div>
                                             <!-- Document Title -->
                                             <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label" for="txtTitle">Document Title:</label>
+                                                <label class="col-sm-4 col-form-label" for="txtTitle"><font style="color: red">* </font>Document Title:</label>
                                                 <div class="col-sm-8">
                                                     <input type="text" class="form-control" name="txtTitle" id="txtTitle" value='<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>' required />
                                                 </div>
@@ -164,7 +164,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                             <!-- In a Subfolder -->
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label">In a Subfolder:</label>
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-8" id="subFolder">
                                                     <div class="form-check form-check-inline radioButton">
                                                         <input type="radio" class="form-check-input" name="rbInASubfolder" id="inSubfolder_yes" value="1" />
                                                         <label class="form-check-label" for="inSubfolder_yes">Yes</label>
@@ -178,8 +178,8 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                             <!-- Radio Buttons End -->
                                             <!-- Classification -->
                                             <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label" for="classificationMethod">Classification:</label>
-                                                <div class="col-sm-8" id="classification">
+                                                <label class="col-sm-4 col-form-label" for="classificationMethod"><font style="color: red">* </font>Classification:</label>
+                                                <div class="col-sm-8">
                                                     <select id="classificationMethod" name="classificationMethod" class="form-control" required>
                                                         <!-- GET FOLDER CLASSIFICATION LIST -->
                                                         <?php
@@ -337,7 +337,6 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
 
             event.preventDefault();
             /* Send the data using post */
-
             $.ajax({
                 type: 'post',
                 url: 'form_processing.php',
@@ -374,6 +373,25 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                 }
             });
         });
+
+        var docTitle = $('#txtTitle').val();
+        var decimal = /\./g;
+
+        var decimalCheck = decimal.test(docTitle);
+
+        /*console.log("Title", docTitle);
+        console.log("check", decimalCheck);*/
+
+        if(decimalCheck == true)
+        {
+            $('#subFolder').append('<font style="color: red">File must be subfolder </font>');
+            $('#inSubfolder_yes').prop("checked", true);
+
+            $('#inSubfolder_yes, #inSubfolder_no').change(function() {
+                alert("ERROR: Must be checked yes when decimal is present!");
+                $('#inSubfolder_yes').prop("checked", true);
+            });
+        }
     });
 
     function add_fields(val)
