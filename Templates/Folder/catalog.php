@@ -151,11 +151,11 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                             <div class="form-group row" id="needsReview" hidden>
                                                 <label class="col-sm-4 col-form-label">Needs Review:</label>
                                                 <div class="col-sm-8">
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type="radio" class="form-check-input" name="folderNeedsReview" id="folderNeedsReview_yes" value="1" checked />
                                                         <label class="form-check-label" for="folderNeedsReview_yes">Yes</label>
                                                     </div>
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type="radio" class="form-check-input" name="folderNeedsReview" id="folderNeedsReview_no" value="0"/>
                                                         <label class="form-check-label" for="folderNeedsReview_no">No</label>
                                                     </div>
@@ -165,11 +165,11 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label">In a Subfolder:</label>
                                                 <div class="col-sm-8">
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type="radio" class="form-check-input" name="rbInASubfolder" id="inSubfolder_yes" value="1" />
                                                         <label class="form-check-label" for="inSubfolder_yes">Yes</label>
                                                     </div>
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type="radio" class="form-check-input" name="rbInASubfolder" id="inSubfolder_no" value="0" checked />
                                                         <label class="form-check-label" for="inSubfolder_no">No</label>
                                                     </div>
@@ -179,7 +179,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                             <!-- Classification -->
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label" for="classificationMethod">Classification:</label>
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-8" id="classification">
                                                     <select id="classificationMethod" name="classificationMethod" class="form-control" required>
                                                         <!-- GET FOLDER CLASSIFICATION LIST -->
                                                         <?php
@@ -337,6 +337,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
 
             event.preventDefault();
             /* Send the data using post */
+
             $.ajax({
                 type: 'post',
                 url: 'form_processing.php',

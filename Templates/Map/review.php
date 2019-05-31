@@ -177,11 +177,11 @@ $date = new DateHelper();
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Is Map:</label>
                                     <div class="col-sm-8">
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbIsMap" id = "rbIsMap_yes" value="1" <?php if($document['IsMap'] == 1) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbIsMap_yes">Yes</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbIsMap" id = "rbIsMap_no" value="0" <?php if($document['IsMap'] == 0) echo "checked"; ?> />
                                             <label class="form-check-label" for="rbIsMap_no">No</label>
                                         </div>
@@ -191,11 +191,11 @@ $date = new DateHelper();
                                 <div class="form-group row" id="needsReview" hidden>
                                     <label class="col-sm-4 col-form-label">Needs Review:</label>
                                     <div class="col-sm-8">
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbNeedsReview" id = "rbNeedsReview_yes" value="1" <?php if($document['NeedsReview'] == 1) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbNeedsReview_yes">Yes</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbNeedsReview" id = "rbNeedsReview_no" value="0" <?php if($document['NeedsReview'] == 0) echo "checked"; ?> />
                                             <label class="form-check-label" for="rbNeedsReview_no">No</label>
                                         </div>
@@ -205,11 +205,11 @@ $date = new DateHelper();
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Has North Arrow:</label>
                                     <div class="col-sm-8">
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasNorthArrow" id = "rbHasNorthArrow_yes" value="1" <?php if($document['HasNorthArrow'] == 1) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasNorthArrow_yes">Yes</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasNorthArrow" id = "rbHasNorthArrow_no" value="0"  <?php if($document['HasNorthArrow'] == 0) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasNorthArrow_no">No</label>
                                         </div>
@@ -219,11 +219,11 @@ $date = new DateHelper();
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Has Street:</label>
                                     <div class="col-sm-8">
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasStreets" id = "rbHasStreets_yes" value="1" <?php if($document['HasStreets'] == 1) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasStreets_yes">Yes</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasStreets" id = "rbHasStreets_no" value="0" <?php if($document['HasStreets'] == 0) echo "checked"; ?> />
                                             <label class="form-check-label" for="rbHasStreets_no">No</label>
                                         </div>
@@ -233,11 +233,11 @@ $date = new DateHelper();
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Has POI:</label>
                                     <div class="col-sm-8">
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasPOI" id = "rbHasPOI_yes" value="1" <?php if($document['HasPOI'] == 1) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasPOI_yes">Yes</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasPOI" id = "rbHasPOI_no" value="0"  <?php if($document['HasPOI'] == 0) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasPOI_no">No</label>
                                         </div>
@@ -254,11 +254,11 @@ $date = new DateHelper();
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Has Coordinates:</label>
                                     <div class="col-sm-8">
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasCoordinates" id = "rbHasCoordinates_yes" value="1" <?php if($document['HasCoordinates'] == 1) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasCoordinates_yes">Yes</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasCoordinates" id = "rbHasCoordinates_no" value="0"  <?php if($document['HasCoordinates'] == 0) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasCoordinates_no">No</label>
                                         </div>
@@ -268,11 +268,11 @@ $date = new DateHelper();
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Has Coast:</label>
                                     <div class="col-sm-8">
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasCoast" id = "rbHasCoast_yes" value="1" <?php if($document['HasCoast'] == 1) echo "checked"; ?>/>
                                             <label class="form-check-label" for="rbHasCoast_yes">Yes</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline radioButton">
                                             <input type = "radio" class="form-check-input" name = "rbHasCoast" id = "rbHasCoast_no" value="0" <?php if($document['HasCoast'] == 0) echo "checked"; ?> />
                                             <label class="form-check-label" for="rbHasCoast_no">No</label>
                                         </div>
@@ -491,12 +491,22 @@ $date = new DateHelper();
 
 <!-- Our custom javascript file -->
 <script type="text/javascript" src="../../Master/master.js"></script>
+<script type="text/javascript" src="../../Master/errorMessage.js"></script>
+<script type="text/javascript" src="../../Master/maps-ErrorHandling.js"></script>
 
 <!-- This Script Needs to Be added to Every Page, If the Sizing is off from dynamic content loading, then this will need to be taken away or adjusted -->
 <script>
     $(document).ready(function() {
+        var docHeight = $(window).height() - $('#megaMenu').height();
+        var footerHeight = $('#footer').height();
+        var footerTop = $('#footer').position().top + footerHeight;
 
-        var docHeight = $(window).height();
+        if (footerTop < docHeight)
+            $('#footer').css('margin-top', 0 + (docHeight - footerTop) + 'px');
+    });
+
+    $(window).resize(function() {
+        var docHeight = $(window).height() - $('#megaMenu').height();
         var footerHeight = $('#footer').height();
         var footerTop = $('#footer').position().top + footerHeight;
 
@@ -504,6 +514,7 @@ $date = new DateHelper();
             $('#footer').css('margin-top', 0 + (docHeight - footerTop) + 'px');
     });
 </script>
+
 <script>
     $( document ).ready(function()
     {

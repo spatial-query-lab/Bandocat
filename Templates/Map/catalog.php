@@ -151,12 +151,12 @@ $userRole = $session->getRole();
                                     <div class="form-group row" id="ScaleBar" hidden>
                                         <label class="col-sm-4 col-form-label">Has Scale Bar:</label>
                                         <div class="col-sm-8 mt-2">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name ="hasScaleBar" id ="hasScaleBar_yes"
                                                        value="1"/>
                                                 <label class="form-check-label" for="hasScaleBar_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "hasScaleBar" id ="hasScaleBar_no"
                                                        value="0" checked />
                                                 <label class="form-check-label" for="hasScaleBar_no">No</label>
@@ -188,11 +188,11 @@ $userRole = $session->getRole();
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label">Is Map:</label>
                                         <div class="col-sm-8">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbIsMap" id = "rbIsMap_yes" value="1" checked/>
                                                 <label class="form-check-label" for="rbIsMap_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbIsMap" id = "rbIsMap_no" value="0"  />
                                                 <label class="form-check-label" for="rbIsMap_no">No</label>
                                             </div>
@@ -202,11 +202,11 @@ $userRole = $session->getRole();
                                     <div class="form-group row" id="needsReview" hidden>
                                         <label class="col-sm-4 col-form-label">Needs Review:</label>
                                         <div class="col-sm-8">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbNeedsReview" id = "rbNeedsReview_yes" value="1" checked/>
                                                 <label class="form-check-label" for="rbNeedsReview_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbNeedsReview" id = "rbNeedsReview_no" value="0"  />
                                                 <label class="form-check-label" for="rbNeedsReview_no">No</label>
                                             </div>
@@ -216,11 +216,11 @@ $userRole = $session->getRole();
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label">Has North Arrow:</label>
                                         <div class="col-sm-8">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasNorthArrow" id = "rbHasNorthArrow_yes" value="1" checked/>
                                                 <label class="form-check-label" for="rbHasNorthArrow_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasNorthArrow" id = "rbHasNorthArrow_no" value="0"  />
                                                 <label class="form-check-label" for="rbHasNorthArrow_no">No</label>
                                             </div>
@@ -230,11 +230,11 @@ $userRole = $session->getRole();
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label">Has Street:</label>
                                         <div class="col-sm-8">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasStreets" id = "rbHasStreets_yes" value="1" />
                                                 <label class="form-check-label" for="rbHasStreets_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasStreets" id = "rbHasStreets_no" value="0" checked />
                                                 <label class="form-check-label" for="rbHasStreets_no">No</label>
                                             </div>
@@ -244,11 +244,11 @@ $userRole = $session->getRole();
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label">Has POI:</label>
                                         <div class="col-sm-8">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasPOI" id = "rbHasPOI_yes" value="1" />
                                                 <label class="form-check-label" for="rbHasPOI_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasPOI" id = "rbHasPOI_no" value="0"  checked/>
                                                 <label class="form-check-label" for="rbHasPOI_no">No</label>
                                             </div>
@@ -265,11 +265,11 @@ $userRole = $session->getRole();
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label">Has Coordinates:</label>
                                         <div class="col-sm-8">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasCoordinates" id = "rbHasCoordinates_yes" value="1" />
                                                 <label class="form-check-label" for="rbHasCoordinates_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasCoordinates" id = "rbHasCoordinates_no" value="0"  checked/>
                                                 <label class="form-check-label" for="rbHasCoordinates_no">No</label>
                                             </div>
@@ -279,11 +279,11 @@ $userRole = $session->getRole();
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label">Has Coast:</label>
                                         <div class="col-sm-8">
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasCoast" id = "rbHasCoast_yes" value="1" />
                                                 <label class="form-check-label" for="rbHasCoast_yes">Yes</label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline radioButton">
                                                 <input type = "radio" class="form-check-input" name = "rbHasCoast" id = "rbHasCoast_no" value="0" checked />
                                                 <label class="form-check-label" for="rbHasCoast_no">No</label>
                                             </div>
@@ -359,7 +359,7 @@ $userRole = $session->getRole();
                                     <!-- Readability -->
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label" for="ddlReadability">Readability</label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-8" id ="readability">
                                             <select id="ddlReadability" name="ddlReadability" class="form-control">
                                                 <?php
                                                 $Render->GET_DDL2($readrec,null);
@@ -370,7 +370,7 @@ $userRole = $session->getRole();
                                     <!-- Rectifiability -->
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label" for="ddlRectifiability">Rectifiability</label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-8" id ="rectifiability">
                                             <select id="ddlRectifiability" name="ddlRectifiability" class="form-control">
                                                 <?php
                                                 $Render->GET_DDL2($readrec,null);

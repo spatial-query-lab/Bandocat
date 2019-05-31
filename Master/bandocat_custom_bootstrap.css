@@ -128,3 +128,12 @@ body {
     clear:both;
     padding-top:20px;
 }/*
+
+/*********************** Aligning radio buttons and respective text fields ***********************/
+
+.radioButton{
+    margin-top: 10px;
+}
+
+
+/*********************************************************************************/

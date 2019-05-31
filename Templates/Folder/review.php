@@ -165,11 +165,11 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
                                             <div class="form-group row" id="needsReview" hidden>
                                                 <label class="col-sm-4 col-form-label">Needs Review:</label>
                                                 <div class="col-sm-8">
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type = "radio" class="form-control-input" name = "rbNeedsReview" id = "rbNeedsReview_yes" size="26" <?php if($document['NeedsReview'] == 1) echo "checked"; ?> />
                                                         <label class="form-check-label" for="rbNeedsReview_yes">Yes</label>
                                                     </div>
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type = "radio" class="form-control-input" name = "rbNeedsReview" id = "rbNeedsReview_no" value="0" <?php if($document['NeedsReview'] == 0) echo "checked"; ?> />
                                                         <label class="form-check-label" for="rbNeedsReview_no">No</label>
                                                     </div>
@@ -179,11 +179,11 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
                                             <div class="form-group row">
                                                 <label class="col-sm-4 col-form-label">In a Subfolder:</label>
                                                 <div class="col-sm-8">
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type = "radio" class="form-control-input" name = "rbInASubfolder" id = "rbInASubfolder_yes" size="26" value="1" <?php if($document['InSubfolder'] == 1) echo "checked"; ?> />
                                                         <label class="form-check-label" for="rbInASubfolder_yes">Yes</label>
                                                     </div>
-                                                    <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline radioButton">
                                                         <input type = "radio" class="form-control-input" name = "rbInASubfolder" id = "rbInASubfolder_no" size="26" value="0" <?php if($document['InSubfolder'] == 0) echo "checked"; ?> />
                                                         <label class="form-check-label" for="rbInASubfolder_no">No</label>
                                                     </div>
