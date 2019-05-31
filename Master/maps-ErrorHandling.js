@@ -237,23 +237,6 @@ function handleError(data)
         }
     }
 
-    /*************************************** Doc Medium ***************************************/
-    if(docMediumValue == "") // if value is empty
-    {
-        var message = '<strong>ERROR:</strong> Required text field\n'
-        errorReport("docMedium", message, "danger");
-        flag = true;
-    }
-
-    /************************************ Map Scale Units ************************************/
-
-    if (unitLeftValue == unitRightValue)
-    {
-        var message = '<strong>ERROR:</strong> Units cannot be the same\n';
-        errorReport("mainScaleDiv", message, "danger");
-        flag = true;
-    }
-
     ///////////////////////////////// Error Displaying Ends Here ///////////////////////////////////////
 
     return flag;
