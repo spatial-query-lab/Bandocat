@@ -78,9 +78,11 @@ switch($option)
             <!-- Put Page Contents Here -->
             <h1 class="text-center"><?php echo $option; ?></h1>
             <hr>
-            <h5 class="text-center">Please Select a Collection</h5>
-            <div class="d-flex justify-content-center">
-                <?php include "$pageContents"; ?>
+            <div style="text-align: center;">
+                <h5 class="text-center">Please Select a Collection</h5>
+                <div class="d-flex justify-content-center">
+                    <?php include "$pageContents"; ?>
+                </div>
             </div>
         </div>
     </div> <!-- row -->

@@ -30,6 +30,7 @@ else header('Location: ../../');
 
 include '../../Library/DateHelper.php';
 $date = new DateHelper();
+var_dump('Jose')
 ?>
 <!doctype html>
 <html lang="en">
