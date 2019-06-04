@@ -134,7 +134,7 @@ $userRole = $session->getRole();
                                     <!-- Has Scale -->
                                     <div class="form-group row">
                                         <label class="col-sm-4 col-form-label">Has Scale:</label>
-                                        <div class="col-sm-8 mt-2">
+                                        <div class="col-sm-8 radioButton">
                                             <div class="form-check form-check-inline">
                                                 <input type = "radio" class="form-check-input" name ="hasScale" id ="hasScale_yes"
                                                        value="1"/>
@@ -258,7 +258,7 @@ $userRole = $session->getRole();
                                     <div class="form-group row" id="POI" hidden>
                                         <label for="POIDescription" class="col-sm-4 col-form-label">POI Description:</label>
                                         <div class="col-sm-8">
-                                            <textarea class="form-control" cols="35" rows="1" name="POIDescription" id="POIDescription" ></textarea>
+                                            <textarea class="form-control" cols="35" rows="2" name="POIDescription" id="POIDescription" ></textarea>
                                         </div>
                                     </div>
                                     <!-- Has Coordinates -->
@@ -556,12 +556,12 @@ $userRole = $session->getRole();
                         console.log(data);
                         //alert("Catalog Successful!");
                         $('#responseModalBody').empty();
-                        $('#responseModalBody').append('<p><font style="color: green">Catalog Successful!! ...Loading blank form</font></p>');
+                        $('#responseModalBody').append('<p style="text-align: center"><font style="color: green">Catalog Successful!! <br> ...Loading blank form</font></p>');
                         $('#responseModal').modal('show');
                     },
                     fail: function() {
                         $('#responseModalBody').empty();
-                        $('#responseModalBody').append('<p><font style="color: red">ERROR: Catalog Unsuccessful. Please report error!!</font></p>');
+                        $('#responseModalBody').append('<p style="text-align: center"><font style="color: red">ERROR: Catalog Unsuccessful. Please report error!!</font></p>');
                         $('#responseModal').modal('show');
                     }
                 });
@@ -661,7 +661,7 @@ $userRole = $session->getRole();
     $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
         console.log(userRole);
-        if ((userRole === "Admin") || (userRole === "Super Admin") === false){
+        if ((userRole === "Admin") || (userRole === "Super Admin")){
             console.log ('Display. User is admin!');
             $('#needsReview').prop('hidden', false);
         }

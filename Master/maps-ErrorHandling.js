@@ -230,7 +230,7 @@ function handleError(data)
     {
         if(theFrontScan != theBackScan)
         {
-            var message = '<strong>ERROR:</strong> front and back scan must be the same\n'
+            var message = '<strong>ERROR:</strong> front and back scan must have the same name\n'
             errorReport("frontScan", message, "danger");
             errorReport("backScan", message, "danger");
             flag = true;

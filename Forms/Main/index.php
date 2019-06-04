@@ -24,28 +24,7 @@ $userRole = $session->getRole();
 
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
-    <!--<style>
-        @media only screen and (min-width: 768px) {
-            /* tablets and desktop */
-            body {
-                background-color: dodgerblue;
-            }
-        }
 
-        @media only screen and (max-width: 767px) {
-            /* phones */
-            body {
-                background-color: red;
-            }
-        }
-
-        @media only screen and (max-width: 767px) and (orientation: portrait) {
-            /* portrait phones */
-            body {
-                background-color: yellow;
-            }
-        }
-    </style>-->
 </head>
 <body>
 <?php include "../../Master/bandocat_mega_menu.php"; ?>

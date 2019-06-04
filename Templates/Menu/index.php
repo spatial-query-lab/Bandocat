@@ -70,7 +70,7 @@ switch($option)
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body>
+<body style="background-color: #f1f1f1;">
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container">
     <div class="row">

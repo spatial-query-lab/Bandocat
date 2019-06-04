@@ -374,10 +374,10 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
             });
         });
 
-        var docTitle = $('#txtTitle').val();
+        var libIndex = $('#txtLibraryIndex').val();
         var decimal = /\./g;
 
-        var decimalCheck = decimal.test(docTitle);
+        var decimalCheck = decimal.test(libIndex);
 
         /*console.log("Title", docTitle);
         console.log("check", decimalCheck);*/

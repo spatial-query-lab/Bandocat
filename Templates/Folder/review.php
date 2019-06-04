@@ -273,6 +273,26 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
                                                     {echo "<input type='submit' id='btnSubmit' name='btnSubmit' value='Update' class='btn btn-primary'/>";}
                                                     ?></div>
 
+                                        <input type = "hidden" id="txtDocID" name = "txtDocID" value = "<?php echo $docID;?>" />
+                                        <input type = "hidden" id="txtAction" name="txtAction" value="review" />  <!-- catalog or review -->
+                                        <input type = "hidden" id="txtCollection" name="txtCollection" value="<?php echo $collection; ?>" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div> <!-- Card -->
+            </div>
+        </div> <!-- Col -->
+        <!-- Start of description of Classification method chosen-->
+        <div class="col-1" id="classificationCard" style="display: none">
+            <div class="card" id="card" style="width: 18rem; margin-left: 65px; margin-top: 250px;">
+                <div class="card-body">
+                    <h5 class="card-title" id="className" style="text-align: center; font-size:18px; text-decoration: underline;"></h5>
+                    <p class="card-text" id="classDesc" style="text-align: center; font-size: 13px"></p>
+                </div>
+            </div>
+        </div>
                                                 <input type = "hidden" id="txtDocID" name = "txtDocID" value = "<?php echo $docID;?>" />
                                                 <input type = "hidden" id="txtAction" name="txtAction" value="review" />  <!-- catalog or review -->
                                                 <input type = "hidden" id="txtCollection" name="txtCollection" value="<?php echo $collection; ?>" />
@@ -364,6 +384,22 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
 
         //});
 
+
+        var classList =  <?php echo json_encode($classification); ?>;
+        $('#classificationCard').show();
+        var classText = $('#ddlClassification option:selected').text();
+        if(classText == "Select")
+        {
+            $('#classificationCard').hide();
+        }
+
+        $("#className").text(classText);
+        for(var x = 0; x < classList.length; x++) {
+            if(classList[x][0] == classText) {
+                $('#classDesc').text(classList[x][1])
+            }
+        }
+
         var authors = <?php echo json_encode($authors); ?>;
         for(var i = 1; i < authors.length; i++)
         {
@@ -418,6 +454,42 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection,$docID);
                 }
             });
         });
+
+        var libIndex = $('#txtLibraryIndex').val();
+        var decimal = /\./g;
+
+        var decimalCheck = decimal.test(libIndex);
+
+        /*console.log("Title", docTitle);
+        console.log("check", decimalCheck);*/
+
+        if(decimalCheck == true)
+        {
+            $('#subFolder').append('<font style="color: red">File must be subfolder </font>');
+            $('#rbInASubfolder_yes').prop("checked", true);
+
+            $('#rbInASubfolder_yes, #rbInASubfolder_no').change(function() {
+                alert("ERROR: Must be checked yes when decimal is present!");
+                $('#rbInASubfolder_yes').prop("checked", true);
+            });
+        }
+    });
+
+    $('#ddlClassification').change(function () {
+        var classList =  <?php echo json_encode($classification); ?>;
+        $('#classificationCard').show();
+        var classText = $('#ddlClassification option:selected').text();
+        if(classText == "Select")
+        {
+            $('#classificationCard').hide();
+        }
+
+        $("#className").text(classText);
+        for(var x = 0; x < classList.length; x++) {
+            if(classList[x][0] == classText) {
+                $('#classDesc').text(classList[x][1])
+            }
+        }
     });
 
     // *****************************************************************************************************************
