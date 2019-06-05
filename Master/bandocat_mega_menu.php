@@ -273,6 +273,12 @@ $errorTickets .= $tempt;
         <!-- right side -->
         <!-- Website Errors -->
         <ul class="navbar-nav ml-auto">
+            <!-- Translation buttons -->
+            <div id="translator_1525" class="pt-2">
+                <noscript>Javascript is disable - <a href="http://www.webestools.com/">http://www.webestools.com/</a> - <a href="http://www.webestools.com/translator-buttons-web-page-translation-google-translate-website-widget-online-html-translator.html">Translation Buttons Generator</a>
+                </noscript>
+            </div>
+            <script type="text/javascript" src="http://services.webestools.com/translator/1525-1-yyyyyyyyy.js"></script>
             <!-- Bug Reporting (Website errors) -->
             <li class="nav-item" data-toggle="modal" data-target="#bugReportModal">
                 <a class="nav-link">

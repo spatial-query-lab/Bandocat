@@ -70,10 +70,10 @@ switch($option)
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="../../Master/bandocat_custom_bootstrap.css">
 </head>
-<body style="background-color: #f1f1f1;">
+<body style="background-color: #f1f1f1; background-size: 80% 80%; background-repeat: no-repeat; background-position: center;" background="../../Images/blueFade-world-map.png">
 <?php include "../../Master/bandocat_mega_menu.php"; ?>
 <div class="container">
-    <div class="row">
+    <div class="row" >
         <div class="col">
             <!-- Put Page Contents Here -->
             <h1 class="text-center"><?php echo $option; ?></h1>
