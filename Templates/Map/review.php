@@ -97,7 +97,7 @@ var_dump('Jose')
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="txtLibraryIndex">Library Index:</label>
                                     <div class="col-sm-8">
-                                        <input type = "text" class="form-control" style = "text-align: center;" name = "txtLibraryIndex" id = "txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES); ?>' required />
+                                        <input type = "text" class="form-control" style = "text-align: center;" name = "txtLibraryIndex" id = "txtLibraryIndex" value='<?php echo htmlspecialchars($document['LibraryIndex'],ENT_QUOTES); ?>' required readonly />
                                     </div>
                                 </div>
                                 <!-- Document Title -->

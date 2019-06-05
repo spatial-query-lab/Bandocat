@@ -79,7 +79,7 @@ switch($option)
             <h1 class="text-center"><?php echo $option; ?></h1>
             <hr>
             <div style="text-align: center;">
-                <h5 class="text-center">Please Select a Collection</h5>
+                <h5 class="text-center">Please Select a Collection:</h5>
                 <div class="d-flex justify-content-center">
                     <?php include "$pageContents"; ?>
                 </div>
