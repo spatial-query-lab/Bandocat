@@ -3,6 +3,7 @@ include '../../Library/SessionManager.php';
 $session = new SessionManager();
 $userID = $session->getUserID();
 $userRole = $session->getRole();
+//var_dump($session);
 ?>
 <!doctype html>
 <html lang="en">
@@ -37,9 +38,9 @@ $userRole = $session->getRole();
         <!-- Home Page Greeting Message -->
         <div class="col-9 text-center" style="margin-top: 1em;">
             <h4><span id="Time_Day"></span></h4>
-            <h4><span id="Greetings"></span></h4>
+            <h4><span id="Greetings" style="font-style: italic; font-weight: normal; font-size: 20px;"></span></h4>
 
-            <hr style="background-color: #1E90FF">
+            <hr style="background-color: #1E90FF;">
         </div>
 
         <!-- Logo Displayed On Home Page -->
@@ -68,8 +69,6 @@ $userRole = $session->getRole();
             }
             ?>
             <!-- ANNOUNCEMENTS APPENDED HERE -->
-
-
         </div>
     </div> <!-- row -->
 </div><!-- Container -->
@@ -186,6 +185,7 @@ $userRole = $session->getRole();
         var Generic_Number = Random * (Greetings.length);
         var Integer = parseInt(Generic_Number);
         document.getElementById("Greetings").innerHTML = Greetings[Integer];
+        //console.log(Greetings.length);
 
         ///////////////////////////////// Game Easter Eggs /////////////////////////////////
         var map = [];
@@ -301,7 +301,7 @@ $userRole = $session->getRole();
 
         // Only Admins are allowed to edit announcements
         var userRole = "<?php echo $userRole ?>";
-        if ((userRole === "Admin"))
+        if ((userRole === 'Admin') || (userRole === 'Super Admin'))
         {
             $('#rowModal').modal('show');
         }
