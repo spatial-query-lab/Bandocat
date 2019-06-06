@@ -660,7 +660,7 @@ $userRole = $session->getRole();
     // Hides and shows "needs review" option depending on user role
     $('#needsReview').ready(function(){
         var userRole = "<?php echo $userRole ?>";
-        console.log(userRole);
+        //console.log(userRole);
         if ((userRole === "Admin") || (userRole === "Super Admin")){
             console.log ('Display. User is admin!');
             $('#needsReview').prop('hidden', false);
