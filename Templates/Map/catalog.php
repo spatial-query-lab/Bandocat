@@ -258,7 +258,7 @@ $userRole = $session->getRole();
                                     <div class="form-group row" id="POI" hidden>
                                         <label for="POIDescription" class="col-sm-4 col-form-label">POI Description:</label>
                                         <div class="col-sm-8">
-                                            <textarea class="form-control" cols="35" rows="2" name="POIDescription" id="POIDescription" ></textarea>
+                                            <textarea class="form-control" cols="35" rows="1" name="POIDescription" id="POIDescription" ></textarea>
                                         </div>
                                     </div>
                                     <!-- Has Coordinates -->
