@@ -155,6 +155,34 @@ var_dump('Jose')
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Map Scale -->
+                                <!--<div class="form-group row">
+                                    <label class="col-sm-4 col-form-label" for="txtMapScale">Map Scale:</label>
+                                    <div class="col-sm-8">
+                                        <input type = "text" class="form-control" name = "txtMapScale" id = "txtMapScale" value="</?php /*echo htmlspecialchars($document['MapScale'],ENT_QUOTES); */?>"  />
+                                    </div>
+                                </div>-->
+                                <!-- Map Scale -->
+                                <div class="form-group row" id="mapScale">
+                                    <label class="col-sm-4 col-form-label" for="mapScale">Map Scale:</label>
+                                    <div class="col-sm-8" id="mainScaleDiv">
+                                        <div class="d-flex">
+                                            <input type="number" min="1" class="form-control" id="numberLeft" name="numberLeft">
+                                            <select class="form-control" id="unitLeft" name="unitLeft">
+                                                <option value="in">in</option>
+                                                <option value="ft">ft</option>
+                                                <option value="vrs">vrs</option>
+                                            </select>
+                                            <input type="text" value="=" class="form-control" disabled style="background-color: #FFFFFF; text-align: center; border: none;">
+                                            <input type="number" min="1" class="form-control" id="numberRight" name="numberRight">
+                                            <select class="form-control" id="unitRight" name="unitRight">
+                                                <option value="ft">ft</option>
+                                                <option value="vrs">vrs</option>
+                                                <option value="in">in</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- Document Author -->
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="txtAuthor">Document Author:</label>

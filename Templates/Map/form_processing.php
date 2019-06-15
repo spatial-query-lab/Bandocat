@@ -42,8 +42,9 @@ if($action == "review")
     if($collection != "pennyfenner")
     {
         $valid = true;
+        $mapScale = $data['numberLeft'] . " " . $data['unitLeft'] . " = " . $data['numberRight'] . " " . $data['unitRight'];
         $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_UPDATE($collection,$data['txtDocID'],$data['txtLibraryIndex'],$data['txtTitle'],$data['txtSubtitle'],
-            $data['rbIsMap'],$data['txtMapScale'],$data['rbHasNorthArrow'],$data['rbHasStreets'],
+            $data['rbIsMap'],$mapScale,$data['rbHasNorthArrow'],$data['rbHasStreets'],
             $data['rbHasPOI'],$data['rbHasCoordinates'],$data['rbHasCoast'],$data['rbNeedsReview'],
             $data['txtComments'],$customerID,$startdate,$enddate,$data['txtFieldBookNumber'],$data['txtFieldBookPage'],$data['ddlReadability'],
             $data['ddlRectifiability'],$companyID,$data['txtType'],$mediumID,$authorID);
@@ -53,8 +54,9 @@ if($action == "review")
     {
         $valid = true;
         $data['txtType'] = null;
+        $mapScale = $data['numberLeft'] . " " . $data['unitLeft'] . " = " . $data['numberRight'] . " " . $data['unitRight'];
         $retval = $DB->SP_TEMPLATE_MAP_DOCUMENT_WITH_JOBNUMBER_UPDATE($collection,$data['txtDocID'],$data['txtLibraryIndex'],$data['txtTitle'],$data['txtSubtitle'],
-            $data['rbIsMap'],$data['txtMapScale'],$data['rbHasNorthArrow'],$data['rbHasStreets'],
+            $data['rbIsMap'],$mapScale,$data['rbHasNorthArrow'],$data['rbHasStreets'],
             $data['rbHasPOI'],$data['rbHasCoordinates'],$data['rbHasCoast'],$data['rbNeedsReview'],
             $data['txtComments'],$customerID,$startdate,$enddate,$data['txtJobNumber'],$data['txtFieldBookNumber'],$data['txtFieldBookPage'],$data['ddlReadability'],
             $data['ddlRectifiability'],$companyID,$data['txtType'],$mediumID,$authorID);

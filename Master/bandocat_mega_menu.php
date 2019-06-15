@@ -274,11 +274,7 @@ $errorTickets .= $tempt;
         <!-- Website Errors -->
         <ul class="navbar-nav ml-auto">
             <!-- Translation buttons -->
-            <div id="translator_1525" class="pt-2">
-                <noscript>Javascript is disable - <a href="http://www.webestools.com/">http://www.webestools.com/</a> - <a href="http://www.webestools.com/translator-buttons-web-page-translation-google-translate-website-widget-online-html-translator.html">Translation Buttons Generator</a>
-                </noscript>
-            </div>
-            <script type="text/javascript" src="http://services.webestools.com/translator/1525-1-yyyyyyyyy.js"></script>
+            <div class="pt-2 pr-2" id="google_translate_element"></div>
             <!-- Bug Reporting (Website errors) -->
             <li class="nav-item" data-toggle="modal" data-target="#bugReportModal">
                 <a class="nav-link">
@@ -382,3 +378,11 @@ $errorTickets .= $tempt;
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>

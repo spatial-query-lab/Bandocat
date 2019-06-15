@@ -12,7 +12,7 @@
     </ul>
 </div>-->
 
-<div class="card" style="width: 18rem;">
+<div class="card" style="width: 20rem; border-color: #0c0c0c; border-width: 3px">
     <div class="list-group list-group-flush">
         <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#blucher">Blucher</a>
     </div>
