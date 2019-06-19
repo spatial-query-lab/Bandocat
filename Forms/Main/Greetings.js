@@ -96,7 +96,6 @@ Greetings = [
 'Two windmills are standing in a wind farm. One asks, “What\'s your favorite type of music?” The other says, “I\'m a big metal fan.”',
 'A rubber band pistol was confiscated in algebra class; it was a weapon of math disruption. *Requires a specific cadence to make authentic and appealing*',
 
-
 'Q: Why do we seagulls fly over the sea? A: Because if they flew over the bay they would be called bagels!',
 'Q: What did the digital clock say to the grandfather clock? A: Look Grandpa! No hands!',
 'Q: How do you make an egg roll? A: You push it!',
