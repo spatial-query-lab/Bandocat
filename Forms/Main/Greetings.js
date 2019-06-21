@@ -9,7 +9,6 @@ Greetings = [
 'Venison\'s dear isn\'t it?',
 'A good pun is it\'s own reword.',
 'Has someone heard from Lillian?',
-'I saw a stationary store moves.',
 'There\'s no silent p in swimming.',
 'I have a CD Burner… my fireplace.',
 'I heard it is still hot in Texas.',
