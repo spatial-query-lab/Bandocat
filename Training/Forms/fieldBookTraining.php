@@ -253,7 +253,7 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
                             </div>
                             <!-- Scan of Page -->
                             <div class="form-group row">
-                                <div class="col-sm-3 col-form-label" title="Auto populated Scan of page">Scan of Page:</div>
+                                <div class="col-sm-3 col-form-label">Scan of Page:</div>
                                 <div class="col-sm-9">
                                     <?php echo "<a href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\">(Click to download)</a><br>";
                                     echo "<a id='download_front' href=\"download.php?file=$config[StorageDir]$document[FileNamePath]\"><br><img src='" .  '../../' . $config['ThumbnailDir'] . $document['Thumbnail'] . " ' alt = Error /></a>";
@@ -265,14 +265,15 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
                                 <div class="col">
                                     <div class="d-flex justify-content-between">
                                         <div class="row pl-3">
-                                            <div><input type="reset" id="btnReset" name="btnReset" value="Reset" title="Will display a new document for training" class="btn btn-secondary"/></div>
+                                            <div><input type="reset" id="btnReset" name="btnReset" value="New Document" title="Will display a new document for training" class="btn btn-secondary"/></div>
                                             <div class="pl-2">
-                                                <input type='button' id='help' name='help' value='Help' data-toggle="tooltip" title="Click here for tips!" class='btn btn-success'/>
+                                                <input type='button' id='help' name='help' value='Help' title="Click here for tips!" class='btn btn-success'/>
                                             </div>
                                         </div>
                                         <div><?php if($session->hasWritePermission())
                                             {echo "<input type='submit' id='btnSubmit' name='btnSubmit' value='Update' class='btn btn-primary'/>";}
-                                            ?></div>
+                                            ?>
+                                         </div>
 
                                         <input type="hidden" id="txtDocID" name = "txtDocID" value = "<?php echo $docID;?>" />
                                         <input type="hidden" id="txtAction" name="txtAction" value="catalog" />  <!-- catalog or review -->
@@ -377,6 +378,20 @@ $crews = $DB->GET_FIELDBOOK_CREWS_BY_DOCUMENT_ID($collection,$docID);
 <script>
     $(document).ready(function()
     {
+        var correctStartDay = "<?php echo htmlspecialchars($date->splitDate($document['StartDate'])['Day']);?>";
+        var correctStartMonth = "<?php echo htmlspecialchars($date->splitDate($document['StartDate'])['Month']);?>";
+        var correctStartYear = "<?php echo htmlspecialchars($date->splitDate($document['StartDate'])['Year']);?>";
+        var correctStartDate = correctStartDay.concat("/", correctStartMonth, "/", correctStartYear);
+
+        var correctEndDay = "<?php echo htmlspecialchars($date->splitDate($document['EndDate'])['Day']);?>";
+        var correctEndMonth = "<?php echo htmlspecialchars($date->splitDate($document['EndDate'])['Month']);?>";
+        var correctEndYear = "<?php echo htmlspecialchars($date->splitDate($document['EndDate'])['Year']);?>";
+        var correctEndDate = correctEndDay.concat("/", correctEndMonth, "/", correctEndYear);
+
+        //Shows correct answers in user console log
+        console.log("Start Date: ", correctStartDate);
+        console.log("End Date: ", correctEndDate);
+
         var libIndex = $('#txtLibraryIndex').val();
         console.log(libIndex);
         if(libIndex == "")

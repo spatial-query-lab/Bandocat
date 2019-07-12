@@ -86,7 +86,7 @@
     <!-- Footer Links -->
 
     <!-- Copyright -->
-    <div class="footer-copyright text-center py-3">© 2018 Copyright:
+    <div class="footer-copyright text-center py-3">© 2019 Copyright:
         <a href="http://spatialquerylab.com/">(S{Q}L)</a>
     </div>
     <!-- Copyright -->

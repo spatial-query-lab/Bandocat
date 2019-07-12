@@ -185,7 +185,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                                     <select id="classificationMethod" name="classificationMethod" class="form-control" required>
                                                         <!-- GET FOLDER CLASSIFICATION LIST -->
                                                         <?php
-                                                        $Render->GET_DDL_TOOLTIP($DB->GET_FOLDER_CLASSIFICATION_LIST($collection),$document['Classification']);
+                                                        $Render->GET_DDL_TOOLTIP($DB->GET_FOLDER_CLASSIFICATION_LIST($collection),$document['None']);
                                                         ?>
                                                     </select>
                                                 </div>
@@ -259,7 +259,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
                                         <div class="col">
                                             <div class="d-flex justify-content-between">
                                                 <div class="row pl-3">
-                                                    <input type="reset" id="btnReset" name="btnReset" value="Reset" onclick="resetPage()" data-toggle="tooltip" title="Will display a new document for training" class="btn btn-secondary"/>
+                                                    <input type="reset" id="btnReset" name="btnReset" value="New Document" onclick="resetPage()" data-toggle="tooltip" title="Will display a new document for training" class="btn btn-secondary"/>
                                                     <div class="pl-2">
                                                         <input type='button' id='help' name='help' value='Help' data-toggle="tooltip" title="Click here for tips!" class='btn btn-success'/>
                                                     </div>
@@ -344,6 +344,29 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
     var author_count = 0;
 
     $( document ).ready(function() {
+
+        // Initializing correct answers for checking when document is submitted from user
+        var correctTitle = "<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>";
+        var correctClassification = "<?php echo htmlspecialchars($document['Classification'],ENT_QUOTES);?>";
+        // Correct Document Dates
+        var correctStartDay = "<?php echo htmlspecialchars($date->splitDate($document['StartDate'])['Day']);?>";
+        var correctStartMonth = "<?php echo htmlspecialchars($date->splitDate($document['StartDate'])['Month']);?>";
+        var correctStartYear = "<?php echo htmlspecialchars($date->splitDate($document['StartDate'])['Year']);?>";
+        var correctStartDate = correctStartDay.concat("/", correctStartMonth, "/", correctStartYear);
+
+        var correctEndDay = "<?php echo htmlspecialchars($date->splitDate($document['EndDate'])['Day']);?>";
+        var correctEndMonth = "<?php echo htmlspecialchars($date->splitDate($document['EndDate'])['Month']);?>";
+        var correctEndYear = "<?php echo htmlspecialchars($date->splitDate($document['EndDate'])['Year']);?>";
+        var correctEndDate = correctEndDay.concat("/", correctEndMonth, "/", correctEndYear);
+
+        var correctTitle = "<?php echo htmlspecialchars($document['Title'],ENT_QUOTES);?>";
+
+        //Shows correct answers in user console log
+        console.log("Document Title: ", correctTitle);
+        console.log("Classification: ", correctClassification);
+        console.log("Start Date: ", correctStartDate);
+        console.log("End Date: ", correctEndDate);
+
         //Parse out the authors read in to the add_fields function
         var authors = <?php echo json_encode($authors); ?>;
         for(var i = 1; i < authors.length; i++)
@@ -351,43 +374,109 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
             add_fields(authors[i][0]);
         }
 
+        //console.log("Authors: ", authors);
+
+        for(var i = 0; i < authors.length; i++)
+            console.log("Authors: ", authors[i][0]);
+
+        //var numberAuth = </?php echo count($authors); ?>;
+        //console.log("Authors: ", numberAuth);
+
         /* attach a submit handler to the form */
         $('#theform').submit(function (event) {
             /* stop form from submitting normally */
             var formData = new FormData($(this)[0]);
 
             //Append Authors data to the form
-            var authors = $('[name="txtAuthor[]');
+            var theAuthors = $('[name="txtAuthor[]');
             var array_authors = [];
-            for(var i = 0; i < authors.length; i++)
-                array_authors.push(authors[i].value);
+            for(var i = 0; i < theAuthors.length; i++)
+                array_authors.push(theAuthors[i].value);
             formData.append("authors",JSON.stringify(array_authors));
-            /*jquery that displays the three points loader*/
 
-            /*var error = errorHandling($('#txtLibraryIndex'), '</?php echo $collection ?>');
-            if(error.answer){
-                for(i = 0; i < error.desc.length; i++) {
-                    alert(error.desc[i].message)
-                }
-                return false
+            for(var z = 0; z < authors.length; z++)
+            {
+                console.log("Authors: ", authors[z][0]);
             }
-            var eScale = errorHandling($('#txtMapScale'), '</?php echo $collection ?>');
-            if(eScale.answer){
-                for(i = 0; i < eScale.desc.length; i++) {
-                    alert(eScale.desc[i].message)
-                }
-                return false
-            }*/
 
-            console.log(formData);
+            console.log("****************************************");
+
+            for(var i = 0; i < theAuthors.length; i++)
+            {
+                console.log("theAuthors: ", theAuthors[i].value);
+            }
+
+            ////////////////////////////////////////////////////////////////////// TRAINING CHECK //////////////////////////////////////////////////////////////////////
+
+            var errors = 0;
+            // Doc Title
+            var title = $('#txtTitle').val();
+
+            // Classification
+            var classification = $('#classificationMethod').val();
+
+            // User Dates entered that need to be checked
+            var startDay = $('#ddlStartDay').val();
+            var startMonth = $('#ddlStartMonth').val();
+            var startYear = $('#ddlStartYear').val();
+            var startDate = startDay.concat("/", startMonth, "/", startYear);
+
+            var endDay = $('#ddlEndDay').val();
+            var endMonth = $('#ddlEndMonth').val();
+            var endYear = $('#ddlEndYear').val();
+            var endDate = endDay.concat("/", endMonth, "/", endYear);
+
+            //console.log("startDay: ", startDay);
+            $('#responseModalBody').empty(); // Clearing response modal of previous data
+
+            // Checking
+            if(correctTitle != title) // Checks to see if the user entered title is the same as the stored title for this document (if correct)
+            {
+                errors++;
+                $('#responseModalBody').append('<p style="text-align: center"><font style="color: red"><strong>Error: </strong>Incorrect Title. Please try again</font></p>');
+            }
+            if(correctClassification != classification) // Checks to see if the user entered Classification is the same as the stored Classification for this document (if correct)
+            {
+                errors++;
+                $('#responseModalBody').append('<p style="text-align: center"><font style="color: red"><strong>Error: </strong>Incorrect Classification. Please try again</font></p>');
+            }
+            if(startDate != correctStartDate) // Checks to see if the user entered Start Date is the same as the stored Start Date for this document (if correct)
+            {
+                errors++;
+                $('#responseModalBody').append('<p style="text-align: center"><font style="color: red"><strong>Error: </strong>Incorrect Start Date. Please try again</font></p>');
+            }
+            if(endDate != correctEndDate) // Checks to see if the user entered End Date is the same as the stored End Date for this document (if correct)
+            {
+                errors++;
+                $('#responseModalBody').append('<p style="text-align: center"><font style="color: red"><strong>Error: </strong>Incorrect End Date. Please try again</font></p>');
+            }
+
+
+            // Authors Checking
+            for(var x = 0; x < authors.length; x++) // Checks to see if the user entered Author is the same as the stored Author for this document (if correct)
+            {
+                if(authors[x][0] != theAuthors[x].value)
+                {
+                    errors++;
+                    $('#responseModalBody').append('<p style="text-align: center"><font style="color: red"><strong>Error: </strong>Incorrect Author '+ x+1 +'. Please try again</font></p>');
+                }
+            }
+
+            // If there weren't any errors, a success message will appear via modal, and a new page will be loaded
+            if(errors == 0)
+            {
+                $('#responseModalBody').append('<p style="text-align: center"><font style="color: green">Job Folder Catalog Training Successful!! <br> ...Loading new form</font></p>');
+            }
+
             event.preventDefault();
 
-            $('#responseModalBody').empty();
-            $('#responseModalBody').append('<p style="text-align: center"><font style="color: green">Job Folder Catalog Training Successful!! <br> ...Loading new form</font></p>');
+            // Shows the response modal with the appropriate appended information
             $('#responseModal').modal('show');
+            ////////////////////////////////////////////////////////////////////// TRAINING CHECK END //////////////////////////////////////////////////////////////////////
 
         });
 
+        ///// This section checks to see if document is in a subfolder /////
         var libIndex = $('#txtLibraryIndex').val();
         var decimal = /\./g;
 
@@ -407,6 +496,7 @@ $classification = $DB->GET_FOLDER_CLASSIFICATION_LIST($collection);
             });
         }
 
+        ///// This section displays the classification description /////
         var classList =  <?php echo json_encode($classification); ?>;
         $('#classificationCard').show();
         var classText = $('#classificationMethod option:selected').text();

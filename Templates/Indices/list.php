@@ -241,17 +241,5 @@ else header('Location: ../../');
     });
 </script>
 
-<!-- This Script Needs to Be added to Every Page, If the Sizing is off from dynamic content loading, then this will need to be taken away or adjusted -->
-<script>
-    $(document).ready(function() {
-
-        var docHeight = $(window).height();
-        var footerHeight = $('#footer').height();
-        var footerTop = $('#footer').position().top + footerHeight;
-
-        if (footerTop < docHeight)
-            $('#footer').css('margin-top', 0 + (docHeight - footerTop) + 'px');
-    });
-</script>
 </body>
 </html>

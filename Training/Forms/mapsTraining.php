@@ -420,7 +420,7 @@ $userRole = $session->getRole();
                                 <div class="col">
                                     <div class="d-flex justify-content-between">
                                         <div class="row pl-3">
-                                            <input type="reset" id="btnReset" name="btnReset" value="Reset" title="Will clear the page of all content" class="btn btn-secondary"/>
+                                            <input type="reset" id="btnReset" name="btnReset" value="New Document" title="Will display a new document for training" class="btn btn-secondary"/>
                                             <div class="pl-2">
                                                 <input type='button' id='help' name='help' value='Help' data-toggle="tooltip" title="Click here for tips!" class='btn btn-success'/>
                                             </div>
